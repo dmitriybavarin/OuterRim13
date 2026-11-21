@@ -1,0 +1,59 @@
+[[rank]]
+name = "Admin Observer"
+include = []
+exclude = ["AUTOADMIN"]
+edit = []
+
+[[rank]]
+name = "Moderator"
+include = ["ADMIN"]
+exclude = []
+edit = []
+
+[[rank]]
+name = "Admin Candidate"
+include = ["@"]
+exclude = []
+edit = []
+
+[[rank]]
+name = "Trial Admin"
+include = ["@", "SPAWN", "VAREDIT", "BAN"]
+exclude = []
+edit = []
+
+[[rank]]
+name = "Badmin"
+include = ["@", "POSSESS", "POLL", "BUILD", "SERVER", "FUN"]
+exclude = []
+edit = []
+
+[[rank]]
+name = "Game Admin"
+include = ["@", "STEALTH", "SOUND", "DEBUG"]
+exclude = []
+edit = []
+
+[[rank]]
+name = "Game Master"
+include = ["EVERYTHING"]
+exclude = []
+edit = ["EVERYTHING"]
+
+[[rank]]
+name = "Lazy Master"
+include = ["EVERYTHING"]
+exclude = ["AUTOADMIN"]
+edit = ["EVERYTHING"]
+
+[[rank]]
+name = "Host"
+include = ["EVERYTHING"]
+exclude = []
+edit = ["EVERYTHING"]
+
+[[rank]]
+name = "Coder"
+include = ["DEBUG", "VAREDIT", "SERVER", "SPAWN", "POLL"]
+exclude = ["AUTOADMIN"]
+edit = []

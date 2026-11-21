@@ -1,0 +1,345 @@
+@use 'sass:color';
+@use 'sass:map';
+@use '../colors.scss';
+@use '../base.scss';
+
+.ChoicedSelection {
+  padding: var(--space-m);
+  background-color: var(--color-base);
+  box-shadow: 0 0.5em 1em hsla(0, 0%, 0%, 0.5);
+}
+
+.PreferencesMenu {
+  &__Antags {
+    &__antagSelection {
+      gap: var(--space-l);
+
+      @mixin animate-hover {
+        .antagonist-icon-parent .antagonist-icon {
+          &:hover {
+            transform: scale(1.3);
+            transition: transform var(--transition-time-fast) ease-out;
+          }
+        }
+      }
+
+      &__antagonist {
+        .antagonist-icon-parent {
+          cursor: var(--cursor-pointer);
+          border-style: solid;
+          border-radius: var(--border-radius-circular);
+          border-width: var(--border-thickness-large);
+          box-sizing: content-box;
+          overflow: hidden;
+          position: relative;
+
+          height: 96px;
+          width: 96px;
+
+          .antagonist-icon {
+            image-rendering: pixelated;
+            border-radius: var(--border-radius-circular);
+            overflow: hidden;
+            transition: transform var(--transition-time-fast) ease-in;
+          }
+        }
+
+        &--off {
+          @include animate-hover;
+
+          .antagonist-icon-parent {
+            border-color: var(--color-red);
+
+            .antagonist-icon {
+              opacity: 0.5;
+
+              &:hover {
+                opacity: 1;
+              }
+            }
+          }
+        }
+
+        &--on {
+          @include animate-hover;
+
+          .antagonist-icon-parent {
+            border-color: var(--color-green);
+          }
+        }
+
+        &--banned {
+          .antagonist-icon-parent {
+            border-color: var(--color-grey);
+          }
+
+          .antagonist-icon {
+            opacity: 0.5;
+          }
+        }
+
+        .antagonist-banned-slash {
+          background: var(--color-grey);
+
+          width: 100%;
+          height: 3px;
+
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translateY(-50%) translateX(-50%) rotate(35deg);
+
+          opacity: 0.8;
+        }
+
+        .antagonist-days-left {
+          text-align: center;
+          text-shadow: 1px 1px 1px hsl(0, 0%, 13.3%);
+
+          width: 100%;
+
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translateY(-50%) translateX(-50%);
+        }
+      }
+    }
+  }
+
+  &__Jobs {
+    > * {
+      flex: 1;
+    }
+
+    &__characterMenu {
+      box-shadow: var(--dropdown-menu-blur);
+      background-color: var(--dropdown-menu-background);
+      border: var(--dropdown-menu-border);
+      border-radius: var(--dropdown-menu-border-radius);
+      transition: opacity 0.35s ease-out;
+
+      &--hidden {
+        opacity: 0;
+        pointer-events: none;
+
+        @at-root .Floating:has(> #{&}) {
+          pointer-events: none;
+        }
+      }
+    }
+
+    &__departments {
+      &.head {
+        background: colors.bg(var(--department-color));
+
+        .job-name {
+          font-weight: bold;
+          &.hovered {
+            background: colors.hover(colors.bg(var(--department-color)));
+          }
+        }
+      }
+
+      background: colors.fg(var(--department-color));
+      border: var(--border-thickness-small) outset
+        colors.fg(var(--department-color));
+      color: black;
+
+      .options {
+        padding-right: var(--space-xxs);
+        padding-bottom: 0.2em;
+        background: hsla(0, 0%, 0%, 0.2);
+      }
+      .job-name {
+        &.hovered {
+          background: colors.hover(colors.fg(var(--department-color)));
+        }
+      }
+
+      &--Captain {
+        border: var(--border-thickness-medium) outset hsla(60, 100%, 39.2%, 1);
+
+        &:first-child {
+          border-top: var(--border-thickness-medium) outset
+            hsla(60, 100%, 39.2%, 1);
+        }
+
+        .job-name {
+          font-size: 17px;
+          &.hovered {
+            background: colors.hover(colors.fg(var(--department-color)));
+          }
+        }
+      }
+
+      &__priority {
+        border: var(--border-thickness-tiny) solid hsla(0, 0%, 0%, 0.3);
+
+        &--off::after {
+          content: '';
+
+          background: hsla(0, 0%, 0%, 0.2);
+          display: block;
+          height: 80%;
+          left: 50%;
+          position: relative;
+          top: 50%;
+          transform: translateX(-50%) translateY(-50%) rotate(40deg);
+          width: 2px;
+        }
+      }
+    }
+
+    &__PriorityHeader {
+      font-weight: bold;
+      font-size: 11px;
+      line-height: 1.2;
+      transform: translateX(-4px) translateY(-8px) rotate(315deg);
+      transform-origin: left bottom;
+      white-space: nowrap;
+      overflow: visible;
+      width: 19px;
+    }
+  }
+
+  &__Quirks {
+    &__QuirkList {
+      scrollbar-color: var(--color-scrollbar-thumb, hsl(0, 0%, 35%)) transparent;
+      width: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    &__Slots {
+      width: 100%;
+    }
+
+    &__chip {
+      display: inline-flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 0.4rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 0.3rem;
+      border: 1px solid hsla(0, 0%, 100%, 0.12);
+      background-color: hsla(0, 0%, 100%, 0.05);
+      white-space: nowrap;
+
+      &__label {
+        opacity: 0.65;
+      }
+
+      &__value {
+        font-weight: bold;
+      }
+    }
+
+    &__slotEmpty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 4.6rem;
+      box-sizing: border-box;
+      border: 1px dashed hsla(0, 0%, 100%, 0.22);
+      border-radius: 0.3rem;
+      color: hsla(0, 0%, 100%, 0.4);
+      font-style: italic;
+    }
+
+    &__quirk {
+      $accents: (
+        'positive': hsl(120, 45%, 48%),
+        'neutral': hsl(0, 0%, 60%),
+        'negative': hsl(0, 55%, 55%),
+      );
+
+      display: flex;
+      align-items: stretch;
+      gap: 0.75rem;
+      box-sizing: border-box;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid hsla(0, 0%, 100%, 0.1);
+      border-left-width: 3px;
+      border-radius: 0.3rem;
+      background-color: hsla(0, 0%, 100%, 0.05);
+      cursor: var(--cursor-pointer);
+      transition: background-color var(--transition-time-fast) ease-in;
+
+      &:hover {
+        background-color: hsla(0, 0%, 100%, 0.1);
+        transition: background-color var(--transition-time-fast) ease-out;
+      }
+
+      @each $quality, $color-value in $accents {
+        &--#{$quality} {
+          border-left-color: $color-value;
+
+          .PreferencesMenu__Quirks__quirk__icon,
+          .PreferencesMenu__Quirks__quirk__cost {
+            color: $color-value;
+          }
+        }
+      }
+
+      &--compact {
+        height: 4.6rem;
+        overflow: hidden;
+      }
+
+      &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 2.5rem;
+        font-size: 1.8rem;
+      }
+
+      &__body {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 0;
+        min-width: 0;
+        gap: 0.25rem;
+      }
+
+      &__head {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      &__name {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-weight: bold;
+        font-size: 1.1em;
+      }
+
+      &__cost {
+        flex: 0 0 auto;
+        font-weight: bold;
+      }
+
+      &__desc {
+        font-size: 0.85em;
+        line-height: 1.3;
+        color: hsla(0, 0%, 100%, 0.6);
+      }
+
+      &--compact &__desc {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      &__requirement {
+        font-size: 0.85em;
+        font-weight: bold;
+        color: hsl(0, 55%, 62%);
+      }
+    }
+  }
+}

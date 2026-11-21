@@ -1,0 +1,31 @@
+/mob/living/silicon/ai/examine(mob/user)
+	. = list()
+	var/list/gender_args = list(gender = get_visible_gender())
+	if(stat == DEAD)
+		. += span_warning(loc_key("examine-ai-dead", gender_args))
+	. += span_notice(loc_key("examine-ai-bolts-[is_anchored ? "tight" : "loose"]", gender_args))
+	if(is_anchored)
+		if(!opened)
+			if(!emagged)
+				. += span_notice(loc_key("examine-ai-panel-[stat == DEAD ? "dead" : "closed"]", gender_args))
+			else
+				. += span_warning(loc_key("examine-ai-panel-emagged", gender_args))
+		else
+			. += span_notice(loc_key("examine-ai-panel-open", gender_args))
+	if(stat != DEAD)
+		if (get_brute_loss())
+			if (get_brute_loss() < 30)
+				. += span_warning(loc_key("examine-ai-dented-light", gender_args))
+			else
+				. += span_warning("<B>[loc_key("examine-ai-dented-heavy", gender_args)]</B>")
+		if (get_fire_loss())
+			if (get_fire_loss() < 30)
+				. += span_warning(loc_key("examine-ai-charred-light", gender_args))
+			else
+				. += span_warning("<B>[loc_key("examine-ai-melted", gender_args)]</B>")
+		if(deployed_shell)
+			. += LOC_KEY("examine-ai-network-light")
+		else if (!shunted && !client)
+			. += loc_key("examine-ai-core-frozen", list(ai = src))
+
+	. += ..()

@@ -1,0 +1,299 @@
+/// Queues and manages navmap pathfinding steps
+SUBSYSTEM_DEF(pathfinder)
+	name = "Pathfinder"
+	priority = FIRE_PRIORITY_PATHFINDING
+	wait = 0.5
+	/// List of pathfind datums we are currently trying to process
+	var/list/datum/pathfind/active_pathing = list()
+	/// List of pathfind datums being ACTIVELY processed. exists to make subsystem stats readable
+	var/list/datum/pathfind/currentrun = list()
+	/// Async rust-g navmap jobs.
+	var/list/datum/pathfind/navmap/navmap_pathing = list()
+	var/list/datum/pathfind/navmap/current_navmap_run = list()
+	/// List of uncheccked source_to_map entries
+	var/list/currentmaps = list()
+	/// Assoc list of target turf -> list(/datum/path_map) centered on the turf
+	var/list/source_to_maps = list()
+	var/static/space_type_cache
+
+/datum/controller/subsystem/pathfinder/Initialize()
+	space_type_cache = typecacheof(/turf/open/space)
+	return SS_INIT_SUCCESS
+
+/datum/controller/subsystem/pathfinder/stat_entry(msg)
+	msg = "P:[length(active_pathing)] A:[length(navmap_pathing)]"
+	return ..()
+
+// This is another one of those subsystems (hey lighting) in which one "Run" means fully processing a queue
+// We'll use a copy for this just to be nice to people reading the mc panel
+/datum/controller/subsystem/pathfinder/fire(resumed)
+	if(!resumed)
+		src.currentrun = active_pathing.Copy()
+		src.current_navmap_run = navmap_pathing.Copy()
+		src.currentmaps = deep_copy_list(source_to_maps)
+
+	// Dies of sonic speed from caching datum var reads
+	var/list/currentrun = src.currentrun
+	while(length(currentrun))
+		var/datum/pathfind/path = currentrun[length(currentrun)]
+		var/step_ok = path.search_step()
+		if(!step_ok) // Something's wrong
+			path.early_exit()
+			continue
+		if(MC_TICK_CHECK)
+			return
+		path.finished()
+
+	var/list/datum/pathfind/navmap/current_navmap_run = src.current_navmap_run
+	while(length(current_navmap_run))
+		var/datum/pathfind/navmap/path = current_navmap_run[length(current_navmap_run)]
+		var/step_ok = path.search_step()
+		if(!step_ok)
+			path.early_exit()
+			current_navmap_run.len--
+			continue
+		if(path.complete)
+			path.finished()
+		current_navmap_run.len--
+		if(MC_TICK_CHECK)
+			return
+
+	// Go over our existing pathmaps, clear out the ones we aren't using
+	var/list/currentmaps = src.currentmaps
+	var/oldest_time = world.time - MAP_REUSE_SLOWEST
+	while(length(currentmaps))
+		var/turf/source = currentmaps[length(currentmaps)]
+		var/list/datum/path_map/owned_maps = currentmaps[source]
+		for(var/datum/path_map/map as anything in owned_maps)
+			if(map.creation_time < oldest_time && !map.building)
+				source_to_maps[source] -= map
+			owned_maps.len--
+			if(MC_TICK_CHECK)
+				return
+		if(!length(source_to_maps[source]))
+			source_to_maps -= source
+
+		currentmaps.len--
+
+/// Initiates a pathfind. Returns true if we're good, FALSE if something's failed.
+/// Uses the DLL if available, otherwise uses the DM navmap A* implementation.
+/datum/controller/subsystem/pathfinder/proc/pathfind(atom/movable/requester, atom/end, max_distance = 30, mintargetdist, access = list(), simulated_only = TRUE, turf/exclude, skip_first = TRUE, diagonal_handling = DIAGONAL_REMOVE_CLUNKY, list/datum/callback/on_finish, allow_multiz = FALSE, max_path_cost = 0, allow_nav_links = FALSE, alist/nav_cost_modifiers)
+	var/turf/start = get_turf(requester)
+	var/turf/goal = get_turf(end)
+	if(!start || !goal)
+		return FALSE
+	var/datum/can_pass_info/pass_info = new(requester, access)
+	var/list/native_cost_modifiers = nav_cost_modifiers_to_native(nav_cost_modifiers)
+	if(isnull(native_cost_modifiers))
+		for(var/datum/callback/finished as anything in on_finish)
+			finished.Invoke(list())
+		return TRUE
+	if(allow_multiz || allow_nav_links || length(nav_cost_modifiers))
+		var/datum/pathfind/navmap/multiz_path = navmap_pathfind(requester, end, max_distance, mintargetdist, access, simulated_only, exclude, skip_first, diagonal_handling, on_finish, allow_multiz, max_path_cost, allow_nav_links, nav_cost_modifiers)
+		return !!multiz_path
+	if(navmap_pathfinder_available())
+		var/list/path
+		try
+			var/list/result = navmap_pathfinder(start, goal, pass_info, NAV_IS_FLYING(pass_info), max_distance, mintargetdist || 0, simulated_only, exclude, diagonal_handling, skip_first, allow_multiz, max_path_cost, allow_nav_links, native_cost_modifiers)
+			path = result["path"] || list()
+			for(var/datum/callback/finished as anything in on_finish)
+				finished.Invoke(path)
+			return TRUE
+		catch
+			for(var/datum/callback/finished as anything in on_finish)
+				finished.Invoke(list())
+			return TRUE
+
+	var/datum/pathfind/navmap/astar_path = navmap_pathfind(requester, end, max_distance, mintargetdist, access, simulated_only, exclude, skip_first, diagonal_handling, on_finish, allow_multiz, max_path_cost, allow_nav_links, nav_cost_modifiers)
+	return !!astar_path
+
+/// Starts a async navmap pathfinding job and returns the queued job.
+/datum/controller/subsystem/pathfinder/proc/navmap_pathfind(atom/movable/requester, atom/end, max_distance = 30, mintargetdist, access = list(), simulated_only = TRUE, turf/exclude, skip_first = TRUE, diagonal_handling = DIAGONAL_REMOVE_CLUNKY, list/datum/callback/on_finish, allow_multiz = FALSE, max_path_cost = 0, allow_nav_links = FALSE, alist/nav_cost_modifiers)
+	var/list/native_cost_modifiers = nav_cost_modifiers_to_native(nav_cost_modifiers)
+	if(isnull(native_cost_modifiers))
+		for(var/datum/callback/finished as anything in on_finish)
+			finished.Invoke(list(), list())
+		return
+	if(allow_multiz && !SSnavmap.groups_reachable(get_turf(requester), get_turf(end)))
+		for(var/datum/callback/finished as anything in on_finish)
+			finished.Invoke(list(), list())
+		return
+	var/datum/pathfind/navmap/path = new()
+	path.setup(requester, end, max_distance, mintargetdist, access, simulated_only, exclude, skip_first, diagonal_handling, on_finish, allow_multiz, max_path_cost, allow_nav_links, nav_cost_modifiers)
+	if(!path.start())
+		qdel(path)
+		return
+	navmap_pathing += path
+	return path
+
+/// Initiates a swarmed pathfind. Returns TRUE if we're good, FALSE if something's failed
+/// If a valid pathmap exists for the TARGET turf we'll use that, otherwise we have to build a new one
+/datum/controller/subsystem/pathfinder/proc/swarmed_pathfind(atom/movable/requester, atom/end, max_distance = 30, mintargetdist = 0, age = MAP_REUSE_INSTANT, access = list(), simulated_only = TRUE, turf/exclude, skip_first = TRUE, list/datum/callback/on_finish, alist/nav_cost_modifiers)
+	if(length(nav_cost_modifiers))
+		return pathfind(requester, end, max_distance, mintargetdist, access, simulated_only, exclude, skip_first, DIAGONAL_REMOVE_CLUNKY, on_finish, FALSE, 0, FALSE, nav_cost_modifiers)
+	var/turf/target = get_turf(end)
+	var/datum/can_pass_info/pass_info = new(requester, access)
+	// If there's a map we can use already, use it
+	var/datum/path_map/valid_map = get_valid_map(pass_info, target, simulated_only, exclude, age, include_building = TRUE)
+	if(valid_map && valid_map.expand(max_distance))
+		path_map_passalong(on_finish, get_turf(requester), mintargetdist, skip_first, valid_map)
+		return TRUE
+
+	// Otherwise we're gonna make a new one, and turn it into a path for the callbacks passed into us
+	var/list/datum/callback/pass_in = list()
+	pass_in += CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(path_map_passalong), on_finish, get_turf(requester), mintargetdist, skip_first)
+	// And to allow subsequent calls to reuse the same map, we'll put a placeholder in the cache, and fill it up when the pathing finishes
+	var/datum/path_map/empty = new()
+	empty.pass_info = new(requester, access)
+	empty.start = target
+	empty.pass_space = simulated_only
+	empty.avoid = exclude
+	empty.building = TRUE
+	path_map_cache(target, empty)
+	pass_in += CALLBACK(src, PROC_REF(path_map_fill), target, empty)
+	if(!SSpathfinder.can_pass_build_map(pass_info, target, max_distance, simulated_only, exclude, pass_in))
+		return FALSE
+	return TRUE
+
+/// We generate a path for the passed in callbacks, and then pipe it over
+/proc/path_map_passalong(list/datum/callback/return_callbacks, turf/target, mintargetdist = 0, skip_first = TRUE, datum/path_map/hand_back)
+	var/list/requested_path
+	if(istype(hand_back, /datum/path_map))
+		requested_path = hand_back.get_path_from(target, skip_first, mintargetdist)
+	for(var/datum/callback/return_callback as anything in return_callbacks)
+		return_callback.Invoke(requested_path)
+
+/// Caches the passed in path_map, allowing for reuse in future
+/datum/controller/subsystem/pathfinder/proc/path_map_cache(turf/target, datum/path_map/hand_back)
+	// Cache our path_map
+	if(!target || !hand_back)
+		return
+	source_to_maps[target] += list(hand_back)
+
+/datum/controller/subsystem/pathfinder/proc/path_map_fill(turf/target, datum/path_map/fill_into, datum/path_map/hand_back)
+	fill_into.building = FALSE
+	if(!fill_into.compare_against(hand_back))
+		source_to_maps[target] -= fill_into
+		return
+	fill_into.copy_from(hand_back)
+	fill_into.creation_time = hand_back.creation_time
+	// If we aren't in the source list anymore don't go trying to clear it out yeah?
+	if(!source_to_maps[target] || !(fill_into in source_to_maps[target]))
+		return
+	// Let's remove anything we're better than
+	for(var/datum/path_map/same_target as anything in source_to_maps[target])
+		if(fill_into == same_target || !same_target.compare_against(hand_back))
+			continue
+		// If it's still being made it'll be fresher then us
+		if(same_target.building)
+			continue
+		// We assume that we are fresher, and that's all we care about
+		// If it's being expanded it'll get updated when that finishes, then clear when all the refs drop
+		source_to_maps[target] -= same_target
+
+/// Initiates a SSSP run. Returns true if we're good, FALSE if something's failed
+/datum/controller/subsystem/pathfinder/proc/build_map(atom/movable/requester, turf/source, max_distance = 30, access = list(), simulated_only = TRUE, turf/exclude, list/datum/callback/on_finish)
+	var/datum/pathfind/sssp/path = new()
+	path.setup(requester, access, source, max_distance, simulated_only, exclude, on_finish)
+	if(path.start())
+		active_pathing += path
+		return TRUE
+	return FALSE
+
+/// Initiates a SSSP run from a pass_info datum. Returns true if we're good, FALSE if something's failed
+/datum/controller/subsystem/pathfinder/proc/can_pass_build_map(datum/can_pass_info/pass_info, turf/source, max_distance = 30, simulated_only = TRUE, turf/exclude, list/datum/callback/on_finish)
+	var/datum/pathfind/sssp/path = new()
+	path.setup_from_canpass(pass_info, source, max_distance, simulated_only, exclude, on_finish)
+	if(path.start())
+		active_pathing += path
+		return TRUE
+	return FALSE
+
+/// Begins to handle a pathfinding run based off the input /datum/pathfind datum
+/// You should not use this, it exists to allow for shenanigans. You do not know how to do shenanigans
+/datum/controller/subsystem/pathfinder/proc/run_pathfind(datum/pathfind/run)
+	active_pathing += run
+	return TRUE
+
+/// Takes a set of pathfind info, returns the first valid pathmap that would work if one exists
+/// Optionally takes a max age to accept (defaults to 0 seconds) and a minimum acceptable range
+/// If include_building is true and we can only find a building path, we'll use that instead. tho we will wait for it to finish first
+/datum/controller/subsystem/pathfinder/proc/get_valid_map(datum/can_pass_info/pass_info, turf/target, simulated_only = TRUE, turf/exclude, age = MAP_REUSE_INSTANT, min_range = -INFINITY, include_building = FALSE)
+	// Walk all the maps that match our requester's turf OR our target's
+	// Then hold onto em. If their cache time is short we can reuse/expand them, if not we'll have to make a new one
+	var/oldest_time = world.time - age
+	/// Backup return value used if no finished pathmaps are found
+	var/datum/path_map/constructing
+	for(var/datum/path_map/shared_source as anything in source_to_maps[target])
+		if(!shared_source.compare_against_args(pass_info, target, simulated_only, exclude))
+			continue
+		var/max_dist = 0
+		if(shared_source.distances.len)
+			max_dist = shared_source.distances[shared_source.distances.len]
+		if(max_dist < min_range)
+			continue
+		if(oldest_time > shared_source.creation_time && !shared_source.building)
+			continue
+		if(shared_source.building)
+			if(include_building)
+				constructing = constructing || shared_source
+			continue
+
+		return shared_source
+	if(constructing)
+		UNTIL(constructing.building == FALSE)
+		return constructing
+	return null
+
+/// Builds a single directional arrow image for a path step visualization
+/datum/controller/subsystem/pathfinder/proc/render_path_arrow(turf/draw, direction)
+	var/image/arrow = image('icons/turf/debug.dmi', draw, "arrow", PATH_ARROW_DEBUG_LAYER, direction)
+	SET_PLANE_EXPLICIT(arrow, BALLOON_CHAT_PLANE, draw)
+	return arrow
+
+///Renders a full path of arrows, showing the direction taken from each tile.
+/datum/controller/subsystem/pathfinder/proc/render_path_images(list/turf/draw_list)
+	if(!length(draw_list))
+		return list()
+	var/list/image/turf_images = list()
+	for(var/i in 1 to (length(draw_list) - 1))
+		var/turf/T = draw_list[i]
+		var/turf/next = draw_list[i + 1]
+		turf_images += render_path_arrow(T, get_dir(T, next))
+	return turf_images
+
+/// Renders a full path visualisation: start marker, directional arrows along the path, end marker.
+/datum/controller/subsystem/pathfinder/proc/render_path_images_full(list/turf/draw_list)
+	if(!length(draw_list))
+		return list()
+	var/list/image/turf_images = list()
+	var/turf/first = draw_list[1]
+	var/image/start = image('icons/turf/debug.dmi', first, "start", PATH_DEBUG_LAYER)
+	SET_PLANE_EXPLICIT(start, BALLOON_CHAT_PLANE, first)
+	turf_images += start
+	turf_images += render_path_images(draw_list)
+	var/turf/last = draw_list[length(draw_list)]
+	var/image/end = image('icons/turf/debug.dmi', last, "end", PATH_DEBUG_LAYER)
+	SET_PLANE_EXPLICIT(end, BALLOON_CHAT_PLANE, last)
+	turf_images += end
+	return turf_images
+
+/// Takes a set of pathfind info, returns all valid pathmaps that would work
+/// Takes an optional minimum range arg
+/datum/controller/subsystem/pathfinder/proc/get_valid_maps(datum/can_pass_info/pass_info, turf/target, simulated_only = TRUE, turf/exclude, age = MAP_REUSE_INSTANT, min_range = -INFINITY, include_building = FALSE)
+	// Walk all the maps that match our requester's turf OR our target's
+	// Then hold onto em. If their cache time is short we can reuse/expand them, if not we'll have to make a new one
+	var/list/valid_maps = list()
+	var/oldest_time = world.time - age
+	for(var/datum/path_map/shared_source as anything in source_to_maps[target])
+		if(shared_source.compare_against_args(pass_info, target, simulated_only, exclude))
+			continue
+		var/max_dist = shared_source.distances[shared_source.distances.len]
+		if(max_dist < min_range)
+			continue
+		if(oldest_time > shared_source.creation_time)
+			continue
+		if(!include_building && shared_source.building)
+			continue
+		valid_maps += shared_source
+	return valid_maps
