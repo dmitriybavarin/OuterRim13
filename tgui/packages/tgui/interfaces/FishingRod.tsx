@@ -8,6 +8,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -33,6 +34,7 @@ type Props = {
 
 const FishingRodSlot = (props: Props) => {
   const { act } = useBackend();
+  const t = useT();
   const {
     current_item_icon,
     current_item_icon_state,
@@ -59,7 +61,7 @@ const FishingRodSlot = (props: Props) => {
                 )}
               </Flex.Item>
               <Flex.Item grow align="center">
-                <Box textAlign="center">{current_item_name ?? 'None'}</Box>
+                <Box textAlign="center">{current_item_name ?? t('fishingrod-none', {}, 'None')}</Box>
               </Flex.Item>
             </Flex>
           </Button>
@@ -71,6 +73,7 @@ const FishingRodSlot = (props: Props) => {
 
 export const FishingRod = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const {
     bait_name,
     bait_icon,
@@ -89,21 +92,21 @@ export const FishingRod = (props) => {
       <Window.Content>
         <Section>
           <FishingRodSlot
-            name="Bait"
+            name={t('fishingrod-bait', {}, 'Bait')}
             slot="bait"
             current_item_name={bait_name}
             current_item_icon={bait_icon}
             current_item_icon_state={bait_icon_state}
           />
           <FishingRodSlot
-            name="Line"
+            name={t('fishingrod-line', {}, 'Line')}
             slot="line"
             current_item_name={line_name}
             current_item_icon={line_icon}
             current_item_icon_state={line_icon_state}
           />
           <FishingRodSlot
-            name="Hook"
+            name={t('fishingrod-hook', {}, 'Hook')}
             slot="hook"
             current_item_name={hook_name}
             current_item_icon={hook_icon}

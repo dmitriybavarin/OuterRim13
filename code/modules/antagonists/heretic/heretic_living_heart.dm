@@ -44,7 +44,7 @@
 /datum/component/living_heart/proc/on_organ_removed(obj/item/organ/source, mob/living/carbon/old_owner)
 	SIGNAL_HANDLER
 
-	to_chat(old_owner, span_userdanger("As your living [source.name] leaves your body, you feel less connected to the Mansus!"))
+	to_chat(old_owner, span_userdanger(loc_key("heretic-heart-removed", list(organ = loc_entity(source, source.name)))))
 	qdel(src)
 
 /**
@@ -110,7 +110,7 @@
 	var/datum/heretic_knowledge/sac_knowledge = heretic_datum.get_knowledge(/datum/heretic_knowledge/hunt_and_sacrifice)
 
 	if(!LAZYLEN(heretic_datum.sac_targets))
-		owner.balloon_alert(owner, "no targets, visit a rune!")
+		owner.balloon_alert(owner, LOC_KEY("heretic-heart-no-targets"))
 		StartCooldown(1 SECONDS)
 		return TRUE
 
@@ -186,8 +186,7 @@
 	if(ismob(tracked_thing))
 		var/mob/tracked_mob = tracked_thing
 		if(tracked_mob.stat == DEAD)
-			to_chat(owner, span_mansus("[tracked_mob] is dead. Bring them to a transmutation rune \
-				and invoke \"[sac_knowledge.name]\" to sacrifice them!"))
+			to_chat(owner, span_mansus(loc_key("heretic-heart-target-dead", list(target = tracked_mob, ritual = sac_knowledge.loc_name()))))
 
 	StartCooldown()
 	return TRUE
@@ -203,6 +202,7 @@
 /// Gets the balloon message for who we're tracking.
 /datum/action/cooldown/track_target/proc/get_balloon_message(atom/tracked_thing)
 	var/balloon_message = "error text!"
+	var/direction_text
 	var/turf/their_turf = get_turf(tracked_thing)
 	var/turf/our_turf = get_turf(owner)
 	var/their_z = their_turf?.z
@@ -211,7 +211,7 @@
 	// One of us is in somewhere we shouldn't be
 	if(!our_z || !their_z)
 		// "Hell if I know"
-		balloon_message = "on another plane!"
+		balloon_message = LOC_KEY("heretic-heart-other-plane")
 
 	// They're not on the same z-level as us
 	else if(our_z != their_z)
@@ -220,24 +220,24 @@
 			// We're on a multi-z station
 			if(is_station_level(our_z))
 				if(our_z > their_z)
-					balloon_message = "below you!"
+					balloon_message = LOC_KEY("heretic-heart-below")
 				else
-					balloon_message = "above you!"
+					balloon_message = LOC_KEY("heretic-heart-above")
 			// We're off station, they're not
 			else
-				balloon_message = "on station!"
+				balloon_message = LOC_KEY("heretic-heart-on-station")
 
 		// Mining
 		else if(is_mining_level(their_z))
-			balloon_message = "on lavaland!"
+			balloon_message = LOC_KEY("heretic-heart-lavaland")
 
 		// In the gateway
 		else if(is_away_level(their_z) || is_secret_level(their_z))
-			balloon_message = "beyond the gateway!"
+			balloon_message = LOC_KEY("heretic-heart-gateway")
 
 		// They're somewhere we probably can't get too - sacrifice z-level, centcom, etc
 		else
-			balloon_message = "on another plane!"
+			balloon_message = LOC_KEY("heretic-heart-other-plane")
 
 	// They're on the same z-level as us!
 	else
@@ -245,19 +245,20 @@
 		var/dir = get_dir(our_turf, their_turf)
 
 		var/arrow_color
+		direction_text = loc_lookup("research-direction", dir2text(dir))
 
 		switch(dist)
 			if(0 to 15)
-				balloon_message = "very near, [dir2text(dir)]!"
+				balloon_message = loc_key("heretic-heart-very-near", list(direction = direction_text))
 				arrow_color = COLOR_GREEN
 			if(16 to 31)
-				balloon_message = "near, [dir2text(dir)]!"
+				balloon_message = loc_key("heretic-heart-near", list(direction = direction_text))
 				arrow_color = COLOR_YELLOW
 			if(32 to 127)
-				balloon_message = "far, [dir2text(dir)]!"
+				balloon_message = loc_key("heretic-heart-far", list(direction = direction_text))
 				arrow_color = COLOR_ORANGE
 			else
-				balloon_message = "very far!"
+				balloon_message = LOC_KEY("heretic-heart-very-far")
 				arrow_color = COLOR_RED
 
 		if(owner.hud_used)
@@ -267,7 +268,7 @@
 	if(ismob(tracked_thing))
 		var/mob/tracked_mob = tracked_thing
 		if(tracked_mob.stat == DEAD)
-			balloon_message = "they're dead, " + balloon_message
+			balloon_message = loc_key("heretic-heart-dead-wrapper", list(message = balloon_message))
 
 	return balloon_message
 

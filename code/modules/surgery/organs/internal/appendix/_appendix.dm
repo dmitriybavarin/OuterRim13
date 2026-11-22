@@ -83,11 +83,11 @@
 	var/effective_stage = floor(inflamation_stage + (damage / maxHealth))
 	switch(effective_stage)
 		if(1)
-			return span_warning("Your [self_aware ? "appendix" : "lower abdomen"] feels a little off.")
+			return span_warning(loc_key("organ-appendix-selfcheck-1-[self_aware ? "aware" : "looks"]"))
 		if(2)
-			return span_warning("Your [self_aware ? "appendix" : "lower right abdomen"] feels sore.")
+			return span_warning(loc_key("organ-appendix-selfcheck-2-[self_aware ? "aware" : "looks"]"))
 		if(3 to INFINITY)
-			return span_boldwarning("Your [self_aware ? "appendix" : "lower right abdomen"] feels like it's on fire!")
+			return span_boldwarning(loc_key("organ-appendix-selfcheck-3-[self_aware ? "aware" : "looks"]"))
 
 /obj/item/organ/appendix/get_availability(datum/species/owner_species, mob/living/owner_mob)
 	return owner_species.mutantappendix

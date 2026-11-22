@@ -51,7 +51,7 @@
 	lunatic_obj.master = heretic_master
 	lunatic_obj.update_explanation_text()
 
-	to_chat(owner, span_boldnotice("Ruin the lie, save the truth through obeying [heretic_master] the ringleader!"))
+	to_chat(owner, span_boldnotice(loc_key("heretic-mob-lunatic-obey", list(master = heretic_master))))
 
 /datum/antagonist/lunatic/apply_innate_effects(mob/living/mob_override)
 	var/mob/living/our_mob = mob_override || owner.current

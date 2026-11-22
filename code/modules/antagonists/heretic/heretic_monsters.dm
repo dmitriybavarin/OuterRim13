@@ -15,10 +15,10 @@
 /datum/antagonist/heretic_monster/on_removal()
 	if(!silent)
 		if(master?.current)
-			to_chat(master.current, span_warning("The essence of [owner], your servant, fades from your mind."))
+			to_chat(master.current, span_warning(loc_key("heretic-mob-monster-release-master", list(servant = owner))))
 		if(owner.current)
-			to_chat(owner.current, span_deconversion_message("Your mind begins to fill with haze - your master is no longer[master ? " [master]":""], you are free!"))
-			owner.current.visible_message(span_deconversion_message("[owner.current] looks like [owner.current.p_theyve()] been freed from the chains of the Mansus!"), ignored_mobs = owner.current)
+			to_chat(owner.current, span_deconversion_message(master ? loc_key("heretic-mob-monster-release-named", list(master = master)) : LOC_KEY("heretic-mob-monster-release")))
+			owner.current.visible_message(span_deconversion_message(loc_key("heretic-mob-monster-freed-others", list(user = owner.current, theyve = owner.current.p_theyve()))), ignored_mobs = owner.current)
 
 	master = null
 	return ..()
@@ -47,5 +47,5 @@
 
 	objectives += master_obj
 	owner.announce_objectives()
-	to_chat(owner, span_boldnotice("You are a [ishuman(owner.current) ? "shambling corpse returned":"horrible creation brought"] to this plane through the Gates of the Mansus."))
-	to_chat(owner, span_notice("Your master is [master]. Assist them to all ends."))
+	to_chat(owner, span_boldnotice(ishuman(owner.current) ? LOC_KEY("heretic-mob-monster-gained-human") : LOC_KEY("heretic-mob-monster-gained-other")))
+	to_chat(owner, span_notice(loc_key("heretic-mob-monster-master", list(master = master))))

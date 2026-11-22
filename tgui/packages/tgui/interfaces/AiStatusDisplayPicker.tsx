@@ -10,6 +10,7 @@ import {
 } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type StatusDisplayOption = {
@@ -32,8 +33,13 @@ type Data = {
 };
 
 export const AiStatusDisplayPicker = () => {
+  const t = useT();
   return (
-    <Window width={500} height={600} title="AI Status Display Options">
+    <Window
+      width={500}
+      height={600}
+      title={t('aistatusdisplay-title', {}, 'AI Status Display Options')}
+    >
       <Window.Content scrollable>
         <AiStatusDisplayPickerContent />
       </Window.Content>
@@ -44,6 +50,7 @@ export const AiStatusDisplayPicker = () => {
 const AiStatusDisplayPickerContent = () => {
   const { act, data } = useBackend<Data>();
   const { current_emotion, current_icon, options = [] } = data;
+  const t = useT();
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -61,7 +68,7 @@ const AiStatusDisplayPickerContent = () => {
   return (
     <Stack fill vertical>
       <Stack.Item>
-        <Section title="Current Display">
+        <Section title={t('aistatusdisplay-current', {}, 'Current Display')}>
           <Flex align="center" justify="center" direction="column">
             {current_icon && (
               <Flex.Item mb={2}>
@@ -84,7 +91,8 @@ const AiStatusDisplayPickerContent = () => {
             )}
             <Flex.Item mb={1}>
               <Box fontSize="1.4em" textAlign="center" bold color="good">
-                {current_emotion || 'No Selection'}
+                {current_emotion ||
+                  t('aistatusdisplay-none', {}, 'No Selection')}
               </Box>
             </Flex.Item>
           </Flex>
@@ -95,7 +103,11 @@ const AiStatusDisplayPickerContent = () => {
         <Section>
           <Input
             fluid
-            placeholder="Search display options..."
+            placeholder={t(
+              'aistatusdisplay-search',
+              {},
+              'Search display options...',
+            )}
             value={searchTerm}
             onChange={(value) => setSearchTerm(value)}
           />
@@ -106,7 +118,7 @@ const AiStatusDisplayPickerContent = () => {
         <Stack fill vertical>
           {originalOptions.length > 0 && (
             <Stack.Item>
-              <Section title="AI Emotions">
+              <Section title={t('aistatusdisplay-emotions', {}, 'AI Emotions')}>
                 <OptionsList options={originalOptions} />
               </Section>
             </Stack.Item>
@@ -114,7 +126,13 @@ const AiStatusDisplayPickerContent = () => {
 
           {newOptions.length > 0 && (
             <Stack.Item>
-              <Section title="Additional Status Display Options">
+              <Section
+                title={t(
+                  'aistatusdisplay-additional',
+                  {},
+                  'Additional Status Display Options',
+                )}
+              >
                 <OptionsList options={newOptions} />
               </Section>
             </Stack.Item>
@@ -123,7 +141,11 @@ const AiStatusDisplayPickerContent = () => {
           {filteredOptions.length === 0 && (
             <Stack.Item>
               <Box textAlign="center" color="average" mt={4}>
-                No options found matching "{searchTerm}"
+                {t(
+                  'aistatusdisplay-not-found',
+                  { term: searchTerm },
+                  'No options found matching "{ $term }"',
+                )}
               </Box>
             </Stack.Item>
           )}

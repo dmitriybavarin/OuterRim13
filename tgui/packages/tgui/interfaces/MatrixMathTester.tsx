@@ -9,6 +9,7 @@ import {
 import { toFixed } from 'tgui-core/math';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 const MatrixMathTesterInput = (props: { value: number; varName: string }) => {
@@ -56,9 +57,14 @@ export const MatrixMathTester = (props) => {
   const [shearX, setShearX] = useState(0);
   const [shearY, setShearY] = useState(0);
   const [angle, setAngle] = useState(0);
+  const t = useT();
 
   return (
-    <Window title="Nobody Wants to Learn Matrix Math" width={290} height={270}>
+    <Window
+      title={t('matrixmath-title', {}, 'Nobody Wants to Learn Matrix Math')}
+      width={290}
+      height={270}
+    >
       <Window.Content>
         <Section fill>
           <Table>
@@ -75,7 +81,15 @@ export const MatrixMathTester = (props) => {
                 <MatrixMathTesterInput value={matrix_d} varName="d" />
               </Table.Cell>
               <Table.Cell>
-                <Input disabled placeholder="0 (fixed value)" fluid />
+                <Input
+                  disabled
+                  placeholder={t(
+                    'matrixmath-fixed-zero',
+                    {},
+                    '0 (fixed value)',
+                  )}
+                  fluid
+                />
               </Table.Cell>
             </Table.Row>
             <Table.Row>
@@ -86,7 +100,15 @@ export const MatrixMathTester = (props) => {
                 <MatrixMathTesterInput value={matrix_e} varName="e" />
               </Table.Cell>
               <Table.Cell>
-                <Input disabled placeholder="0 (fixed value)" fluid />
+                <Input
+                  disabled
+                  placeholder={t(
+                    'matrixmath-fixed-zero',
+                    {},
+                    '0 (fixed value)',
+                  )}
+                  fluid
+                />
               </Table.Cell>
             </Table.Row>
             <Table.Row>
@@ -97,13 +119,21 @@ export const MatrixMathTester = (props) => {
                 <MatrixMathTesterInput value={matrix_f} varName="f" />
               </Table.Cell>
               <Table.Cell>
-                <Input disabled placeholder="1 (fixed value)" fluid />
+                <Input
+                  disabled
+                  placeholder={t(
+                    'matrixmath-fixed-one',
+                    {},
+                    '1 (fixed value)',
+                  )}
+                  fluid
+                />
               </Table.Cell>
             </Table.Row>
           </Table>
           <Table mt={3}>
             <Table.Row header>
-              <Table.Cell>Action</Table.Cell>
+              <Table.Cell>{t('matrixmath-action', {}, 'Action')}</Table.Cell>
               <Table.Cell>X</Table.Cell>
               <Table.Cell>Y</Table.Cell>
             </Table.Row>
@@ -114,7 +144,7 @@ export const MatrixMathTester = (props) => {
                   fluid
                   onClick={() => act('scale', { x: scaleX, y: scaleY })}
                 >
-                  Scale
+                  {t('matrixmath-scale', {}, 'Scale')}
                 </Button>
               </Table.Cell>
               <Table.Cell>
@@ -149,7 +179,7 @@ export const MatrixMathTester = (props) => {
                     act('translate', { x: translateX, y: translateY })
                   }
                 >
-                  Translate
+                  {t('matrixmath-translate', {}, 'Translate')}
                 </Button>
               </Table.Cell>
               <Table.Cell>
@@ -182,7 +212,7 @@ export const MatrixMathTester = (props) => {
                   fluid
                   onClick={() => act('shear', { x: shearX, y: shearY })}
                 >
-                  Shear
+                  {t('matrixmath-shear', {}, 'Shear')}
                 </Button>
               </Table.Cell>
               <Table.Cell>
@@ -215,7 +245,7 @@ export const MatrixMathTester = (props) => {
                   fluid
                   onClick={() => act('turn', { angle: angle })}
                 >
-                  Rotate
+                  {t('matrixmath-rotate', {}, 'Rotate')}
                 </Button>
               </Table.Cell>
               <Table.Cell>
@@ -234,12 +264,16 @@ export const MatrixMathTester = (props) => {
                   icon="dog"
                   color="bad"
                   selected={pixelated}
-                  tooltip="Pixel Enhanced Transforming"
+                  tooltip={t(
+                    'matrixmath-pet-tooltip',
+                    {},
+                    'Pixel Enhanced Transforming',
+                  )}
                   tooltipPosition="bottom"
                   fluid
                   onClick={() => act('toggle_pixel')}
                 >
-                  PET
+                  {t('matrixmath-pet', {}, 'PET')}
                 </Button>
               </Table.Cell>
             </Table.Row>

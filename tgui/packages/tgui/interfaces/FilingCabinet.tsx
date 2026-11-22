@@ -1,6 +1,7 @@
 import { Box, Button, Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -11,10 +12,11 @@ type Data = {
 
 export const FilingCabinet = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { cabinet_name, contents, contents_ref } = data;
 
   return (
-    <Window title={cabinet_name || 'Filing Cabinet'} width={350} height={300}>
+    <Window title={cabinet_name || t('filingcabinet-title', {}, 'Filing Cabinet')} width={350} height={300}>
       <Window.Content backgroundColor="#B88F3D" scrollable>
         {contents.map((object, index) => (
           <Stack
@@ -40,7 +42,11 @@ export const FilingCabinet = (props) => {
         {contents.length === 0 && (
           <Section>
             <Box color="white" align="center">
-              The {cabinet_name} is empty!
+              {t(
+                'filingcabinet-empty',
+                { name: cabinet_name },
+                `The ${cabinet_name} is empty!`,
+              )}
             </Box>
           </Section>
         )}

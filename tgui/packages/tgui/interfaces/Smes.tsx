@@ -11,6 +11,7 @@ import { formatPower } from 'tgui-core/format';
 import { round } from 'tgui-core/math';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -33,6 +34,7 @@ const POWER_MUL = 1e3;
 
 export const Smes = () => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     capacity,
     charge,
@@ -56,7 +58,7 @@ export const Smes = () => {
   return (
     <Window width={340} height={350}>
       <Window.Content>
-        <Section title="Stored Energy">
+        <Section title={t('smes-stored-energy', {}, 'Stored Energy')}>
           <ProgressBar
             value={capacityPercent * 0.01}
             ranges={{
@@ -67,26 +69,29 @@ export const Smes = () => {
           />
         </Section>
         <Section
-          title="Input"
+          title={t('smes-input', {}, 'Input')}
           buttons={
             <Button
               icon={inputAttempt ? 'sync-alt' : 'times'}
               selected={inputAttempt}
               onClick={() => act('tryinput')}
             >
-              {inputAttempt ? 'Auto' : 'Off'}
+              {inputAttempt
+                ? t('smes-auto', {}, 'Auto')
+                : t('smes-off', {}, 'Off')}
             </Button>
           }
         >
           <LabeledList>
-            <LabeledList.Item label="Charge Mode">
+            <LabeledList.Item label={t('smes-charge-mode', {}, 'Charge Mode')}>
               <Box color={inputState}>
-                {(capacityPercent >= 100 && 'Fully Charged') ||
-                  (inputting && 'Charging') ||
-                  'Not Charging'}
+                {(capacityPercent >= 100 &&
+                  t('smes-fully-charged', {}, 'Fully Charged')) ||
+                  (inputting && t('smes-charging', {}, 'Charging')) ||
+                  t('smes-not-charging', {}, 'Not Charging')}
               </Box>
             </LabeledList.Item>
-            <LabeledList.Item label="Target Input">
+            <LabeledList.Item label={t('smes-target-input', {}, 'Target Input')}>
               <Stack fill>
                 <Stack.Item>
                   <Button
@@ -146,34 +151,36 @@ export const Smes = () => {
                 </Stack.Item>
               </Stack>
             </LabeledList.Item>
-            <LabeledList.Item label="Available">
+            <LabeledList.Item label={t('smes-available', {}, 'Available')}>
               {formatPower(inputAvailable)}
             </LabeledList.Item>
           </LabeledList>
         </Section>
         <Section
-          title="Output"
+          title={t('smes-output', {}, 'Output')}
           buttons={
             <Button
               icon={outputAttempt ? 'power-off' : 'times'}
               selected={outputAttempt}
               onClick={() => act('tryoutput')}
             >
-              {outputAttempt ? 'On' : 'Off'}
+              {outputAttempt
+                ? t('smes-on', {}, 'On')
+                : t('smes-off', {}, 'Off')}
             </Button>
           }
         >
           <LabeledList>
-            <LabeledList.Item label="Output Mode">
+            <LabeledList.Item label={t('smes-output-mode', {}, 'Output Mode')}>
               <Box color={outputState}>
                 {outputting
-                  ? 'Sending'
+                  ? t('smes-sending', {}, 'Sending')
                   : charge > 0
-                    ? 'Not Sending'
-                    : 'No Charge'}
+                    ? t('smes-not-sending', {}, 'Not Sending')
+                    : t('smes-no-charge', {}, 'No Charge')}
               </Box>
             </LabeledList.Item>
-            <LabeledList.Item label="Target Output">
+            <LabeledList.Item label={t('smes-target-output', {}, 'Target Output')}>
               <Stack fill>
                 <Stack.Item>
                   <Button
@@ -232,7 +239,7 @@ export const Smes = () => {
                 </Stack.Item>
               </Stack>
             </LabeledList.Item>
-            <LabeledList.Item label="Outputting">
+            <LabeledList.Item label={t('smes-outputting', {}, 'Outputting')}>
               {formatPower(outputUsed)}
             </LabeledList.Item>
           </LabeledList>

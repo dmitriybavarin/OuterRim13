@@ -67,12 +67,12 @@
 
 /datum/heretic_knowledge/limited_amount/starting/base_void/recipe_snowflake_check(mob/living/user, list/atoms, list/selected_atoms, turf/loc)
 	if(!isopenturf(loc))
-		loc.balloon_alert(user, "ritual failed, invalid location!")
+		loc.balloon_alert(user, LOC_KEY("heretic-void-ritual-invalid-location"))
 		return FALSE
 
 	var/turf/open/our_turf = loc
 	if(our_turf.GetTemperature() > T0C)
-		loc.balloon_alert(user, "ritual failed, not cold enough!")
+		loc.balloon_alert(user, LOC_KEY("heretic-void-ritual-too-warm"))
 		return FALSE
 
 	return ..()
@@ -158,12 +158,12 @@
 
 /datum/heretic_knowledge/armor/void/recipe_snowflake_check(mob/living/user, list/atoms, list/selected_atoms, turf/loc)
 	if(!isopenturf(loc))
-		loc.balloon_alert(user, "ritual failed, invalid location!")
+		loc.balloon_alert(user, LOC_KEY("heretic-void-ritual-invalid-location"))
 		return FALSE
 
 	var/turf/open/our_turf = loc
 	if(our_turf.GetTemperature() > T0C)
-		loc.balloon_alert(user, "ritual failed, not cold enough!")
+		loc.balloon_alert(user, LOC_KEY("heretic-void-ritual-too-warm"))
 		return FALSE
 
 	return ..()
@@ -267,15 +267,14 @@
 		INVOKE_ASYNC(src, PROC_REF(create_conduit), affected_turf, source, sword)
 		return COMPONENT_CANCEL_ATTACK_CHAIN
 
-	to_chat(source, span_mansus("[sword] hums with power, but [target] is not cold enough to create a conduit!"))
+	to_chat(source, span_mansus(loc_key("heretic-void-conduit-too-warm", list(sword = sword, target = target))))
 	return NONE
 
 /datum/heretic_knowledge/void_conduit/proc/create_conduit(turf/open/affected_turf, mob/living/source, obj/item/sword)
 	playsound(source, 'sound/effects/cloth_rip.ogg', 50, TRUE) // funny thing is, can't hear sound in a vacuum
-	to_chat(source, span_mansus("You plunge [sword] deep into [affected_turf], trying to rip open a conduit to the void!"))
+	to_chat(source, span_mansus(loc_key("heretic-void-conduit-plunge-self", list(sword = sword, turf = affected_turf))))
 	source.visible_message(
-		span_hypnophrase("[source] plunges [source.p_their()] [sword.name] into [affected_turf] - \
-			[isspaceturf(affected_turf) ? "but instead of nothing happening" : "contrary to what you expected"], a dark energy begins to flow from the site!"),
+		span_hypnophrase(isspaceturf(affected_turf) ? loc_key("heretic-void-conduit-plunge-space", list(source = source, their = source.p_their(), sword = sword.name, turf = affected_turf)) : loc_key("heretic-void-conduit-plunge-other", list(source = source, their = source.p_their(), sword = sword.name, turf = affected_turf))),
 		ignored_mobs = source,
 	)
 	var/obj/effect/temp_visual/void_conduit_opening/animation = new(affected_turf)
@@ -283,9 +282,9 @@
 		animate(animation, alpha = 0, time = 1 SECONDS)
 		QDEL_IN(animation, 1 SECONDS)
 		return
-	to_chat(source, span_mansus("The conduit opens, releasing a storm of void energy! [sword] shatters into a million tiny shards!"))
+	to_chat(source, span_mansus(loc_key("heretic-void-conduit-open-self", list(sword = sword))))
 	source.visible_message(
-		span_hypnophrase("A conduit to the void opens, releasing a storm of void energy!"),
+		span_hypnophrase(LOC_KEY("heretic-void-conduit-open-others")),
 		ignored_mobs = source,
 	)
 	new /obj/structure/void_conduit(affected_turf)
@@ -316,12 +315,12 @@
 
 /datum/heretic_knowledge/ultimate/void_final/recipe_snowflake_check(mob/living/user, list/atoms, list/selected_atoms, turf/loc)
 	if(!isopenturf(loc))
-		loc.balloon_alert(user, "ritual failed, invalid location!")
+		loc.balloon_alert(user, LOC_KEY("heretic-void-ritual-invalid-location"))
 		return FALSE
 
 	var/turf/open/our_turf = loc
 	if(our_turf.GetTemperature() > T0C)
-		loc.balloon_alert(user, "ritual failed, not cold enough!")
+		loc.balloon_alert(user, LOC_KEY("heretic-void-ritual-too-warm"))
 		return FALSE
 
 	return ..()
@@ -420,8 +419,8 @@
 		return NONE
 
 	ascended_heretic.visible_message(
-		span_danger("The void storm surrounding [ascended_heretic] deflects [hitting_projectile]!"),
-		span_userdanger("The void storm protects you from [hitting_projectile]!"),
+		span_danger(loc_key("heretic-void-final-deflect-others", list(heretic = ascended_heretic, projectile = hitting_projectile))),
+		span_userdanger(loc_key("heretic-void-final-deflect-self", list(projectile = hitting_projectile))),
 	)
 	playsound(ascended_heretic, /datum/sound_effect/void_deflect, 75, TRUE)
 	hitting_projectile.set_firer(ascended_heretic)

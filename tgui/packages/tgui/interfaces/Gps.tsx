@@ -15,6 +15,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { createSearch } from 'tgui-core/string';
 import { vecLength, vecSubtract } from 'tgui-core/vector';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -39,6 +40,7 @@ const coordsToVec = (coords: string) => coords.split(', ').map(parseFloat);
 export const Gps = () => {
   const { act, data } = useBackend<Data>();
   const { currentArea, currentCoords, globalmode, power, tag, updating } = data;
+  const t = useT();
   const [searchName, setSearchName] = useState('');
   const searchByName = createSearch<GpsSignal>(
     searchName,
@@ -70,58 +72,66 @@ export const Gps = () => {
       ]),
   ])(data.signals || []);
   return (
-    <Window title="Global Positioning System" width={470} height={700}>
+    <Window
+      title={t('gps-title', {}, 'Global Positioning System')}
+      width={470}
+      height={700}
+    >
       <Window.Content scrollable>
         <Section
-          title="Control"
+          title={t('gps-control', {}, 'Control')}
           buttons={
             <Button
               icon="power-off"
               selected={power}
               onClick={() => act('power')}
             >
-              {power ? 'On' : 'Off'}
+              {power ? t('gps-on', {}, 'On') : t('gps-off', {}, 'Off')}
             </Button>
           }
         >
           <LabeledList>
-            <LabeledList.Item label="Tag">
+            <LabeledList.Item label={t('gps-tag', {}, 'Tag')}>
               <Button icon="pencil-alt" onClick={() => act('rename')}>
                 {tag}
               </Button>
             </LabeledList.Item>
-            <LabeledList.Item label="Scan Mode">
+            <LabeledList.Item label={t('gps-scan-mode', {}, 'Scan Mode')}>
               <Button
                 icon={updating ? 'unlock' : 'lock'}
                 color={!updating && 'bad'}
                 onClick={() => act('updating')}
               >
-                {updating ? 'AUTO' : 'MANUAL'}
+                {updating
+                  ? t('gps-scan-auto', {}, 'AUTO')
+                  : t('gps-scan-manual', {}, 'MANUAL')}
               </Button>
             </LabeledList.Item>
-            <LabeledList.Item label="Range">
+            <LabeledList.Item label={t('gps-range', {}, 'Range')}>
               <Button
                 icon="sync"
                 selected={!globalmode}
                 onClick={() => act('globalmode')}
               >
-                {globalmode ? 'MAXIMUM' : 'LOCAL'}
+                {globalmode
+                  ? t('gps-range-max', {}, 'MAXIMUM')
+                  : t('gps-range-local', {}, 'LOCAL')}
               </Button>
             </LabeledList.Item>
           </LabeledList>
         </Section>
         {!!power && (
           <>
-            <Section title="Current Location">
+            <Section title={t('gps-current-location', {}, 'Current Location')}>
               <Box fontSize="18px">
                 {currentArea} ({currentCoords})
               </Box>
             </Section>
             <Section
-              title="Detected Signals"
+              title={t('gps-detected-signals', {}, 'Detected Signals')}
               buttons={
                 <Input
-                  placeholder="Search by name..."
+                  placeholder={t('gps-search', {}, 'Search by name...')}
                   width="200px"
                   value={searchName}
                   onChange={(value) => setSearchName(value)}
@@ -130,9 +140,13 @@ export const Gps = () => {
             >
               <Table>
                 <Table.Row bold>
-                  <Table.Cell>Name</Table.Cell>
-                  <Table.Cell collapsing>Direction</Table.Cell>
-                  <Table.Cell collapsing>Coordinates</Table.Cell>
+                  <Table.Cell>{t('gps-col-name', {}, 'Name')}</Table.Cell>
+                  <Table.Cell collapsing>
+                    {t('gps-col-direction', {}, 'Direction')}
+                  </Table.Cell>
+                  <Table.Cell collapsing>
+                    {t('gps-col-coordinates', {}, 'Coordinates')}
+                  </Table.Cell>
                 </Table.Row>
                 {signals
                   .filter(searchByName)

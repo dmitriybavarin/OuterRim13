@@ -7,6 +7,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -17,25 +18,34 @@ type Data = {
 
 export const HealthSensor = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { health, scanning, target } = data;
 
   return (
     <Window width={360} height={115}>
       <Window.Content>
         <Section
-          title="Health Sensor"
+          title={t('healthsensor-title', {}, 'Health Sensor')}
           buttons={
             <>
               <Button
                 icon={scanning ? 'power-off' : 'times'}
-                content={scanning ? 'On' : 'Off'}
+                content={
+                  scanning
+                    ? t('healthsensor-on', {}, 'On')
+                    : t('healthsensor-off', {}, 'Off')
+                }
                 selected={scanning}
                 onClick={() => act('scanning')}
               />
               <Button
                 icon={target ? 'skull' : 'heartbeat'}
                 color="red"
-                content={target ? 'Checking for Death' : 'Checking for Crit'}
+                content={
+                  target
+                    ? t('healthsensor-check-death', {}, 'Checking for Death')
+                    : t('healthsensor-check-crit', {}, 'Checking for Crit')
+                }
                 onClick={() => act('target')}
               />
             </>
@@ -50,7 +60,7 @@ export const HealthSensor = (props) => {
                 bad: [-Infinity, 0.2],
               }}
             >
-              {scanning ? <AnimatedNumber value={health} /> : 'Off'}
+              {scanning ? <AnimatedNumber value={health} /> : t('healthsensor-off', {}, 'Off')}
             </ProgressBar>
           )}
         </Section>

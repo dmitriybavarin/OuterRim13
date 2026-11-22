@@ -11,6 +11,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Song = {
@@ -30,6 +31,7 @@ type Data = {
 export const Jukebox = () => {
   const { act, data } = useBackend<Data>();
   const { active, looping, track_selected, volume, songs } = data;
+  const t = useT();
 
   const songs_sorted: Song[] = sortBy(songs, [(song: Song) => song.name]);
   const song_selected: Song | undefined = songs.find(
@@ -40,18 +42,22 @@ export const Jukebox = () => {
     <Window width={370} height={313}>
       <Window.Content>
         <Section
-          title="Song Player"
+          title={t('jukebox-player', {}, 'Song Player')}
           buttons={
             <>
               <Button
                 icon={active ? 'pause' : 'play'}
-                content={active ? 'Stop' : 'Play'}
+                content={
+                  active
+                    ? t('jukebox-stop', {}, 'Stop')
+                    : t('jukebox-play', {}, 'Play')
+                }
                 selected={active}
                 onClick={() => act('toggle')}
               />
               <Button.Checkbox
                 icon={'arrow-rotate-left'}
-                content="Repeat"
+                content={t('jukebox-repeat', {}, 'Repeat')}
                 disabled={active}
                 checked={looping}
                 onClick={() => act('loop', { looping: !looping })}
@@ -60,12 +66,14 @@ export const Jukebox = () => {
           }
         >
           <LabeledList>
-            <LabeledList.Item label="Track Selected">
+            <LabeledList.Item label={t('jukebox-track-selected', {}, 'Track Selected')}>
               <Dropdown
                 width="240px"
                 options={songs_sorted.map((song) => song.name)}
                 disabled={!!active}
-                selected={song_selected?.name || 'Select a Track'}
+                selected={
+                  song_selected?.name || t('jukebox-select', {}, 'Select a Track')
+                }
                 onSelected={(value) =>
                   act('select_track', {
                     track: value,
@@ -73,18 +81,20 @@ export const Jukebox = () => {
                 }
               />
             </LabeledList.Item>
-            <LabeledList.Item label="Track Length">
-              {song_selected?.length || 'No Track Selected'}
+            <LabeledList.Item label={t('jukebox-length', {}, 'Track Length')}>
+              {song_selected?.length || t('jukebox-none', {}, 'No Track Selected')}
             </LabeledList.Item>
-            <LabeledList.Item label="Track Beat">
-              {song_selected?.beat || 'No Track Selected'}
-              {song_selected?.beat === 1 ? ' beat' : ' beats'}
+            <LabeledList.Item label={t('jukebox-beat', {}, 'Track Beat')}>
+              {song_selected?.beat || t('jukebox-none', {}, 'No Track Selected')}
+              {!!song_selected && ' '}
+              {!!song_selected &&
+                t('jukebox-beats', { count: song_selected.beat }, 'beats')}
             </LabeledList.Item>
           </LabeledList>
         </Section>
-        <Section title="Machine Settings">
+        <Section title={t('jukebox-settings', {}, 'Machine Settings')}>
           <LabeledControls justify="center">
-            <LabeledControls.Item label="Volume">
+            <LabeledControls.Item label={t('jukebox-volume', {}, 'Volume')}>
               <Box position="relative">
                 <Knob
                   size={3.2}

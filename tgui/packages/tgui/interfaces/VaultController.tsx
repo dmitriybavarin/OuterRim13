@@ -8,6 +8,7 @@ import { toFixed } from 'tgui-core/math';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -18,16 +19,21 @@ type Data = {
 
 export const VaultController = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { doorstatus, stored, max } = data;
 
   return (
     <Window width={300} height={120}>
       <Window.Content>
         <Section
-          title="Lock Status: "
+          title={t('vaultcontroller-lock-status', {}, 'Lock Status: ')}
           buttons={
             <Button
-              content={doorstatus ? 'Locked' : 'Unlocked'}
+              content={
+                doorstatus
+                  ? t('vaultcontroller-locked', {}, 'Locked')
+                  : t('vaultcontroller-unlocked', {}, 'Unlocked')
+              }
               icon={doorstatus ? 'lock' : 'unlock'}
               disabled={stored < max}
               onClick={() => act('togglelock')}
@@ -44,11 +50,12 @@ export const VaultController = (props) => {
 /** Displays info about the vault in a labeledlist */
 const VaultList = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { stored, max } = data;
 
   return (
     <LabeledList>
-      <LabeledList.Item label="Charge">
+      <LabeledList.Item label={t('vaultcontroller-charge', {}, 'Charge')}>
         <ProgressBar
           value={stored / max}
           ranges={{

@@ -489,13 +489,14 @@
 		/datum/computer_file/program/status,
 	)
 
-/obj/item/modular_computer/pda/veteran_advisor
-	name = "security advisor PDA"
-	greyscale_colors = "#EA3232#FFD700"
+/obj/item/modular_computer/pda/trader
+	name = "trader PDA"
+	greyscale_colors = "#8b4c31#FFD700"
 	inserted_item = /obj/item/pen/fountain
 	starting_programs = list(
-		/datum/computer_file/program/records/security,
-		/datum/computer_file/program/coupon, //veteran discount
+		/datum/computer_file/program/shipping,
+		/datum/computer_file/program/budgetorders,
+		/datum/computer_file/program/coupon,
 		/datum/computer_file/program/skill_tracker,
 	)
 

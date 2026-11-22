@@ -435,10 +435,12 @@ export function CreateObject(props: CreateObjectProps) {
               {t('spawnpanel-search-none')}
             </NoticeBox>
           ) : (
-            <VirtualList>
-              {filteredResults.map((obj, index) => (
+            <VirtualList
+              key={`${query}|${sortBy}|${hideMapping}|${searchBy}|${filteredResults.length}`}
+            >
+              {filteredResults.map((obj) => (
                 <Button
-                  key={index}
+                  key={obj}
                   color="transparent"
                   tooltip={
                     (showIcons || tooltipIcon) &&

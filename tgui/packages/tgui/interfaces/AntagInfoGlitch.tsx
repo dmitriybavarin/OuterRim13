@@ -1,6 +1,7 @@
 import { Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import type { Objective } from './common/Objectives';
 
@@ -21,6 +22,7 @@ const textStyles = {
 export const AntagInfoGlitch = (props) => {
   const { data } = useBackend<Data>();
   const { antag_name, objectives = [] } = data;
+  const t = useT();
 
   return (
     <Window width={350} height={450} theme="ntos_terminal">
@@ -33,9 +35,14 @@ export const AntagInfoGlitch = (props) => {
               <span style={textStyles.variable}>Initialize({antag_name})</span>
             </Stack.Item>
             <Stack.Item mb={1}>
-              <span style={textStyles.danger}>Bitrunning</span> is a crime. Your
-              mission: <span style={textStyles.variable}>Eliminate</span>{' '}
-              organic intruders to maintain the integrity of the system.
+              <span style={textStyles.danger}>
+                {t('antaginfo-glitch-crime-name')}
+              </span>{' '}
+              {t('antaginfo-glitch-crime-mid')}{' '}
+              <span style={textStyles.variable}>
+                {t('antaginfo-glitch-eliminate')}
+              </span>{' '}
+              {t('antaginfo-glitch-crime-post')}
             </Stack.Item>
             <SpecificInfo />
 
@@ -71,18 +78,25 @@ export const AntagInfoGlitch = (props) => {
 const SpecificInfo = (props) => {
   const { data } = useBackend<Data>();
   const { antag_name } = data;
+  const t = useT();
 
   switch (antag_name) {
     case 'Cyber Police':
       return (
         <>
           <Stack.Item mb={1}>
-            To assist your task, your program has been loaded with cutting edge{' '}
-            <span style={textStyles.variable}>martial arts</span> skills.
+            {t('antaginfo-glitch-police-pre')}{' '}
+            <span style={textStyles.variable}>
+              {t('antaginfo-glitch-police-skills')}
+            </span>{' '}
+            {t('antaginfo-glitch-police-post')}
           </Stack.Item>
           <Stack.Item grow>
-            Ranged weaponry is <span style={textStyles.danger}>forbidden</span>.
-            Ballistic defense is frowned upon. Style is paramount.
+            {t('antaginfo-glitch-police-ranged-pre')}{' '}
+            <span style={textStyles.danger}>
+              {t('antaginfo-glitch-police-forbidden')}
+            </span>
+            {t('antaginfo-glitch-police-ranged-post')}
           </Stack.Item>
         </>
       );
@@ -90,12 +104,17 @@ const SpecificInfo = (props) => {
       return (
         <>
           <Stack.Item mb={1}>
-            You are an advanced combat unit. You have been outfitted with{' '}
-            <span style={textStyles.variable}>lethal weaponry</span>.
+            {t('antaginfo-glitch-tac-pre')}{' '}
+            <span style={textStyles.variable}>
+              {t('antaginfo-glitch-tac-weapons')}
+            </span>
+            .
           </Stack.Item>
           <Stack.Item grow>
-            <span style={textStyles.danger}>Terminate</span> organic life at any
-            cost.
+            <span style={textStyles.danger}>
+              {t('antaginfo-glitch-tac-terminate')}
+            </span>{' '}
+            {t('antaginfo-glitch-tac-cost')}
           </Stack.Item>
         </>
       );
@@ -103,7 +122,7 @@ const SpecificInfo = (props) => {
       return (
         <Stack.Item grow>
           <span style={{ ...textStyles.danger, fontSize: '16px' }}>
-            ORGANIC LIFE MUST BE TERMINATED.
+            {t('antaginfo-glitch-prime')}
           </span>
         </Stack.Item>
       );

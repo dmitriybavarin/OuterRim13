@@ -23,7 +23,7 @@
 
 /obj/item/reagent_containers/cup/phylactery/interact_with_atom_secondary(atom/target, mob/living/user, list/modifiers)
 	if(!COOLDOWN_FINISHED(src, drain_cooldown))
-		user.balloon_alert(user, "can't steal so fast!")
+		user.balloon_alert(user, LOC_KEY("heretic-item-phylactery-cooldown"))
 		return NONE
 	if(!isliving(target))
 		return NONE
@@ -32,21 +32,21 @@
 	if(living_target == user)
 		return ITEM_INTERACT_BLOCKING
 	if(reagents.total_volume >= reagents.maximum_volume)
-		to_chat(user, span_notice("[src] is full."))
+		to_chat(user, span_notice(loc_key("heretic-item-phylactery-full", list(item = src))))
 		return ITEM_INTERACT_BLOCKING
 	if(living_target.can_block_magic(MAGIC_RESISTANCE_HOLY))
-		to_chat(user, span_warning("You are unable to draw any blood from [living_target]!"))
+		to_chat(user, span_warning(loc_key("heretic-item-phylactery-unable", list(target = living_target))))
 		COOLDOWN_START(src, drain_cooldown, 5 SECONDS)
-		to_chat(living_target, span_warning("You feel a force attempt to steal your blood, but it is repelled!"))
+		to_chat(living_target, span_warning(LOC_KEY("heretic-item-phylactery-repelled")))
 		return ITEM_INTERACT_BLOCKING
 	var/drawn_amount = min(reagents.maximum_volume - reagents.total_volume, 5)
 	if(living_target.transfer_blood_to(src, drawn_amount))
-		to_chat(user, span_notice("You take a blood sample from [living_target]."))
-		to_chat(living_target, span_warning("You feel a tiny prick!"))
+		to_chat(user, span_notice(loc_key("heretic-item-phylactery-sample", list(target = living_target))))
+		to_chat(living_target, span_warning(LOC_KEY("heretic-item-phylactery-prick")))
 		COOLDOWN_START(src, drain_cooldown, 5 SECONDS)
 		playsound(src, 'sound/effects/chemistry/catalyst.ogg', 20, TRUE, extrarange = SILENCED_SOUND_EXTRARANGE, falloff_exponent = 10)
 	else
-		to_chat(user, span_warning("You are unable to draw any blood from [living_target]!"))
+		to_chat(user, span_warning(loc_key("heretic-item-phylactery-unable", list(target = living_target))))
 	return ITEM_INTERACT_SUCCESS
 
 /obj/item/reagent_containers/cup/phylactery/ranged_interact_with_atom_secondary(atom/interacting_with, mob/living/user, list/modifiers)

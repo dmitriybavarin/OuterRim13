@@ -7,6 +7,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -18,6 +19,7 @@ type Data = {
 
 export const AtmosTempGate = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { on, temperature, min_temperature, max_temperature } = data;
 
   return (
@@ -25,15 +27,15 @@ export const AtmosTempGate = (props) => {
       <Window.Content>
         <Section>
           <LabeledList>
-            <LabeledList.Item label="Power">
+            <LabeledList.Item label={t('atmos-power', {}, 'Power')}>
               <Button
                 icon={on ? 'power-off' : 'times'}
-                content={on ? 'On' : 'Off'}
+                content={on ? t('atmos-on', {}, 'On') : t('atmos-off', {}, 'Off')}
                 selected={on}
                 onClick={() => act('power')}
               />
             </LabeledList.Item>
-            <LabeledList.Item label="Heat settings">
+            <LabeledList.Item label={t('atmostempgate-heat-settings', {}, 'Heat settings')}>
               <NumberInput
                 animated
                 value={temperature}
@@ -51,7 +53,7 @@ export const AtmosTempGate = (props) => {
               <Button
                 ml={1}
                 icon="plus"
-                content="Max"
+                content={t('atmos-max', {}, 'Max')}
                 disabled={temperature === max_temperature}
                 onClick={() =>
                   act('temperature', {

@@ -103,11 +103,11 @@
 	else if(istype(target, /obj/machinery/computer))
 		var/obj/machinery/computer/computer = target
 		computer.authenticated = TRUE
-		computer.balloon_alert(source, "unlocked")
+		computer.balloon_alert(source, LOC_KEY("heretic-lock-grasp-unlocked"))
 	else if(istype(target, /obj/machinery/turretid))
 		var/obj/machinery/turretid/turretcontrol = target
 		turretcontrol.locked = FALSE
-		turretcontrol.balloon_alert(source, "unlocked")
+		turretcontrol.balloon_alert(source, LOC_KEY("heretic-lock-grasp-unlocked"))
 
 	var/turf/target_turf = get_turf(target)
 	SEND_SIGNAL(target_turf, COMSIG_ATOM_MAGICALLY_UNLOCKED, src, source)
@@ -262,13 +262,13 @@
 		if(body.stat != DEAD)
 			continue
 		if(LAZYLEN(body.get_organs_for_zone(BODY_ZONE_CHEST)))
-			to_chat(user, span_hierophant_warning("[body] has organs in their chest."))
+			to_chat(user, span_hierophant_warning(loc_key("heretic-lock-final-organs", list(body = body))))
 			continue
 
 		selected_atoms += body
 
 	if(!LAZYLEN(selected_atoms))
-		loc.balloon_alert(user, "ritual failed, not enough valid bodies!")
+		loc.balloon_alert(user, LOC_KEY("heretic-lock-final-nobodies"))
 		return FALSE
 	return TRUE
 

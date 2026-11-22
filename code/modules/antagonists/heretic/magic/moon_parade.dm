@@ -64,7 +64,7 @@
 
 	// Anti-magic destroys the projectile for consistency and counterplay
 	if(victim.can_block_magic(MAGIC_RESISTANCE_MOON))
-		visible_message(span_warning("The parade hits [victim] and a sudden wave of clarity comes over you!"))
+		visible_message(span_warning(loc_key("heretic-spell-moon-parade-clarity", list(victim = victim))))
 		return PROJECTILE_DELETE_WITHOUT_HITTING
 
 	return ..()

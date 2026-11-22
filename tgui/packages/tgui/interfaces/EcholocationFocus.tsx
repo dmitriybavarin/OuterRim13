@@ -1,5 +1,6 @@
 import { Button, Section, Stack } from 'tgui-core/components';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type EchoData = {
@@ -10,17 +11,22 @@ type EchoData = {
 export const EcholocationFocus = () => {
   const { data, act } = useBackend<EchoData>();
   const { selected_options, all_options } = data;
+  const t = useT();
 
   return (
     <Window width={250} height={300}>
       <Window.Content>
         <Section
-          title="Echolocation Settings"
+          title={t('echolocation-title', {}, 'Echolocation Settings')}
           buttons={
             <Button
               icon="info"
               disabled
-              tooltip="Determines what objects you see or ignore with your echolocation."
+              tooltip={t(
+                'echolocation-tooltip',
+                {},
+                'Determines what objects you see or ignore with your echolocation.',
+              )}
             />
           }
         >

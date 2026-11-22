@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useBackend } from 'tgui/backend';
+import { useT } from 'tgui/i18n';
 import { Window } from 'tgui/layouts';
 import { Box, Button, Section, Stack } from 'tgui-core/components';
 import { isEscape, KEY } from 'tgui-core/keys';
@@ -71,6 +72,7 @@ function formatKeyboardEvent(
 
 export function KeyComboModal(props) {
   const { act, data } = useBackend<KeyInputData>();
+  const t = useT();
   const { init_value, large_buttons, message = '', title, timeout } = data;
   const [input, setInput] = useState(init_value);
   const [binding, setBinding] = useState(true);
@@ -141,7 +143,9 @@ export function KeyComboModal(props) {
                   setBinding(true);
                 }}
               >
-                {binding ? 'Awaiting input...' : `${input}`}
+                {binding
+                  ? t('inputmodal-awaiting-input', {}, 'Awaiting input...')
+                  : `${input}`}
               </Button>
             </Stack.Item>
             <Stack.Item>

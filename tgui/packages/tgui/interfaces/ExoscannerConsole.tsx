@@ -12,6 +12,7 @@ import {
 import { formatTime } from 'tgui-core/format';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type SiteData = {
@@ -34,14 +35,20 @@ type ScanData = {
 
 const ScanFailedModal = (props) => {
   const { act } = useBackend();
+  const t = useT();
   return (
     <Modal>
       <Stack fill vertical>
         <Stack.Item>
-          <Box color="bad">SCAN FAILURE!</Box>
+          <Box color="bad">
+            {t('exoscanner-scan-failure', {}, 'SCAN FAILURE!')}
+          </Box>
         </Stack.Item>
         <Stack.Item>
-          <Button content="Confirm" onClick={() => act('confirm_fail')} />
+          <Button
+            content={t('exoscanner-confirm', {}, 'Confirm')}
+            onClick={() => act('confirm_fail')}
+          />
         </Stack.Item>
       </Stack>
     </Modal>
@@ -58,6 +65,7 @@ const ScanSelectionSection = (props) => {
     deep_scan_complete,
     site_data,
   } = data;
+  const t = useT();
   const site = site_data;
 
   const point_cost = scan_power > 0 ? formatTime(point_scan_eta, 'short') : '∞';
@@ -68,24 +76,32 @@ const ScanSelectionSection = (props) => {
       <Stack.Item grow>
         <Section
           fill
-          title="Site Data"
+          title={t('exoscanner-site-data', {}, 'Site Data')}
           buttons={
             <Button
-              content="Back"
+              content={t('exoscanner-back', {}, 'Back')}
               onClick={() => act('select_site', { site_ref: null })}
             />
           }
         >
           <LabeledList>
-            <LabeledList.Item label="Name">{site.name}</LabeledList.Item>
-            <LabeledList.Item label="Description">
-              {site.revealed ? site.description : 'No Data'}
+            <LabeledList.Item label={t('exoscanner-name', {}, 'Name')}>
+              {site.name}
             </LabeledList.Item>
-            <LabeledList.Item label="Distance">
+            <LabeledList.Item
+              label={t('exoscanner-description', {}, 'Description')}
+            >
+              {site.revealed
+                ? site.description
+                : t('exoscanner-no-data', {}, 'No Data')}
+            </LabeledList.Item>
+            <LabeledList.Item label={t('exoscanner-distance', {}, 'Distance')}>
               {site.distance}
             </LabeledList.Item>
             <LabeledList.Divider />
-            <LabeledList.Item label="Spectrography Data" />
+            <LabeledList.Item
+              label={t('exoscanner-spectrography', {}, 'Spectrography Data')}
+            />
             <LabeledList.Divider />
             {Object.keys(site.band_info).map((band) => (
               <LabeledList.Item key={band} label={band}>
@@ -97,39 +113,53 @@ const ScanSelectionSection = (props) => {
       </Stack.Item>
       {scan_available && (
         <Stack.Item>
-          <Section fill title="Scans">
+          <Section fill title={t('exoscanner-scans', {}, 'Scans')}>
             {!point_scan_complete && (
-              <Section title="Point Scan">
+              <Section title={t('exoscanner-point-scan', {}, 'Point Scan')}>
                 <BlockQuote>
-                  Point scan performs rudimentary scan of the site, revealing
-                  its general characteristics.
+                  {t(
+                    'exoscanner-point-scan-desc',
+                    {},
+                    'Point scan performs rudimentary scan of the site, revealing its general characteristics.',
+                  )}
                 </BlockQuote>
                 <Box>
                   <Button
-                    content="Scan"
+                    content={t('exoscanner-scan', {}, 'Scan')}
                     disabled={scan_power <= 0}
                     onClick={() => act('start_point_scan')}
                   />
                   <Box inline pl={3}>
-                    Estimated Time: {point_cost}.
+                    {t(
+                      'exoscanner-estimated-time',
+                      { time: point_cost },
+                      `Estimated Time: ${point_cost}.`,
+                    )}
                   </Box>
                 </Box>
               </Section>
             )}
             {!deep_scan_complete && (
-              <Section title="Deep Scan">
+              <Section title={t('exoscanner-deep-scan', {}, 'Deep Scan')}>
                 <BlockQuote>
-                  Deep scan performs full scan of the site, revealing all
-                  details.
+                  {t(
+                    'exoscanner-deep-scan-desc',
+                    {},
+                    'Deep scan performs full scan of the site, revealing all details.',
+                  )}
                 </BlockQuote>
                 <Box>
                   <Button
-                    content="Scan"
+                    content={t('exoscanner-scan', {}, 'Scan')}
                     disabled={scan_power <= 0}
                     onClick={() => act('start_deep_scan')}
                   />
                   <Box inline pl={3}>
-                    Estimated Time: {deep_cost}.
+                    {t(
+                      'exoscanner-estimated-time',
+                      { time: deep_cost },
+                      `Estimated Time: ${deep_cost}.`,
+                    )}
                   </Box>
                 </Box>
               </Section>
@@ -150,24 +180,31 @@ type ScanInProgressData = {
 const ScanInProgressModal = (props) => {
   const { act, data } = useBackend<ScanInProgressData>();
   const { scan_time, scan_power, scan_description } = data;
+  const t = useT();
 
   return (
     <Modal ml={1}>
-      <NoticeBox>Scan in Progress!</NoticeBox>
+      <NoticeBox>
+        {t('exoscanner-in-progress', {}, 'Scan in Progress!')}
+      </NoticeBox>
       <Box color="danger" />
       <LabeledList>
-        <LabeledList.Item label="Scan summary">
+        <LabeledList.Item label={t('exoscanner-summary', {}, 'Scan summary')}>
           {scan_description}
         </LabeledList.Item>
-        <LabeledList.Item label="Time left">
+        <LabeledList.Item label={t('exoscanner-time-left', {}, 'Time left')}>
           {formatTime(scan_time)}
         </LabeledList.Item>
-        <LabeledList.Item label="Scanning array power">
+        <LabeledList.Item
+          label={t('exoscanner-array-power', {}, 'Scanning array power')}
+        >
           {scan_power}
         </LabeledList.Item>
-        <LabeledList.Item label="Emergency Stop">
+        <LabeledList.Item
+          label={t('exoscanner-emergency-stop', {}, 'Emergency Stop')}
+        >
           <Button.Confirm
-            content="STOP SCAN"
+            content={t('exoscanner-stop-scan', {}, 'STOP SCAN')}
             color="red"
             icon="times"
             onClick={() => act('stop_scan')}
@@ -199,6 +236,7 @@ export const ExoscannerConsole = (props) => {
     failed,
     scan_conditions = [],
   } = data;
+  const t = useT();
 
   const can_start_wide_scan = scan_power > 0;
 
@@ -209,7 +247,10 @@ export const ExoscannerConsole = (props) => {
       <Window.Content>
         <Stack vertical fill>
           <Stack.Item>
-            <Section fill title="Available array power">
+            <Section
+              fill
+              title={t('exoscanner-available-power', {}, 'Available array power')}
+            >
               <Stack>
                 <Stack.Item grow>
                   {(scan_power > 0 && (
@@ -220,10 +261,16 @@ export const ExoscannerConsole = (props) => {
                       <Icon name="satellite-dish" size={3} />
                     </>
                   )) ||
-                    'No properly configured scanner arrays detected.'}
+                    t(
+                      'exoscanner-no-arrays',
+                      {},
+                      'No properly configured scanner arrays detected.',
+                    )}
                 </Stack.Item>
               </Stack>
-              <Section title="Special Scan Condtions">
+              <Section
+                title={t('exoscanner-conditions', {}, 'Special Scan Condtions')}
+              >
                 {scan_conditions?.map((condition) => (
                   <NoticeBox key={condition}>{condition}</NoticeBox>
                 ))}
@@ -245,24 +292,27 @@ export const ExoscannerConsole = (props) => {
                       disabled={!can_start_wide_scan}
                       onClick={() => act('start_wide_scan')}
                     >
-                      Scan
+                      {t('exoscanner-scan', {}, 'Scan')}
                     </Button>
                   }
                   fill
-                  title="Configure Wide Scan"
+                  title={t('exoscanner-wide-scan', {}, 'Configure Wide Scan')}
                 >
                   <Stack>
                     <Stack.Item>
                       <BlockQuote>
-                        Broad spectrum scan looking for anything not matching
-                        known start charts.
+                        {t(
+                          'exoscanner-wide-scan-desc',
+                          {},
+                          'Broad spectrum scan looking for anything not matching known start charts.',
+                        )}
                       </BlockQuote>
                     </Stack.Item>
                     <Stack.Item>
-                      Cost estimate:{' '}
+                      {t('exoscanner-cost-estimate', {}, 'Cost estimate:')}{' '}
                       {scan_power > 0
                         ? formatTime(wide_scan_eta, 'short')
-                        : '∞ minutes'}
+                        : t('exoscanner-infinite-minutes', {}, '∞ minutes')}
                     </Stack.Item>
                   </Stack>
                 </Section>
@@ -270,11 +320,15 @@ export const ExoscannerConsole = (props) => {
               <Stack.Item grow>
                 <Section
                   fill
-                  title="Configure Targeted Scans"
+                  title={t(
+                    'exoscanner-targeted-scans',
+                    {},
+                    'Configure Targeted Scans',
+                  )}
                   scrollable
                   buttons={
                     <Button
-                      content="View Experiments"
+                      content={t('exoscanner-view-experiments', {}, 'View Experiments')}
                       onClick={() => act('open_experiments')}
                       icon="tasks"
                     />

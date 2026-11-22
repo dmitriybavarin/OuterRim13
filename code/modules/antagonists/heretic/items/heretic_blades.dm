@@ -35,7 +35,7 @@
 	if(!check_usability(user))
 		return
 
-	. += span_notice("You can shatter the blade to teleport to a random, (mostly) safe location by <b>activating it in-hand</b>.")
+	. += span_notice(LOC_KEY("heretic-item-blade-examine-shatter"))
 
 /// Checks if the passed mob can use this blade without being stunned
 /obj/item/melee/sickly_blade/proc/check_usability(mob/living/user)
@@ -46,7 +46,7 @@
 	if(.)
 		return .
 	if(!check_usability(user))
-		to_chat(user, span_danger("You feel a pulse of alien intellect lash out at your mind!"))
+		to_chat(user, span_danger(LOC_KEY("heretic-item-blade-alien-pulse")))
 		var/mob/living/carbon/human/human_user = user
 		human_user.AdjustParalyzed(5 SECONDS)
 		return TRUE
@@ -60,9 +60,9 @@
 	if(heretic_datum?.unlimited_blades)
 		return
 	if(HAS_TRAIT(user, TRAIT_ELDRITCH_ARENA_PARTICIPANT))
-		user.balloon_alert(user, "can't escape!")
+		user.balloon_alert(user, LOC_KEY("heretic-item-blade-cant-escape"))
 		if(escape_attempts > 2)
-			to_chat(user, span_hypnophrase(span_big("Cowardly sheep will be slaughtered!")))
+			to_chat(user, span_hypnophrase(span_big(LOC_KEY("heretic-item-blade-cowardly-sheep"))))
 			playsound(src, /datum/sound_effect/shatter, 70, TRUE)
 			var/obj/item/bodypart/to_remove = user.get_active_hand()
 			to_remove.dismember()
@@ -73,7 +73,7 @@
 		escape_timer = addtimer(CALLBACK(src, PROC_REF(reset_attempts)), 2 SECONDS, TIMER_STOPPABLE)
 		return
 	if(HAS_TRAIT(user, TRAIT_NO_TELEPORT))
-		user.balloon_alert(user, "can't break!")
+		user.balloon_alert(user, LOC_KEY("heretic-item-blade-cant-break"))
 		return
 	seek_safety(user)
 
@@ -86,11 +86,11 @@
 	var/turf/safe_turf = find_safe_turf(z, extended_safety_checks = TRUE)
 	if(check_usability(user))
 		if(do_teleport(user, safe_turf, channel = TELEPORT_CHANNEL_MAGIC))
-			to_chat(user, span_warning("As you shatter [src], you feel a gust of energy flow through your body. [after_use_message]"))
+			to_chat(user, span_warning(loc_key("heretic-item-blade-shatter-teleport", list(item = src, message = after_use_message || ""))))
 		else
-			to_chat(user, span_warning("You shatter [src], but your plea goes unanswered."))
+			to_chat(user, span_warning(loc_key("heretic-item-blade-shatter-unanswered", list(item = src))))
 	else
-		to_chat(user,span_warning("You shatter [src]."))
+		to_chat(user, span_warning(loc_key("heretic-item-blade-shatter", list(item = src))))
 	playsound(src, /datum/sound_effect/shatter, 70, TRUE) //copied from the code for smashing a glass sheet onto the ground to turn it into a shard
 	qdel(src)
 
@@ -108,7 +108,7 @@
 		Yet still it bites, ripping flesh and bone with jagged, rotten teeth."
 	icon_state = "rust_blade"
 	inhand_icon_state = "rust_blade"
-	after_use_message = "The Rusted Hills hear your call..."
+	after_use_message = LOC_KEY("heretic-item-blade-call-rust")
 
 // Path of Ash's blade
 /obj/item/melee/sickly_blade/ash
@@ -117,7 +117,7 @@
 		Unmade, it aspires to be more than it is, and shears soot-filled wounds with a blunt edge."
 	icon_state = "ash_blade"
 	inhand_icon_state = "ash_blade"
-	after_use_message = "The Nightwatcher hears your call..."
+	after_use_message = LOC_KEY("heretic-item-blade-call-ash")
 	resistance_flags = FIRE_PROOF
 
 // Path of Flesh's blade
@@ -127,7 +127,7 @@
 		Keenly aware, it seeks to spread to others the suffering it has endured from its dreadful origins."
 	icon_state = "flesh_blade"
 	inhand_icon_state = "flesh_blade"
-	after_use_message = "The Marshal hears your call..."
+	after_use_message = LOC_KEY("heretic-item-blade-call-flesh")
 
 /obj/item/melee/sickly_blade/flesh/Initialize(mapload)
 	. = ..()
@@ -151,7 +151,7 @@
 		It is a real depiction of purity, and chaos that ensues after its implementation."
 	icon_state = "void_blade"
 	inhand_icon_state = "void_blade"
-	after_use_message = "The Aristocrat hears your call..."
+	after_use_message = LOC_KEY("heretic-item-blade-call-void")
 
 // Path of the Blade's... blade.
 // Opting for /dark instead of /blade to avoid "sickly_blade/blade".
@@ -162,7 +162,7 @@
 	icon_state = "dark_blade"
 	base_icon_state = "dark_blade"
 	inhand_icon_state = "dark_blade"
-	after_use_message = "The Torn Champion hears your call..."
+	after_use_message = LOC_KEY("heretic-item-blade-call-dark")
 	///If our blade is currently infused with the mansus grasp
 	var/infused = FALSE
 
@@ -189,7 +189,7 @@
 	// We're officially behind them, apply effects
 	living_target.AdjustParalyzed(1.5 SECONDS)
 	living_target.apply_damage(10, BRUTE, wound_bonus = CANT_WOUND)
-	living_target.balloon_alert(user, "backstab!")
+	living_target.balloon_alert(user, LOC_KEY("heretic-item-blade-backstab"))
 	playsound(living_target, 'sound/items/weapons/guillotine.ogg', 100, TRUE)
 
 /obj/item/melee/sickly_blade/dark/dropped(mob/user, silent)
@@ -214,7 +214,7 @@
 		An iridescent exile, carving radiant trails, desperately seeking unification."
 	icon_state = "cosmic_blade"
 	inhand_icon_state = "cosmic_blade"
-	after_use_message = "The Stargazer hears your call..."
+	after_use_message = LOC_KEY("heretic-item-blade-call-cosmic")
 
 // Path of Knock's blade
 /obj/item/melee/sickly_blade/lock
@@ -223,7 +223,7 @@
 		What grand gates does it open?"
 	icon_state = "key_blade"
 	inhand_icon_state = "key_blade"
-	after_use_message = "The Stewards hear your call..."
+	after_use_message = LOC_KEY("heretic-item-blade-call-lock")
 	tool_behaviour = TOOL_CROWBAR
 	toolspeed = 1.3
 
@@ -234,7 +234,7 @@
 		A troupe bringing joy, carving smiles on their faces if they want one or not."
 	icon_state = "moon_blade"
 	inhand_icon_state = "moon_blade"
-	after_use_message = "The Moon hears your call..."
+	after_use_message = LOC_KEY("heretic-item-blade-call-moon")
 
 // Path of Nar'Sie's blade
 // What!? This blade is given to cultists as an altar item when they sacrifice a heretic.
@@ -274,22 +274,22 @@
 	if(IS_HERETIC_OR_MONSTER(user) || IS_CULTIST(user))
 		return TRUE
 	if(prob(15))
-		to_chat(user, span_cult_large(pick("\"An untouched mind? Amusing.\"", "\" I suppose it isn't worth the effort to stop you.\"", "\"Go ahead. I don't care.\"", "\"You'll be mine soon enough.\"")))
+		to_chat(user, span_cult_large(pick(LOC_KEY("heretic-item-blade-quote-1"), LOC_KEY("heretic-item-blade-quote-2"), LOC_KEY("heretic-item-blade-quote-3"), LOC_KEY("heretic-item-blade-quote-4"))))
 		user.apply_damage(5, BURN, user.get_active_hand())
 		playsound(src, /datum/sound_effect/sear, 25, TRUE)
-		to_chat(user, span_danger("Your hand sizzles.")) // Nar nar might not care but their essence still doesn't like you
+		to_chat(user, span_danger(LOC_KEY("heretic-item-blade-hand-sizzles"))) // Nar nar might not care but their essence still doesn't like you
 	else if(prob(15))
 		to_chat(user, span_big(span_hypnophrase("LW'NAFH'NAHOR UH'ENAH'YMG EPGOKA AH NAFL MGEMPGAH'EHYE")))
-		to_chat(user, span_danger("Horrible, unintelligible utterances flood your mind!"))
+		to_chat(user, span_danger(LOC_KEY("heretic-item-blade-utterances")))
 		user.adjust_organ_loss(ORGAN_SLOT_BRAIN, 15) // This can kill you if you ignore it
 	return TRUE
 
 /obj/item/melee/sickly_blade/cursed/equipped(mob/user, slot)
 	. = ..()
 	if(IS_HERETIC_OR_MONSTER(user))
-		after_use_message = "The Mansus hears your call..."
+		after_use_message = LOC_KEY("heretic-item-blade-call-mansus")
 	else if(IS_CULTIST(user))
-		after_use_message = "Nar'Sie hears your call..."
+		after_use_message = LOC_KEY("heretic-item-blade-call-narsie")
 	else
 		after_use_message = null
 

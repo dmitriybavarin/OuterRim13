@@ -3,6 +3,7 @@ import { Button, Dropdown, Input, Stack, Table } from 'tgui-core/components';
 import { round } from 'tgui-core/math';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type FishCalculatorEntry = {
@@ -22,6 +23,7 @@ type FishingCalculatorData = {
 
 export const FishingCalculator = (props) => {
   const { act, data } = useBackend<FishingCalculatorData>();
+  const t = useT();
 
   const [bait, setBait] = useState('/obj/item/food/bait/worm');
   const [spot, setSpot] = useState(data.spot_types[0]);
@@ -60,7 +62,7 @@ export const FishingCalculator = (props) => {
               onSelected={(e) => setLine(e)}
               width="100%"
             />
-            <Input value={bait} placeholder="Bait" onChange={setBait} fluid />
+            <Input value={bait} placeholder={t('fishingcalc-bait-placeholder', {}, 'Bait')} onChange={setBait} fluid />
             <Button
               onClick={() =>
                 act('recalc', {
@@ -72,17 +74,21 @@ export const FishingCalculator = (props) => {
                 })
               }
             >
-              Calculate
+              {t('fishingcalc-calculate', {}, 'Calculate')}
             </Button>
           </Stack.Item>
           <Stack.Item>
             <Table>
               <Table.Row header>
-                <Table.Cell>Outcome</Table.Cell>
-                <Table.Cell>Weight</Table.Cell>
-                <Table.Cell>Probabilty</Table.Cell>
-                <Table.Cell>Difficulty</Table.Cell>
-                <Table.Cell>Count</Table.Cell>
+                <Table.Cell>{t('fishingcalc-outcome', {}, 'Outcome')}</Table.Cell>
+                <Table.Cell>{t('fishingcalc-weight', {}, 'Weight')}</Table.Cell>
+                <Table.Cell>
+                  {t('fishingcalc-probability', {}, 'Probabilty')}
+                </Table.Cell>
+                <Table.Cell>
+                  {t('fishingcalc-difficulty', {}, 'Difficulty')}
+                </Table.Cell>
+                <Table.Cell>{t('fishingcalc-count', {}, 'Count')}</Table.Cell>
               </Table.Row>
               {data.info?.map((result) => (
                 <Table.Row key={result.result}>

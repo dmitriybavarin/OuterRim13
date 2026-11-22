@@ -4,7 +4,7 @@ spawnpanel-window-height = 550
 
 preferences-window-width = 920
 
-preferences-window-height = 770
+preferences-window-height = 880
 
 jobselection-window-width = 1012
 

@@ -10,6 +10,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -72,6 +73,7 @@ export const Interview = (props) => {
 
   const allAnswered = questions.every((q) => q.response);
   const numAnswered = questions.filter((q) => q.response)?.length;
+  const t = useT();
 
   return (
     <Window
@@ -81,12 +83,12 @@ export const Interview = (props) => {
     >
       <Window.Content scrollable>
         {(!read_only && (
-          <Section title="Welcome!">
+          <Section title={t('interview-welcome', {}, 'Welcome!')}>
             <p>{linkifyText(welcome_message)}</p>
           </Section>
         )) || <RenderedStatus status={status} queue_pos={queue_pos} />}
         <Section
-          title="Questionnaire"
+          title={t('interview-questionnaire', {}, 'Questionnaire')}
           buttons={
             <span>
               <Button
@@ -95,34 +97,43 @@ export const Interview = (props) => {
                 icon="envelope"
                 tooltip={
                   !allAnswered &&
-                  `Please answer all questions.
-                     ${numAnswered} / ${questions.length}`
+                  t(
+                    'interview-answer-all',
+                    { answered: numAnswered, total: questions.length },
+                    'Please answer all questions. { $answered } / { $total }',
+                  )
                 }
               >
-                {read_only ? 'Submitted' : 'Submit'}
+                {read_only
+                  ? t('interview-submitted', {}, 'Submitted')
+                  : t('interview-submit', {}, 'Submit')}
               </Button>
               {!!is_admin && status === 'interview_pending' && (
                 <span>
                   <Button disabled={!connected} onClick={() => act('adminpm')}>
-                    Admin PM
+                    {t('interview-admin-pm', {}, 'Admin PM')}
                   </Button>
                   <Button color="good" onClick={() => act('approve')}>
-                    Approve
+                    {t('interview-approve', {}, 'Approve')}
                   </Button>
                   <Button color="bad" onClick={() => act('deny')}>
-                    Deny
+                    {t('interview-deny', {}, 'Deny')}
                   </Button>
                   {!!centcom_connected && (
                     <Button
                       color={has_permabans ? 'bad' : 'average'}
                       tooltip={
                         has_permabans
-                          ? 'This user has permabans in their history!'
+                          ? t(
+                              'interview-permabans',
+                              {},
+                              'This user has permabans in their history!',
+                            )
                           : ''
                       }
                       onClick={() => act('check_centcom')}
                     >
-                      Check Centcom
+                      {t('interview-centcom', {}, 'Check Centcom')}
                     </Button>
                   )}
                 </span>
@@ -133,20 +144,41 @@ export const Interview = (props) => {
           {!read_only && (
             <>
               <Box as="p" color="label">
-                Please answer the following questions.
+                {t(
+                  'interview-instructions',
+                  {},
+                  'Please answer the following questions.',
+                )}
                 <ul>
                   <li>
-                    You can press enter key or the save button to save an
-                    answer.
+                    {t(
+                      'interview-instructions-save',
+                      {},
+                      'You can press enter key or the save button to save an answer.',
+                    )}
                   </li>
                   <li>
-                    You can edit your answers until you press the submit button.
+                    {t(
+                      'interview-instructions-edit',
+                      {},
+                      'You can edit your answers until you press the submit button.',
+                    )}
                   </li>
-                  <li>Press SUBMIT when you are done.</li>
+                  <li>
+                    {t(
+                      'interview-instructions-submit',
+                      {},
+                      'Press SUBMIT when you are done.',
+                    )}
+                  </li>
                 </ul>
               </Box>
               <NoticeBox info align="center">
-                You will not be able to edit your answers after submitting.
+                {t(
+                  'interview-no-edit',
+                  {},
+                  'You will not be able to edit your answers after submitting.',
+                )}
               </NoticeBox>
             </>
           )}
@@ -161,17 +193,29 @@ export const Interview = (props) => {
 
 const RenderedStatus = (props: { status: string; queue_pos: number }) => {
   const { status, queue_pos } = props;
+  const t = useT();
 
   switch (status) {
     case STATUS.Approved:
-      return <NoticeBox success>This interview was approved.</NoticeBox>;
+      return (
+        <NoticeBox success>
+          {t('interview-approved', {}, 'This interview was approved.')}
+        </NoticeBox>
+      );
     case STATUS.Denied:
-      return <NoticeBox danger>This interview was denied.</NoticeBox>;
+      return (
+        <NoticeBox danger>
+          {t('interview-denied', {}, 'This interview was denied.')}
+        </NoticeBox>
+      );
     default:
       return (
         <NoticeBox info>
-          Your answers have been submitted. You are position {queue_pos} in
-          queue.
+          {t(
+            'interview-queue',
+            { position: queue_pos },
+            'Your answers have been submitted. You are position { $position } in queue.',
+          )}
         </NoticeBox>
       );
   }
@@ -181,6 +225,7 @@ const QuestionArea = (props: Question) => {
   const { qidx, question, response } = props;
   const { act, data } = useBackend<Data>();
   const { is_admin, read_only } = data;
+  const t = useT();
 
   const [userInput, setUserInput] = useState(response);
 
@@ -199,20 +244,22 @@ const QuestionArea = (props: Question) => {
 
   return (
     <Section
-      title={`Question ${qidx}`}
+      title={t('interview-question', { number: qidx }, 'Question { $number }')}
       buttons={
         <Button
           disabled={!saveAvailable}
           onClick={saveResponse}
           icon={isSaved ? 'check' : 'save'}
         >
-          {isSaved ? 'Saved' : 'Save'}
+          {isSaved
+            ? t('interview-saved', {}, 'Saved')
+            : t('interview-save', {}, 'Save')}
         </Button>
       }
     >
       <p>{linkifyText(question)}</p>
       {read_only || is_admin ? (
-        <BlockQuote>{response || 'No response.'}</BlockQuote>
+        <BlockQuote>{response || t('interview-no-response', {}, 'No response.')}</BlockQuote>
       ) : (
         <TextArea
           fluid
@@ -220,7 +267,11 @@ const QuestionArea = (props: Question) => {
           maxLength={500}
           onChange={setUserInput}
           onEnter={saveResponse}
-          placeholder="Write your response here, max of 500 characters. Press enter to submit."
+          placeholder={t(
+            'interview-placeholder',
+            {},
+            'Write your response here, max of 500 characters. Press enter to submit.',
+          )}
           value={response || undefined}
         />
       )}

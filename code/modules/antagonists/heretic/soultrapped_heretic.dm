@@ -23,8 +23,7 @@
 	if(policy)
 		to_chat(owner, policy)
 	else
-		to_chat(owner, span_ghostalert("You are the trapped soul of the Heretic you once were. You may attempt to convince your wielders to unbind you, granting you some degree of freedom, and them access to some of your powers. \
-		You were enslaved by the cult, but are not a member of it, and retain what remains of your free will. Besides this, there is little to be done but commentary. Try not to get trapped in a locker."))
+		to_chat(owner, span_ghostalert(LOC_KEY("heretic-mob-soultrapped-intro")))
 	owner.current.log_message("was sacrificed to Nar'sie as a Heretic, and sealed inside a longsword.", LOG_GAME)
 	var/datum/objective/epic_fail = new /datum/objective/heretic_trapped()
 	epic_fail.completed = FALSE

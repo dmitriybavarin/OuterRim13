@@ -55,7 +55,7 @@ GLOBAL_LIST_INIT(heretic_start_knowledge, initialize_starting_knowledge())
 
 	INVOKE_ASYNC(cast_on, TYPE_PROC_REF(/atom/movable, say), message = "R'CH T'H F'SH!", forced = "fishing rod infusion invocation")
 	playsound(cast_on, /datum/action/cooldown/spell/touch/mansus_grasp::sound, 15)
-	cast_on.visible_message(span_notice("[cast_on] snaps [cast_on.p_their()] fingers next to [held_rod], covering it in a burst of purple flames!"))
+	cast_on.visible_message(span_notice(loc_key("heretic-starting-rod-infusion", list(user = cast_on, their = cast_on.p_their(), rod = held_rod))))
 
 	ADD_TRAIT(held_rod, TRAIT_ROD_MANSUS_INFUSED, REF(held_rod))
 	held_rod.difficulty_modifier -= 20
@@ -125,7 +125,7 @@ GLOBAL_LIST_INIT(heretic_start_knowledge, initialize_starting_knowledge())
 			// We found a replacement place to put our heart
 			where_to_put_our_heart = look_for_backup
 			our_heretic.living_heart_organ_slot = backup_slot
-			to_chat(user, span_boldnotice("As your species does not have a heart, your Living Heart is located in your [look_for_backup.name]."))
+			to_chat(user, span_boldnotice(loc_key("heretic-starting-heart-backup", list(organ = loc_entity(look_for_backup, look_for_backup.name)))))
 			break
 
 	if(where_to_put_our_heart)
@@ -136,7 +136,7 @@ GLOBAL_LIST_INIT(heretic_start_knowledge, initialize_starting_knowledge())
 			Cybernetic [where_to_put_our_heart.name]\s will block the ritual!"
 
 	else
-		to_chat(user, span_boldnotice("You don't have a heart, or any chest organs for that matter. You didn't get a Living Heart because of it."))
+		to_chat(user, span_boldnotice(LOC_KEY("heretic-starting-heart-none")))
 
 /datum/heretic_knowledge/living_heart/on_lose(mob/user, datum/antagonist/heretic/our_heretic)
 	var/obj/item/organ/our_living_heart = user.get_organ_slot(our_heretic.living_heart_organ_slot)
@@ -154,14 +154,14 @@ GLOBAL_LIST_INIT(heretic_start_knowledge, initialize_starting_knowledge())
 	var/obj/item/organ/our_living_heart = user.get_organ_slot(our_heretic.living_heart_organ_slot)
 	// No heart, nothing to give living heart to
 	if(QDELETED(our_living_heart))
-		loc.balloon_alert(user, "ritual failed, no [our_heretic.living_heart_organ_slot]!")
+		loc.balloon_alert(user, loc_key("heretic-starting-ritual-no-organ", list(slot = loc_lookup("heretic-organ-slot", our_heretic.living_heart_organ_slot))))
 		return FALSE
 
 	// For sanity's sake, check if they've got a living heart -
 	// even though it's not invokable if you already have one,
 	// they may have gained one unexpectantly in between now and then
 	if(HAS_TRAIT(our_living_heart, TRAIT_LIVING_HEART))
-		loc.balloon_alert(user, "ritual failed, already have a living heart!")
+		loc.balloon_alert(user, LOC_KEY("heretic-starting-ritual-has-heart"))
 		return FALSE
 
 	// By this point they are making a new heart
@@ -169,7 +169,7 @@ GLOBAL_LIST_INIT(heretic_start_knowledge, initialize_starting_knowledge())
 	if(is_valid_heart(our_living_heart))
 		return TRUE
 
-	loc.balloon_alert(user, "ritual failed, [our_heretic.living_heart_organ_slot] can't be awakened!") // "heart can't be awakened!"
+	loc.balloon_alert(user, loc_key("heretic-starting-ritual-cant-awaken", list(slot = loc_lookup("heretic-organ-slot", our_heretic.living_heart_organ_slot)))) // "heart can't be awakened!"
 	return FALSE
 
 /datum/heretic_knowledge/living_heart/on_finished_recipe(mob/living/user, list/selected_atoms, turf/loc)
@@ -179,7 +179,7 @@ GLOBAL_LIST_INIT(heretic_start_knowledge, initialize_starting_knowledge())
 	selected_atoms -= our_new_heart
 	// Make it the living heart
 	our_new_heart.AddComponent(/datum/component/living_heart)
-	to_chat(user, span_warning("You feel your [our_new_heart.name] begin pulse faster and faster as it awakens!"))
+	to_chat(user, span_warning(loc_key("heretic-starting-heart-awakened", list(organ = loc_entity(our_new_heart, our_new_heart.name)))))
 	playsound(user, 'sound/effects/magic/demon_consume.ogg', 50, TRUE)
 	return TRUE
 
@@ -228,13 +228,13 @@ GLOBAL_LIST_INIT(heretic_start_knowledge, initialize_starting_knowledge())
 		playsound(loc, 'sound/items/eatfood.ogg', 100, TRUE)
 		heretic_datum.adjust_knowledge_points(1)
 
-		to_chat(user, span_danger("You feel something invisible tearing away at your very essence!"))
+		to_chat(user, span_danger(LOC_KEY("heretic-starting-owls-tearing")))
 		user.do_jitter_animation()
 		sleep(1 SECONDS)
 		if(QDELETED(user) || QDELETED(heretic_datum))
 			return FALSE
 
-	to_chat(user, span_danger(span_big("Your ambition is ravaged, but something powerful remains in its wake...")))
+	to_chat(user, span_danger(span_big(LOC_KEY("heretic-starting-owls-ravaged"))))
 	var/drain_message = pick_list(HERETIC_INFLUENCE_FILE, "drain_message")
 	to_chat(user, span_hypnophrase(span_big("[drain_message]")))
 	return .

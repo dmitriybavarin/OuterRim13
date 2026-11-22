@@ -1,6 +1,7 @@
 import { Button, NoticeBox, Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type BasketballPanelData = {
@@ -15,27 +16,28 @@ type BasketballPanelData = {
 
 export const BasketballPanel = (props) => {
   const { act, data } = useBackend<BasketballPanelData>();
+  const t = useT();
 
   return (
-    <Window title="Basketball" width={650} height={580}>
+    <Window title={t('basketball-title', {}, 'Basketball')} width={650} height={580}>
       <Window.Content>
         <Stack fill vertical>
           <Stack.Item grow>
             <Section
               fill
               scrollable
-              title="Lobby"
+              title={t('basketball-lobby', {}, 'Lobby')}
               buttons={
                 <>
                   <Button
                     icon="clipboard-check"
                     tooltipPosition="bottom-start"
-                    tooltip={`
-                    Signs you up for the next game. If there
-                    is an ongoing one, you will be signed up
-                    for the next.
-                  `}
-                    content="Sign Up"
+                    tooltip={t(
+                      'basketball-signup-tooltip',
+                      {},
+                      'Signs you up for the next game. If there is an ongoing one, you will be signed up for the next.',
+                    )}
+                    content={t('basketball-signup', {}, 'Sign Up')}
                     onClick={() => act('basketball_signup')}
                   />
                   <Button
@@ -43,14 +45,21 @@ export const BasketballPanel = (props) => {
                     disabled={data.total_votes < data.players_min}
                     onClick={() => act('basketball_start')}
                   >
-                    Start
+                    {t('basketball-start', {}, 'Start')}
                   </Button>
                 </>
               }
             >
               <NoticeBox info>
-                The lobby has {data.total_votes} players signed up. The minigame
-                is for {data.players_min} to {data.players_max} players.
+                {t(
+                  'basketball-lobby-info',
+                  {
+                    votes: data.total_votes,
+                    min: data.players_min,
+                    max: data.players_max,
+                  },
+                  `The lobby has ${data.total_votes} players signed up. The minigame is for ${data.players_min} to ${data.players_max} players.`,
+                )}
               </NoticeBox>
 
               {data.lobbydata.map((lobbyist) => (
@@ -61,7 +70,7 @@ export const BasketballPanel = (props) => {
                   align="baseline"
                 >
                   <Stack.Item grow>{lobbyist.ckey}</Stack.Item>
-                  <Stack.Item>Status:</Stack.Item>
+                  <Stack.Item>{t('basketball-status', {}, 'Status:')}</Stack.Item>
                   <Stack.Item
                     color={lobbyist.status === 'Ready' ? 'green' : 'red'}
                   >

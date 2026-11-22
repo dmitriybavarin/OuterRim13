@@ -9,6 +9,7 @@ import {
 import { toFixed } from 'tgui-core/math';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -21,9 +22,10 @@ const PREFIXES = ['r', 'g', 'b', 'a', 'c'] as const;
 export const ColorMatrixEditor = (props) => {
   const { act, data } = useBackend<Data>();
   const { mapRef, currentColor } = data;
+  const t = useT();
 
   return (
-    <Window title="Color Matrix Editor" width={600} height={220}>
+    <Window title={t('colormatrix-title', {}, 'Color Matrix Editor')} width={600} height={220}>
       <Window.Content>
         <Stack fill>
           <Stack.Item align="center">
@@ -67,8 +69,8 @@ export const ColorMatrixEditor = (props) => {
               <Stack.Item grow />
               <Stack.Item align="left">
                 <Button.Confirm
-                  content="Confirm"
-                  confirmContent="Confirm?"
+                  content={t('colormatrix-confirm', {}, 'Confirm')}
+                  confirmContent={t('colormatrix-confirm-ask', {}, 'Confirm?')}
                   onClick={() => act('confirm')}
                 />
               </Stack.Item>

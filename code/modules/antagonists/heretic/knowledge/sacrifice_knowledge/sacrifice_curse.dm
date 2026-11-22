@@ -79,9 +79,9 @@
 	var/obj/item/organ/removing_organ = pick(removable_organs)
 
 	if (carbon_owner.vomit(vomit_flags = VOMIT_CATEGORY_BLOOD))
-		carbon_owner.visible_message(span_boldwarning("[carbon_owner] vomits out [carbon_owner.p_their()] [removing_organ]"))
+		carbon_owner.visible_message(span_boldwarning(loc_key("heretic-sacrifice-curse-vomit", list(target = carbon_owner, gender = carbon_owner.get_visible_gender(), organ = removing_organ))))
 	else
-		carbon_owner.visible_message(span_boldwarning("[carbon_owner]'s [removing_organ] rips itself out of `[carbon_owner.p_their()] chest!"))
+		carbon_owner.visible_message(span_boldwarning(loc_key("heretic-sacrifice-curse-rip", list(target = carbon_owner, gender = carbon_owner.get_visible_gender(), organ = removing_organ))))
 
 	removing_organ.Remove(carbon_owner)
 

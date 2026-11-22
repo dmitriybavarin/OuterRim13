@@ -1,6 +1,7 @@
 import { Box, Button, Section, Table, Tooltip } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type BindingInfo = {
@@ -91,25 +92,30 @@ const KeyBinding = (props: KeyBindingBoxProps) => (
 
 export const HotkeysHelp = (props) => {
   const { act, data } = useBackend<HotkeysHelpData>();
+  const t = useT();
 
   return (
-    <Window title="Hotkeys" width={500} height={800}>
+    <Window
+      title={t('hotkeys-title', {}, 'Hotkeys')}
+      width={500}
+      height={800}
+    >
       <Window.Content scrollable>
         <Section
-          title="Sorted by Key"
+          title={t('hotkeys-sorted-by-key', {}, 'Sorted by Key')}
           buttons={
             <Button icon="wrench" onClick={() => act('open_keybindings')}>
-              Open Hotkey Settings
+              {t('hotkeys-open-settings', {}, 'Open Hotkey Settings')}
             </Button>
           }
         >
           <Table>
             <Table.Row header>
               <Table.Cell textAlign="center" m={1}>
-                Key
+                {t('hotkeys-col-key', {}, 'Key')}
               </Table.Cell>
               <Table.Cell textAlign="center" m={1}>
-                Binding
+                {t('hotkeys-col-binding', {}, 'Binding')}
               </Table.Cell>
             </Table.Row>
             {data.hotkeys.map((hotkey) => (

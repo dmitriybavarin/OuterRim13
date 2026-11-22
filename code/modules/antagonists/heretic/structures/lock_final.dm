@@ -48,7 +48,7 @@
 	SIGNAL_HANDLER
 	var/turf/our_turf = get_turf(src)
 	playsound(our_turf, 'sound/effects/magic/castsummon.ogg', vol = 100, vary = TRUE)
-	visible_message(span_boldwarning("The rip in space spasms and disappears!"))
+	visible_message(span_boldwarning(LOC_KEY("heretic-structure-lock-tear-vanish")))
 	UnregisterSignal(former_master, list(COMSIG_LIVING_DEATH, COMSIG_QDELETING)) // Just in case they die THEN delete
 	new /obj/effect/temp_visual/destabilising_tear(our_turf)
 	qdel(src)
@@ -63,7 +63,7 @@
 	. = ..()
 	if (!isobserver(user) || gathering_candidates)
 		return
-	. += span_notice("You can use this to enter the world as a foul monster.")
+	. += span_notice(LOC_KEY("heretic-structure-lock-tear-examine"))
 
 /// Turn a ghost into an 'orrible beast
 /obj/structure/lock_tear/proc/ghost_to_monster(mob/dead/observer/user, should_ask = TRUE)

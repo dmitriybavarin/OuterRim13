@@ -1,4 +1,5 @@
 import { useBackend } from 'tgui/backend';
+import { useT } from '../../../i18n';
 import {
   Box,
   Button,
@@ -31,6 +32,7 @@ type Props = {
 export function RecipeContentCompact(props: Props) {
   const { item, iconData, atomData } = props;
   const { data } = useBackend<CraftingData>();
+  const t = useT();
 
   return (
     <Section>
@@ -99,7 +101,7 @@ export function RecipeContentCompact(props: Props) {
                 <Box>
                   {!!item.tool_behaviors && (
                     <Tooltip
-                      content={`Tools: ${item.tool_behaviors.join(', ')}`}
+                      content={t('crafting-tools-list', { tools: item.tool_behaviors.join(', ') }, `Tools: ${item.tool_behaviors.join(', ')}`)}
                     >
                       <Icon p={1} name="screwdriver-wrench" />
                     </Tooltip>
@@ -146,6 +148,7 @@ export function RecipeContent(props: FullProps) {
     iconData,
   } = props;
   const { data } = useBackend<CraftingData>();
+  const t = useT();
   const { mode, diet } = data;
 
   return (
@@ -178,7 +181,7 @@ export function RecipeContent(props: FullProps) {
               {!!item.has_food_effect && (
                 <Box my={2} color="pink">
                   <Icon name="wand-magic-sparkles" mr={1} />
-                  Special effect on consumption.
+                  {t('crafting-special-effect', {}, 'Special effect on consumption.')}
                 </Box>
               )}
               <Box style={{ textTransform: 'capitalize' }}>
@@ -323,6 +326,7 @@ type CraftProps = {
 
 function CraftButton(props: CraftProps) {
   const { act, data } = useBackend<CraftingData>();
+  const t = useT();
   const { item, buttonText } = props;
   const { busy, mode, craftability } = data;
   if (item.non_craftable) return null;
@@ -350,7 +354,7 @@ function CraftButton(props: CraftProps) {
             })
           }
         >
-          {buttonText ?? 'Make'}
+          {buttonText ?? t('crafting-make', {}, 'Make')}
         </Button>
       </Stack.Item>
       <Stack.Item>
@@ -359,7 +363,7 @@ function CraftButton(props: CraftProps) {
             minWidth="30px"
             lineHeight={2.5}
             align="center"
-            tooltip="Repeat this craft until you run out of ingredients."
+            tooltip={t('crafting-repeat', {}, 'Repeat this craft until you run out of ingredients.')}
             tooltipPosition="top"
             disabled={!craftable || busy}
             icon="repeat"

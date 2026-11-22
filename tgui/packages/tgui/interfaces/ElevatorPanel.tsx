@@ -11,6 +11,7 @@ import { clamp } from 'tgui-core/math';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type FloorData = {
@@ -39,6 +40,7 @@ type ElevatorPanelData = {
 
 export const ElevatorPanel = (props) => {
   const { data, act } = useBackend<ElevatorPanelData>();
+  const t = useT();
 
   const {
     current_floor,
@@ -68,7 +70,7 @@ export const ElevatorPanel = (props) => {
         {!lift_exists && <NoLiftDimmer />}
         <Stack height="100%" vertical>
           <Stack.Item>
-            <Section title="Floor" align="center">
+            <Section title={t('elevatorpanel-floor', {}, 'Floor')} align="center">
               <FloorPanel />
             </Section>
           </Stack.Item>
@@ -101,13 +103,14 @@ export const ElevatorPanel = (props) => {
                 <Button
                   width="65%"
                   icon="door-closed"
-                  tooltip={
-                    'Closes all elevator doors, except \
-                    those on the level of the elevator.'
-                  }
+                  tooltip={t(
+                    'elevatorpanel-reset-tooltip',
+                    {},
+                    'Closes all elevator doors, except those on the level of the elevator.',
+                  )}
                   onClick={() => act('reset_doors')}
                 >
-                  Reset Doors
+                  {t('elevatorpanel-reset-doors', {}, 'Reset Doors')}
                 </Button>
               ) : (
                 <Button
@@ -117,12 +120,20 @@ export const ElevatorPanel = (props) => {
                   color={'bad'}
                   tooltip={
                     is_emergency
-                      ? 'In case of emergency, opens all lift doors.'
-                      : `The station is only at ${emergency_level} alert.`
+                      ? t(
+                          'elevatorpanel-emergency-tooltip',
+                          {},
+                          'In case of emergency, opens all lift doors.',
+                        )
+                      : t(
+                          'elevatorpanel-not-emergency',
+                          { level: emergency_level },
+                          `The station is only at ${emergency_level} alert.`,
+                        )
                   }
                   onClick={() => act('emergency_door')}
                 >
-                  Emergency
+                  {t('elevatorpanel-emergency', {}, 'Emergency')}
                 </Button>
               )}
             </Section>
@@ -134,26 +145,32 @@ export const ElevatorPanel = (props) => {
 };
 
 const NoLiftDimmer = () => {
+  const t = useT();
   return (
     <Dimmer>
       <Stack vertical align="center">
         <Stack.Item>
           <Icon size={8} name="exclamation" />
         </Stack.Item>
-        <Stack.Item fontSize="16px">No elevator connected.</Stack.Item>
+        <Stack.Item fontSize="16px">
+          {t('elevatorpanel-no-lift', {}, 'No elevator connected.')}
+        </Stack.Item>
       </Stack>
     </Dimmer>
   );
 };
 
 const MovingDimmer = () => {
+  const t = useT();
   return (
     <Dimmer>
       <Stack vertical align="center">
         <Stack.Item>
           <Icon size={8} name="spinner" spin />
         </Stack.Item>
-        <Stack.Item fontSize="16px">Moving...</Stack.Item>
+        <Stack.Item fontSize="16px">
+          {t('elevatorpanel-moving', {}, 'Moving...')}
+        </Stack.Item>
       </Stack>
     </Dimmer>
   );

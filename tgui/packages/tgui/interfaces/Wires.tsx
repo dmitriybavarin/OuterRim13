@@ -9,6 +9,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -28,6 +29,7 @@ type Wire = {
 export const Wires = (props) => {
   const { data } = useBackend<Data>();
   const { proper_name, status = [], wires = [] } = data;
+  const t = useT();
   const dynamicHeight = 150 + wires.length * 30 + (proper_name ? 30 : 0);
 
   return (
@@ -37,7 +39,11 @@ export const Wires = (props) => {
           {!!proper_name && (
             <Stack.Item>
               <NoticeBox textAlign="center">
-                {proper_name} Wire Configuration
+                {t(
+                  'wires-title',
+                  { name: proper_name },
+                  '{ $name } Wire Configuration',
+                )}
               </NoticeBox>
             </Stack.Item>
           )}
@@ -65,6 +71,7 @@ export const Wires = (props) => {
 const WireMap = (props) => {
   const { act, data } = useBackend<Data>();
   const { wires } = data;
+  const t = useT();
 
   return (
     <LabeledList>
@@ -78,7 +85,11 @@ const WireMap = (props) => {
           buttons={
             <>
               <Button
-                content={wire.cut ? 'Mend' : 'Cut'}
+                content={
+                  wire.cut
+                    ? t('wires-mend', {}, 'Mend')
+                    : t('wires-cut', {}, 'Cut')
+                }
                 onClick={() =>
                   act('cut', {
                     wire: wire.color,
@@ -86,7 +97,7 @@ const WireMap = (props) => {
                 }
               />
               <Button
-                content="Pulse"
+                content={t('wires-pulse', {}, 'Pulse')}
                 onClick={() =>
                   act('pulse', {
                     wire: wire.color,
@@ -94,7 +105,11 @@ const WireMap = (props) => {
                 }
               />
               <Button
-                content={wire.attached ? 'Detach' : 'Attach'}
+                content={
+                  wire.attached
+                    ? t('wires-detach', {}, 'Detach')
+                    : t('wires-attach', {}, 'Attach')
+                }
                 onClick={() =>
                   act('attach', {
                     wire: wire.color,

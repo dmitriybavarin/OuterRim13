@@ -12,6 +12,7 @@ import { formatSiUnit } from 'tgui-core/format';
 import { toTitleCase } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import type { Material } from './Fabrication/Types';
 
@@ -39,21 +40,22 @@ type Data = {
 
 export const ProcessingConsole = (props: any) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { state } = data;
 
   return (
-    <Window title="Processing Unit Console" width={580} height={500}>
+    <Window title={t('processingconsole-title', {}, 'Processing Unit Console')} width={580} height={500}>
       <Window.Content>
         <Stack fill vertical>
           <Stack.Item grow basis={0}>
             <Stack fill>
               <Stack.Item grow={1.2} basis={0}>
-                <Section fill textAlign="center" title="Materials">
+                <Section fill textAlign="center" title={t('processingconsole-materials', {}, 'Materials')}>
                   <MaterialSelection />
                 </Section>
               </Stack.Item>
               <Stack.Item grow basis={0}>
-                <Section fill title="Alloys" textAlign="center">
+                <Section fill title={t('processingconsole-alloys', {}, 'Alloys')} textAlign="center">
                   <AlloySelection />
                 </Section>
               </Stack.Item>
@@ -71,7 +73,9 @@ export const ProcessingConsole = (props: any) => {
               bold
               onClick={() => act('toggle')}
             >
-              {state ? 'Deactivate' : 'Activate'}
+              {state
+                ? t('processingconsole-deactivate', {}, 'Deactivate')
+                : t('processingconsole-activate', {}, 'Activate')}
             </Button>
           </Stack.Item>
         </Stack>
@@ -82,6 +86,7 @@ export const ProcessingConsole = (props: any) => {
 
 const MaterialSelection = (props: any) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { materials, materialIcons, selectedMaterial, SHEET_MATERIAL_AMOUNT } =
     data;
 
@@ -99,12 +104,15 @@ const MaterialSelection = (props: any) => {
       ))}
     </Table>
   ) : (
-    <NoticeBox danger>No material recipes found!</NoticeBox>
+    <NoticeBox danger>
+      {t('processingconsole-no-materials', {}, 'No material recipes found!')}
+    </NoticeBox>
   );
 };
 
 const AlloySelection = (props: any) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { alloys, alloyIcons, selectedAlloy } = data;
 
   return alloys.length > 0 ? (
@@ -120,7 +128,9 @@ const AlloySelection = (props: any) => {
       ))}
     </Table>
   ) : (
-    <NoticeBox danger>No alloy recipes found!</NoticeBox>
+    <NoticeBox danger>
+      {t('processingconsole-no-alloys', {}, 'No alloy recipes found!')}
+    </NoticeBox>
   );
 };
 
@@ -133,6 +143,7 @@ type DisplayRowProps = {
 };
 
 const DisplayRow = (props: DisplayRowProps) => {
+  const t = useT();
   const { name, icon, amount, selected, onSelect } = props;
 
   return (
@@ -156,7 +167,11 @@ const DisplayRow = (props: DisplayRowProps) => {
       </Table.Cell>
       {amount !== undefined ? (
         <Box color="label">
-          {`${formatSiUnit(amount, 0)} ${amount === 1 ? 'sheet' : 'sheets'}`}
+          {t(
+            'processingconsole-sheets',
+            { amount: formatSiUnit(amount, 0), count: amount },
+            `${formatSiUnit(amount, 0)} ${amount === 1 ? 'sheet' : 'sheets'}`,
+          )}
         </Box>
       ) : null}
       <Table.Cell collapsing pr={1} textAlign="right">

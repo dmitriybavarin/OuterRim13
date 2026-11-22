@@ -11,6 +11,7 @@ import { round } from 'tgui-core/math';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Reagent = {
@@ -45,6 +46,7 @@ const GRAPH_MAX_HEIGHT = 250;
 
 export const MassSpec = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     processing,
     lowerRange,
@@ -66,11 +68,15 @@ export const MassSpec = (props) => {
         {!!processing && (
           <Dimmer fontSize="32px">
             <Icon name="cog" spin={1} />
-            {` Purifying... ${round(eta, 0)}s`}
+            {` ${t(
+              'massspec-purifying',
+              { eta: round(eta, 0) },
+              `Purifying... ${round(eta, 0)}s`,
+            )}`}
           </Dimmer>
         )}
         <Section
-          title="Mass Spectroscopy"
+          title={t('massspec-title', {}, 'Mass Spectroscopy')}
           buttons={
             <Button
               icon="power-off"
@@ -79,17 +85,25 @@ export const MassSpec = (props) => {
               }
               tooltip={
                 !beaker_1_has_contents
-                  ? 'Missing input reagents!'
+                  ? t(
+                      'massspec-missing-input',
+                      {},
+                      'Missing input reagents!',
+                    )
                   : !beaker2
-                    ? 'Missing an output beaker!'
+                    ? t(
+                        'massspec-missing-output',
+                        {},
+                        'Missing an output beaker!',
+                      )
                     : eta <= 0
-                      ? 'No work to be done'
-                      : 'Begin purifying'
+                      ? t('massspec-no-work', {}, 'No work to be done')
+                      : t('massspec-begin', {}, 'Begin purifying')
               }
               tooltipPosition="left"
               onClick={() => act('activate')}
             >
-              Start
+              {t('massspec-start', {}, 'Start')}
             </Button>
           }
         >
@@ -102,19 +116,32 @@ export const MassSpec = (props) => {
               maxAbsorbance={peakHeight}
               reagentPeaks={beaker1.contents}
             />
-          )) || <Box>Please insert an input beaker with reagents!</Box>}
+          )) || <Box>
+              {t(
+                'massspec-insert-input',
+                {},
+                'Please insert an input beaker with reagents!',
+              )}
+            </Box>}
         </Section>
 
         <Section
-          title="Input beaker"
+          title={t('massspec-input-beaker', {}, 'Input beaker')}
           buttons={
             beaker1 ? (
               <>
                 <Box inline color="label" mr={2}>
-                  {beaker1.currentVolume} / {beaker1.maxVolume} units
+                  {t(
+                    'massspec-volume',
+                    {
+                      current: beaker1.currentVolume,
+                      max: beaker1.maxVolume,
+                    },
+                    `${beaker1.currentVolume} / ${beaker1.maxVolume} units`,
+                  )}
                 </Box>
                 <Button icon="eject" onClick={() => act('eject1')}>
-                  Eject
+                  {t('massspec-eject', {}, 'Eject')}
                 </Button>
               </>
             ) : (
@@ -126,11 +153,15 @@ export const MassSpec = (props) => {
                 }}
                 tooltip={
                   !hasBeakerInHand &&
-                  'You need to hold a container in your hand'
+                  t(
+                    'massspec-hold-container',
+                    {},
+                    'You need to hold a container in your hand',
+                  )
                 }
                 tooltipPosition="bottom-start"
               >
-                Insert
+                {t('massspec-insert', {}, 'Insert')}
               </Button>
             )
           }
@@ -141,19 +172,30 @@ export const MassSpec = (props) => {
             beaker={beaker1}
           />
           {!!beaker_1_has_contents && (
-            <Box>{`Eta of selection: ${round(eta, 0)} seconds`}</Box>
+            <Box>{t(
+                'massspec-eta',
+                { eta: round(eta, 0) },
+                `Eta of selection: ${round(eta, 0)} seconds`,
+              )}</Box>
           )}
         </Section>
         <Section
-          title="Output beaker"
+          title={t('massspec-output-beaker', {}, 'Output beaker')}
           buttons={
             beaker2 ? (
               <>
                 <Box inline color="label" mr={2}>
-                  {beaker2.currentVolume} / {beaker2.maxVolume} units
+                  {t(
+                    'massspec-volume',
+                    {
+                      current: beaker2.currentVolume,
+                      max: beaker2.maxVolume,
+                    },
+                    `${beaker2.currentVolume} / ${beaker2.maxVolume} units`,
+                  )}
                 </Box>
                 <Button icon="eject" onClick={() => act('eject2')}>
-                  Eject
+                  {t('massspec-eject', {}, 'Eject')}
                 </Button>
               </>
             ) : (
@@ -165,11 +207,15 @@ export const MassSpec = (props) => {
                 }}
                 tooltip={
                   !hasBeakerInHand &&
-                  'You need to hold a container in your hand'
+                  t(
+                    'massspec-hold-container',
+                    {},
+                    'You need to hold a container in your hand',
+                  )
                 }
                 tooltipPosition="bottom-start"
               >
-                Insert
+                {t('massspec-insert', {}, 'Insert')}
               </Button>
             )
           }
@@ -192,33 +238,38 @@ type ProfileProps = {
 };
 
 const BeakerMassProfile = (props: ProfileProps) => {
+  const t = useT();
   const { lowerRange, upperRange, beaker } = props;
 
   return (
     <Box>
-      {(!beaker && <Box color="label">No beaker loaded.</Box>) ||
+      {(!beaker && <Box color="label">
+          {t('massspec-no-beaker', {}, 'No beaker loaded.')}
+        </Box>) ||
         (beaker.contents.length === 0 && (
-          <Box color="label">Beaker is empty.</Box>
+          <Box color="label">
+            {t('massspec-beaker-empty', {}, 'Beaker is empty.')}
+          </Box>
         )) || (
           <Table className="candystripe">
             <Table.Row>
               <Table.Cell bold collapsing color="label">
-                Reagent
+                {t('massspec-col-reagent', {}, 'Reagent')}
               </Table.Cell>
               <Table.Cell bold collapsing color="label">
-                Mass
+                {t('massspec-col-mass', {}, 'Mass')}
               </Table.Cell>
               <Table.Cell bold collapsing color="label">
-                Volume
+                {t('massspec-col-volume', {}, 'Volume')}
               </Table.Cell>
               <Table.Cell bold collapsing color="label">
-                Purity
+                {t('massspec-col-purity', {}, 'Purity')}
               </Table.Cell>
               <Table.Cell bold collapsing color="label">
-                Type
+                {t('massspec-col-type', {}, 'Type')}
               </Table.Cell>
               <Table.Cell bold collapsing color="label">
-                Status
+                {t('massspec-col-status', {}, 'Status')}
               </Table.Cell>
             </Table.Row>
             {beaker.contents.map((reagent) => {
@@ -264,6 +315,7 @@ type SpectroscopyProps = {
 
 const MassSpectroscopy = (props: SpectroscopyProps) => {
   const { act } = useBackend();
+  const t = useT();
   const {
     lowerRange,
     centerValue,
@@ -310,7 +362,7 @@ const MassSpectroscopy = (props: SpectroscopyProps) => {
             font-weight="bold"
             font-size="16"
           >
-            Mass (G)
+            {t('massspec-axis-mass', {}, 'Mass (G)')}
           </tspan>
           <tspan x="0%" y={`${base_line + 20}px`}>
             {graphLowerRange}
@@ -375,7 +427,7 @@ const MassSpectroscopy = (props: SpectroscopyProps) => {
           font-size="17"
           font-weight="bold"
         >
-          <tspan>Absorbance (AU)</tspan>
+          <tspan>{t('massspec-axis-absorbance', {}, 'Absorbance (AU)')}</tspan>
         </text>
         <line
           x1={base_width}

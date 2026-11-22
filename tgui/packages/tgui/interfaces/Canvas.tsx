@@ -5,6 +5,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { decodeHtmlEntities } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { SpriteEditor } from './common/SpriteEditor';
 import {
@@ -44,12 +45,18 @@ type CanvasCommonProps = ZoomProps & {
   height: number;
 };
 
-const ZoomButtons = ({ zoom, setZoom, pixelsPerUnit }: ZoomProps) => (
+const ZoomButtons = ({ zoom, setZoom, pixelsPerUnit }: ZoomProps) => {
+  const t = useT();
+  return (
   <Stack>
     <Stack.Item>
       <Button
         icon="search-minus"
-        tooltip="Zoom Out (Shift + Scroll Down)"
+        tooltip={t(
+          'canvas-zoom-out',
+          {},
+          'Zoom Out (Shift + Scroll Down)',
+        )}
         disabled={zoom <= 1}
         onClick={() => setZoom(Math.max(1, zoom - 1 / pixelsPerUnit))}
       />
@@ -57,13 +64,14 @@ const ZoomButtons = ({ zoom, setZoom, pixelsPerUnit }: ZoomProps) => (
     <Stack.Item>
       <Button
         icon="search-plus"
-        tooltip="Zoom In (Shift + Scroll Up)"
+        tooltip={t('canvas-zoom-in', {}, 'Zoom In (Shift + Scroll Up)')}
         disabled={zoom >= 3}
         onClick={() => setZoom(Math.min(3, zoom + 1 / pixelsPerUnit))}
       />
     </Stack.Item>
   </Stack>
-);
+  );
+};
 
 const ZoomListener = ({
   zoom,
@@ -93,6 +101,7 @@ type EditableCanvasProps = Pick<
 
 const EditableCanvas = (props: EditableCanvasProps) => {
   const { act } = useBackend();
+  const t = useT();
   const {
     editorData,
     pixelsPerUnit,
@@ -179,7 +188,7 @@ const EditableCanvas = (props: EditableCanvasProps) => {
                       checked={showGrid}
                       onClick={() => setShowGrid(!showGrid)}
                     >
-                      Show Grid
+                      {t('canvas-show-grid', {}, 'Show Grid')}
                     </Button.Checkbox>
                   </Stack.Item>
                   <Stack.Item>
@@ -203,7 +212,7 @@ const EditableCanvas = (props: EditableCanvasProps) => {
               </Stack.Item>
               <Stack.Item basis={0} width="100%" textAlign="center">
                 <Button.Confirm onClick={() => act('finalize')}>
-                  Finalize
+                  {t('canvas-finalize', {}, 'Finalize')}
                 </Button.Confirm>
               </Stack.Item>
             </Stack>
@@ -234,6 +243,7 @@ const FinalizedCanvas = (props: FinalizedCanvasProps) => {
   } = props;
   const { title, author, date, medium, patron } = metadata;
   const { act } = useBackend();
+  const t = useT();
   return (
     <Window width={width + 90} height={height + (showPlaque ? 270 : 90)}>
       <Window.Content>
@@ -269,7 +279,8 @@ const FinalizedCanvas = (props: FinalizedCanvasProps) => {
               </Box>
               <Box italic>{medium}</Box>
               <Box italic>
-                {patron && `Sponsored by ${patron}`}
+                {patron &&
+                  t('canvas-sponsored-by', { patron }, `Sponsored by ${patron}`)}
                 <Button
                   icon="hand-holding-usd"
                   color="transparent"

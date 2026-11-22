@@ -11,6 +11,7 @@ import {
 import { formatMoney } from 'tgui-core/format';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -57,17 +58,19 @@ export const BlackMarketUplink = (props) => {
     viewing_category,
     price_modifier,
   } = data;
+  const t = useT();
+  const credits = t('blackmarket-unit-credits', {}, 'cr');
   return (
     <Window width={670} height={480} theme="hackerman">
       <ShipmentSelector />
       <Window.Content scrollable>
         <Section
-          title="Black Market Uplink"
+          title={t('blackmarket-title', {}, 'Black Market Uplink')}
           buttons={
             <Box inline bold>
               <AnimatedNumber
                 value={money}
-                format={(value) => `${formatMoney(value)} cr`}
+                format={(value) => `${formatMoney(value)} ${credits}`}
               />
             </Box>
           }
@@ -128,12 +131,18 @@ export const BlackMarketUplink = (props) => {
                     </Stack>
                   </Stack.Item>
                   <Stack.Item color="label">
-                    {item.amount ? `${item.amount} in stock` : 'Out of stock'}
+                    {item.amount
+                      ? t(
+                          'blackmarket-in-stock',
+                          { count: item.amount },
+                          `${item.amount} in stock`,
+                        )
+                      : t('blackmarket-out-of-stock', {}, 'Out of stock')}
                   </Stack.Item>
-                  <Stack.Item>{`${formatMoney(item.cost * price_modifier)} cr`}</Stack.Item>
+                  <Stack.Item>{`${formatMoney(item.cost * price_modifier)} ${credits}`}</Stack.Item>
                   <Stack.Item>
                     <Button
-                      content="Buy"
+                      content={t('blackmarket-buy', {}, 'Buy')}
                       disabled={
                         !item.amount || item.cost * price_modifier > money
                       }
@@ -158,6 +167,8 @@ export const BlackMarketUplink = (props) => {
 const ShipmentSelector = (props) => {
   const { act, data } = useBackend<Data>();
   const { buying, ltsrbt_built, money } = data;
+  const t = useT();
+  const credits = t('blackmarket-unit-credits', {}, 'cr');
   if (!buying) {
     return null;
   }
@@ -181,7 +192,7 @@ const ShipmentSelector = (props) => {
               <Box mt={1}>{method.description}</Box>
               <Button
                 mt={2}
-                content={`${formatMoney(method.price)} cr`}
+                content={`${formatMoney(method.price)} ${credits}`}
                 disabled={money < method.price}
                 onClick={() =>
                   act('buy', {
@@ -193,7 +204,11 @@ const ShipmentSelector = (props) => {
           );
         })}
       </Stack>
-      <Button content="Cancel" color="bad" onClick={() => act('cancel')} />
+      <Button
+        content={t('blackmarket-cancel', {}, 'Cancel')}
+        color="bad"
+        onClick={() => act('cancel')}
+      />
     </Modal>
   );
 };

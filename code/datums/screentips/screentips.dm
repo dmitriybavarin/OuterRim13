@@ -29,6 +29,6 @@ GLOBAL_LIST_INIT_TYPED(screentip_context_icons, /image, prepare_screentip_contex
 		button = "\icon[GLOB.screentip_context_icons[button]]"
 
 	// Voilá, final result
-	return "[key_combo][button][allow_image ? "" : ":"] [context[key]]"
+	return "[key_combo][button][allow_image ? "" : ":"] [loc_lookup("screentip-hint", context[key])]"
 
 #undef HINT_ICON_FILE

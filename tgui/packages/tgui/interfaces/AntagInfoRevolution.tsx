@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Input, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import type { Objective } from './common/Objectives';
 
@@ -22,59 +23,40 @@ type Info = {
   conversion_objective_max_length: number;
 };
 
-// Takes [a, b, c] and returns "a, b, and c"
-function formatCodes(text: string[]) {
+type Translate = ReturnType<typeof useT>;
+
+function formatCodes(t: Translate, text: string[]) {
   if (text.length === 0) return '';
   if (text.length === 1) return text[0];
-  if (text.length === 2) return `${text[0]} and ${text[1]}`;
-  return `${text.slice(0, -1).join(', ')}, and ${text[text.length - 1]}`;
+  if (text.length === 2) {
+    return t('antaginfo-revolution-codes-two', {
+      first: text[0],
+      second: text[1],
+    });
+  }
+  return t('antaginfo-revolution-codes-many', {
+    list: text.slice(0, -1).join(', '),
+    last: text[text.length - 1],
+  });
 }
 
-// These are just placeholders they don't actually get passed to the player
-function randomObjectivePlaceholderText() {
-  if (Math.random() <= 0.01) {
-    const joke_objectives = [
-      'Annoy the heads of staff as much as possible without harming them.',
-      'Disguise as the heads of staff and confuse the crew.',
-      'Make revolutionary artwork and vandalize the station with it.',
-      'Mass produce picket signs and wave them around the station.',
-      'Start a cult worshipping the proletariat.',
-    ];
-    return joke_objectives[Math.floor(Math.random() * joke_objectives.length)];
-  }
+const JOKE_OBJECTIVE_COUNT = 5;
+const OBJECTIVE_COUNT = 25;
 
-  const objectives = [
-    "Sabotage the station's power grid.",
-    "Steal the Head of Personnel's pet dog.",
-    "Turn the Head of Security's team against them.",
-    "Waste the station's funds and resources.",
-    'Blow up the Research Director with a bomb.',
-    'Bribe the Quartermaster to self-exile.',
-    'Capture anyone with a mindshield and have it surgically removed.',
-    'Create an army of mechs to march on the bridge.',
-    'Cut off the air supply to the brig.',
-    'Equip your leaders with the best gear you can find.',
-    'Find the remaining heads of staff and eliminate them.',
-    'Follow your leaders as closely as possible.',
-    'Gather weapons and armor.',
-    'Go out in a blaze of glory.',
-    'Lie low until we have enough numbers to strike.',
-    'Occupy the bridge and hold it until the heads of staff surrender.',
-    'Protect your leaders at all costs, even if it means sacrifice.',
-    'Protest in front of the bridge.',
-    'Rescue other revolutionaries from the brig.',
-    'Rush the Captain and take his hat.',
-    'Subvert the AI to betray the heads of staff.',
-    'Take the Chief Medical Officer hostage.',
-    'Throw the Chief Engineer into the Supermatter.',
-    'Trick the heads of staff into exiling themselves.',
-    'Wait for the emergency shuttle, then strike in the chaos.',
-  ];
-  return objectives[Math.floor(Math.random() * objectives.length)];
+function randomObjectivePlaceholderText(t: Translate) {
+  if (Math.random() <= 0.01) {
+    return t(
+      `antaginfo-revolution-joke-${Math.floor(Math.random() * JOKE_OBJECTIVE_COUNT) + 1}`,
+    );
+  }
+  return t(
+    `antaginfo-revolution-example-${Math.floor(Math.random() * OBJECTIVE_COUNT) + 1}`,
+  );
 }
 
 export const AntagInfoRevolution = () => {
   const { act, data } = useBackend<Info>();
+  const t = useT();
   const {
     leader,
     code_phrases,
@@ -86,13 +68,13 @@ export const AntagInfoRevolution = () => {
   } = data;
 
   const [objectivePlaceholder, setObjectivePlaceholder] = useState(
-    randomObjectivePlaceholderText(),
+    randomObjectivePlaceholderText(t),
   );
 
   useEffect(() => {
     if (!leader) return;
     const interval = setInterval(() => {
-      setObjectivePlaceholder(randomObjectivePlaceholderText());
+      setObjectivePlaceholder(randomObjectivePlaceholderText(t));
     }, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -103,51 +85,40 @@ export const AntagInfoRevolution = () => {
         <Section scrollable fill>
           <Stack vertical>
             <Stack.Item textColor="red" fontSize="24px" textAlign="center">
-              Viva la Revolution!
+              {t('antaginfo-revolution-title')}
             </Stack.Item>
             <Stack.Item>
               {leader ? (
                 <Stack vertical>
                   {lone_wolf ? (
                     <Stack.Item>
-                      - You are a lone leader of the revolution. It is
-                      recommended to act swiftly and decisively - when the
-                      revolution is sufficiently large, more leaders will be
-                      promoted.
+                      - {t('antaginfo-revolution-leader-alone')}
                     </Stack.Item>
                   ) : (
                     <Stack.Item>
-                      - There are multiple leaders of the revolution. It is
-                      recommended to work together and establish a plan BEFORE
-                      you start converting the crew - being outed early can
-                      prove extremely detrimental.
+                      - {t('antaginfo-revolution-leader-multiple')}
                     </Stack.Item>
                   )}
                   <Stack.Item>
-                    - Convert the crew to your cause with a flash - any flash
-                    will work.
+                    - {t('antaginfo-revolution-leader-convert')}
                   </Stack.Item>
                   <Stack.Item>
-                    - Mindshields will prevent conversion. You can identify them
-                    via the flashing blue border around their job icon.
+                    - {t('antaginfo-revolution-leader-mindshields')}
                   </Stack.Item>
                   <Stack.Item>
-                    - The revolution is lost if you and your fellow leaders are
-                    all killed or exiled. Do not let that happen!
+                    - {t('antaginfo-revolution-leader-lost')}
                   </Stack.Item>
                 </Stack>
               ) : (
                 <Stack vertical>
                   <Stack.Item>
-                    - Help your cause. Do not harm your fellow freedom fighters.
+                    - {t('antaginfo-revolution-member-help')}
                   </Stack.Item>
                   <Stack.Item>
-                    - You can identify your comrades by the red "R" icons, and
-                    your leaders by the blue "R" icons.
+                    - {t('antaginfo-revolution-member-icons')}
                   </Stack.Item>
                   <Stack.Item>
-                    - The revolution is lost if all of your leaders are killed
-                    or exiled. Do not let that happen!
+                    - {t('antaginfo-revolution-member-lost')}
                   </Stack.Item>
                 </Stack>
               )}
@@ -158,11 +129,15 @@ export const AntagInfoRevolution = () => {
                 <Stack.Item>
                   <Stack vertical>
                     <Stack.Item fontSize="16px" textAlign="center">
-                      You must kill or exile the heads of staff:
+                      {t('antaginfo-revolution-heads')}
                     </Stack.Item>
                     {heads.map((head, i) => (
                       <Stack.Item key={`head-${i}`}>
-                        - {head.name}, the {head.role}
+                        -{' '}
+                        {t('antaginfo-revolution-head', {
+                          name: head.name,
+                          role: head.role,
+                        })}
                       </Stack.Item>
                     ))}
                   </Stack>
@@ -177,14 +152,17 @@ export const AntagInfoRevolution = () => {
                     <Stack.Item>
                       <Stack vertical>
                         <Stack.Item italic>
-                          To identify your fellow leaders, use the following
-                          code:
+                          {t('antaginfo-revolution-code-intro')}
                         </Stack.Item>
                         <Stack.Item textColor="blue">
-                          Phrases: {formatCodes(code_phrases)}
+                          {t('antaginfo-revolution-code-phrases', {
+                            codes: formatCodes(t, code_phrases),
+                          })}
                         </Stack.Item>
                         <Stack.Item textColor="red">
-                          Responses: {formatCodes(code_responses)}
+                          {t('antaginfo-revolution-code-responses', {
+                            codes: formatCodes(t, code_responses),
+                          })}
                         </Stack.Item>
                       </Stack>
                     </Stack.Item>
@@ -195,12 +173,13 @@ export const AntagInfoRevolution = () => {
                 <Stack.Item>
                   <Stack vertical>
                     <Stack.Item italic>
-                      Set a conversion guideline: This text is shown only to
-                      newly converted revolutionaries.
+                      {t('antaginfo-revolution-guideline')}
                     </Stack.Item>
                     <Stack.Item>
                       <Input
-                        placeholder={`Ex: ${objectivePlaceholder}`}
+                        placeholder={t('antaginfo-revolution-example-prefix', {
+                          text: objectivePlaceholder,
+                        })}
                         fluid
                         maxLength={conversion_objective_max_length}
                         value={conversion_objective ?? ''}

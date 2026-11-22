@@ -390,47 +390,36 @@
 	var/shown_burn = limb_damage[BURN]
 	var/status = ""
 	var/self_aware = HAS_TRAIT(examiner, TRAIT_SELF_AWARE)
+	var/no_damage = FALSE
 
 	if(self_aware)
 		if(!shown_brute && !shown_burn)
-			status = "no damage"
+			no_damage = TRUE
 		else
-			status = "[shown_brute] brute damage and [shown_burn] burn damage"
+			status = loc_key("bodypart-selfcheck-damage-numbers", list(brute = shown_brute, burn = shown_burn))
 
 	else
 		if(shown_brute > (max_damage * 0.8))
-			status += heavy_brute_msg
+			status += loc_lookup("bodypart-status", heavy_brute_msg)
 		else if(shown_brute > (max_damage * 0.4))
-			status += medium_brute_msg
+			status += loc_lookup("bodypart-status", medium_brute_msg)
 		else if(shown_brute > DAMAGE_PRECISION)
-			status += light_brute_msg
+			status += loc_lookup("bodypart-status", light_brute_msg)
 
 		if(shown_brute > DAMAGE_PRECISION && shown_burn > DAMAGE_PRECISION)
-			status += " and "
+			status += LOC_KEY("bodypart-selfcheck-and")
 
 		if(shown_burn > (max_damage * 0.8))
-			status += heavy_burn_msg
+			status += loc_lookup("bodypart-status", heavy_burn_msg)
 		else if(shown_burn > (max_damage * 0.2))
-			status += medium_burn_msg
+			status += loc_lookup("bodypart-status", medium_burn_msg)
 		else if(shown_burn > DAMAGE_PRECISION)
-			status += light_burn_msg
+			status += loc_lookup("bodypart-status", light_burn_msg)
 
 		if(status == "")
-			status = "OK"
+			no_damage = TRUE
 
-	var/no_damage
-	if(status == "OK" || status == "no damage")
-		no_damage = TRUE
-
-	var/is_disabled = ""
-	if(bodypart_disabled)
-		is_disabled = " is disabled"
-		if(no_damage)
-			is_disabled += " but otherwise"
-		else
-			is_disabled += " and"
-
-	check_list += "<span class='[no_damage ? "notice" : "warning"]'>Your [plaintext_zone][is_disabled][self_aware ? " has " : " looks "][status].</span>"
+	check_list += "<span class='[no_damage ? "notice" : "warning"]'>[loc_key("bodypart-selfcheck-[bodypart_disabled ? "disabled-" : ""][self_aware ? "aware" : "looks"]-[no_damage ? "ok" : "bad"]", list(zone = loc_zone(plaintext_zone), status = status))]</span>"
 
 	var/adept_organ_feeler = owner == examiner && HAS_TRAIT(examiner, TRAIT_SELF_AWARE)
 	for(var/obj/item/organ/organ in src)
@@ -453,8 +442,7 @@
 		if(embedded_thing.get_embed().stealthy_embed)
 			continue
 		var/harmless = embedded_thing.get_embed().is_harmless()
-		var/stuck_wordage = harmless ? "stuck to" : "embedded in"
-		var/embed_text = "\t<a href='byond://?src=[REF(examiner)];embedded_object=[REF(embedded_thing)];embedded_limb=[REF(src)]'>There is [icon2html(embedded_thing, examiner)] \a [embedded_thing] [stuck_wordage] your [plaintext_zone]!</a>"
+		var/embed_text = "\t<a href='byond://?src=[REF(examiner)];embedded_object=[REF(embedded_thing)];embedded_limb=[REF(src)]'>[loc_key("bodypart-selfcheck-embedded-[harmless ? "stuck" : "in"]", list(icon = icon2html(embedded_thing, examiner), item = loc_entity(embedded_thing, "\a [embedded_thing]"), zone = loc_zone(plaintext_zone)))]</a>"
 		if (harmless)
 			check_list += span_italics(span_notice(embed_text))
 		else
@@ -463,15 +451,15 @@
 	var/obj/item/stack/medical/wrap/current_gauze = LAZYACCESS(applied_items, LIMB_ITEM_GAUZE)
 	var/obj/item/tourniquet/current_tourniquet = LAZYACCESS(applied_items, LIMB_ITEM_TOURNIQUET)
 	if(current_tourniquet)
-		var/tourniquet_href = "<a href='byond://?src=[REF(owner)];remove_tourniquet=[REF(src)]'>[icon2html(current_tourniquet, examiner)] \a [current_tourniquet]</a>"
-		var/tourniquet_text = "\tThere is [tourniquet_href] tightly secured around [body_zone == BODY_ZONE_HEAD ? "your neck!" : "it."]"
+		var/tourniquet_href = "<a href='byond://?src=[REF(owner)];remove_tourniquet=[REF(src)]'>[icon2html(current_tourniquet, examiner)] [loc_entity(current_tourniquet, "\a [current_tourniquet]")]</a>"
+		var/tourniquet_text = "\t[loc_key("bodypart-selfcheck-tourniquet-[body_zone == BODY_ZONE_HEAD ? "neck" : "limb"]", list(item = tourniquet_href))]"
 		if(body_zone == BODY_ZONE_HEAD)
 			check_list += span_boldwarning(tourniquet_text)
 		else
 			check_list += span_warning(tourniquet_text)
 	if(current_gauze)
-		var/gauze_href = "<a href='byond://?src=[REF(examiner)];gauze_limb=[REF(src)]'>[icon2html(current_gauze, examiner)] \a [current_gauze]</a>"
-		var/gauze_text = "\tThere is [gauze_href] wrapped around your [name]."
+		var/gauze_href = "<a href='byond://?src=[REF(examiner)];gauze_limb=[REF(src)]'>[icon2html(current_gauze, examiner)] [loc_entity(current_gauze, "\a [current_gauze]")]</a>"
+		var/gauze_text = "\t[loc_key("bodypart-selfcheck-gauze", list(item = gauze_href, zone = loc_zone(name)))]"
 		check_list += span_notice(gauze_text)
 
 	else if(can_bleed())
@@ -487,8 +475,7 @@
 				bleed_text = span_warning(LOC_KEY("surgery-bodyparts-it_s_bleeding_profusely"))
 
 		if(bleed_text)
-			check_list += "\t[span_tooltip("You are loosing blood. You should wrap your limb in gauze \
-				or apply pressure to it by grabbing yourself (while targeting the limb) to stem the flow.", bleed_text)]"
+			check_list += "\t[span_tooltip(LOC_KEY("bodypart-selfcheck-bleed-hint"), bleed_text)]"
 
 	return jointext(check_list, "<br>")
 

@@ -2408,12 +2408,12 @@ ent-obj-structure-falsewall-gold = золотая стена
 
 # name: rough iron wall
 # desc: A wall with rough metal plating.
-ent-obj-structure-falsewall-iron = грубая железная стена
-    .gen = грубой железной стены
-    .dat = грубой железной стене
-    .acc = грубую железную стену
-    .ins = грубой железной стеной
-    .pre = грубой железной стене
+ent-obj-structure-falsewall-iron = грубая стальная стена
+    .gen = грубой стальной стены
+    .dat = грубой стальной стене
+    .acc = грубую стальную стену
+    .ins = грубой стальной стеной
+    .pre = грубой стальной стене
     .desc = Стена с грубой металлической обшивкой.
 
 # name: wall
@@ -3669,7 +3669,7 @@ ent-obj-structure-girder = балка
     .acc = балку
     .ins = балкой
     .pre = балке
-    .desc = Большая конструкция из металла; требуется слой железа, прежде чем ее можно будет считать стеной.
+    .desc = Большая конструкция из металла; требуется слой стали, прежде чем ее можно будет считать стеной.
 
 # name: wall gear
 # desc: A girder made out of sturdy bronze, made to resemble a gear.
@@ -3769,7 +3769,7 @@ ent-obj-structure-grille = решетка
     .acc = решетку
     .ins = решеткой
     .pre = решетке
-    .desc = Хлипкий каркас из железных прутьев.
+    .desc = Хлипкий каркас из стальных прутьев.
 
 # desc: A STRONG framework of hardened plasteel rods, that you cannot possibly get through. If you were an engineer you would be drooling over its construction right now.
 ent-obj-structure-grille-indestructible =
@@ -4478,12 +4478,12 @@ ent-obj-structure-minecart_rail-railbreak = тормоз рельса для в�
     .desc = Останавливает вагонетки на их пути. На путях. Вы поняли, о чем я.
 
 # name: iron door
-ent-obj-structure-mineral_door = железная дверь
-    .gen = железной двери
-    .dat = железной двери
-    .acc = железную дверь
-    .ins = железной дверью
-    .pre = железной двери
+ent-obj-structure-mineral_door = стальная дверь
+    .gen = стальной двери
+    .dat = стальной двери
+    .acc = стальную дверь
+    .ins = стальной дверью
+    .pre = стальной двери
 
 # name: gold door
 ent-obj-structure-mineral_door-gold = золотая дверь
@@ -4494,12 +4494,12 @@ ent-obj-structure-mineral_door-gold = золотая дверь
     .pre = золотой двери
 
 # name: iron door
-ent-obj-structure-mineral_door-iron = железная дверь
-    .gen = железной двери
-    .dat = железной двери
-    .acc = железную дверь
-    .ins = железной дверью
-    .pre = железной двери
+ent-obj-structure-mineral_door-iron = стальная дверь
+    .gen = стальной двери
+    .dat = стальной двери
+    .acc = стальную дверь
+    .ins = стальной дверью
+    .pre = стальной двери
 
 # name: paper frame door
 ent-obj-structure-mineral_door-paperframe = дверь в бумажной раме
@@ -5164,12 +5164,12 @@ ent-obj-structure-platform-gold = золотая платформа
     .pre = золотой платформе
 
 # name: rough iron platform
-ent-obj-structure-platform-iron = грубая железная платформа
-    .gen = грубой железной платформы
-    .dat = грубой железной платформе
-    .acc = грубую железную платформу
-    .ins = грубой железной платформой
-    .pre = грубой железной платформе
+ent-obj-structure-platform-iron = грубая стальная платформа
+    .gen = грубой стальной платформы
+    .dat = грубой стальной платформе
+    .acc = грубую стальную платформу
+    .ins = грубой стальной платформой
+    .pre = грубой стальной платформе
 
 # name: japanese platform
 ent-obj-structure-platform-paper = японская платформа
@@ -6997,7 +6997,7 @@ ent-obj-structure-stone_tile-surrounding_tile-cracked = треснувшая о�
 
 # desc: A square piece of iron standing on four metal legs. It can not move.
 ent-obj-structure-table = стол
-    .desc = Квадратный кусок железа на четырех металлических ножках. Он не умеет двигаться.
+    .desc = Квадратный кусок стали на четырех металлических ножках. Он не умеет двигаться.
 
 # name: alien table
 # desc: Advanced flat surface technology at work!
@@ -7344,12 +7344,12 @@ ent-obj-structure-tram-alt-gold = золотой трамвай
 
 # name: rough iron tram
 # desc: A composite structure with rough iron plating.
-ent-obj-structure-tram-alt-iron = грубый железный трамвай
-    .gen = грубого железного трамвая
-    .dat = грубому железному трамваю
-    .ins = грубым железным трамваем
-    .pre = грубом железном трамвае
-    .desc = Композитная конструкция с грубой железной обшивкой.
+ent-obj-structure-tram-alt-iron = грубый стальный трамвай
+    .gen = грубого стального трамвая
+    .dat = грубому стальному трамваю
+    .ins = грубым стальным трамваем
+    .pre = грубом стальном трамвае
+    .desc = Композитная конструкция с грубой стальной обшивкой.
 
 # name: plasma tram
 # desc: A composite structure with plasma plating. This is definitely a bad idea.

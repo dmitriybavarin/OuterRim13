@@ -219,8 +219,8 @@
 	if(damage < low_threshold)
 		return
 	if(damage < high_threshold)
-		return span_warning("Your [self_aware ? "liver" : "lower abdomen"] feels sore.")
-	return span_boldwarning("Your [self_aware ? "liver" : "lower abdomen"] feels like it's on fire!")
+		return span_warning(loc_key("organ-liver-selfcheck-sore-[self_aware ? "aware" : "looks"]"))
+	return span_boldwarning(loc_key("organ-liver-selfcheck-fire-[self_aware ? "aware" : "looks"]"))
 
 // alien livers can ignore up to 15u of toxins, but they take x3 liver damage
 /obj/item/organ/liver/alien

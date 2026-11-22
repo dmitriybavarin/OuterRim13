@@ -10,6 +10,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Entry = {
@@ -78,6 +79,7 @@ const TIER2TIERDATA: TierData[] = [
 
 export const InfuserBook = (props) => {
   const { data, act } = useBackend<DnaInfuserData>();
+  const t = useT();
   const { entries } = data;
 
   const [bookPosition, setBookPosition] = useState({
@@ -136,7 +138,7 @@ export const InfuserBook = (props) => {
   const restrictedNext = chapter === 3 && pageInChapter === 0;
 
   return (
-    <Window title="DNA Infusion Manual" width={620} height={500}>
+    <Window title={t('infuserbook-title', {}, 'DNA Infusion Manual')} width={620} height={500}>
       <Window.Content>
         <Stack vertical>
           <Stack.Item mb={-1}>
@@ -158,7 +160,9 @@ export const InfuserBook = (props) => {
                           : () => switchChapter(tabIndex)
                       }
                     >
-                      <Box color={tabIndex === 4 && 'red'}>{tab}</Box>
+                      <Box color={tabIndex === 4 && 'red'}>
+                        {t(`infuserbook-tab-${tabIndex}`, {}, tab)}
+                      </Box>
                     </Tabs.Tab>
                   );
                 })}
@@ -176,13 +180,20 @@ export const InfuserBook = (props) => {
             <Stack fontSize="18px" fill>
               <Stack.Item grow={2}>
                 <Button onClick={() => setPage(pageInChapter - 1)} fluid>
-                  Last Page
+                  {t('infuserbook-last-page', {}, 'Last Page')}
                 </Button>
               </Stack.Item>
               <Stack.Item grow={1}>
                 <Section fitted fill pt="3px">
-                  Page {pageInChapter + 1}/
-                  {paginatedEntries[chapter].length + (chapter === 0 ? 1 : 0)}
+                  {t(
+                    'infuserbook-page',
+                    {
+                      current: pageInChapter + 1,
+                      total:
+                        paginatedEntries[chapter].length + (chapter === 0 ? 1 : 0),
+                    },
+                    `Page ${pageInChapter + 1}/${paginatedEntries[chapter].length + (chapter === 0 ? 1 : 0)}`,
+                  )}
                 </Section>
               </Stack.Item>
               <Stack.Item grow={2}>
@@ -191,7 +202,9 @@ export const InfuserBook = (props) => {
                   onClick={() => setPage(pageInChapter + 1)}
                   fluid
                 >
-                  {restrictedNext ? 'RESTRICTED' : 'Next Page'}
+                  {restrictedNext
+                    ? t('infuserbook-restricted', {}, 'RESTRICTED')
+                    : t('infuserbook-next-page', {}, 'Next Page')}
                 </Button>
               </Stack.Item>
             </Stack>
@@ -203,34 +216,30 @@ export const InfuserBook = (props) => {
 };
 
 export const InfuserInstructions = (props) => {
+  const t = useT();
+
   return (
-    <Section title="DNA Infusion Guide" height={PAGE_HEIGHT}>
+    <Section title={t('infuserbook-guide', {}, 'DNA Infusion Guide')} height={PAGE_HEIGHT}>
       <Stack vertical>
-        <Stack.Item fontSize="16px">What does it do?</Stack.Item>
+        <Stack.Item fontSize="16px">{t('infuserbook-what', {}, 'What does it do?')}</Stack.Item>
         <Stack.Item color="label">
-          DNA Infusion is the practice of integrating dead creature DNA into
-          yourself, mutating one of your organs into a genetic slurry that sits
-          somewhere between being yours or the creature&apos;s. While this does
-          bring you further away from being human, and gives a slew of...
-          unfortunate side effects, it also grants new capabilities.{' '}
+          {t('infuserbook-what-text', {}, 'DNA Infusion is the practice of integrating dead creature DNA into yourself, mutating one of your organs into a genetic slurry that sits somewhere between being yours or the creature\'s. While this does bring you further away from being human, and gives a slew of... unfortunate side effects, it also grants new capabilities.')}{' '}
           <b>
-            Above all else, you have to understand that gene-mutants are usually
-            very good at specific things, especially with their threshold
-            bonuses.
+            {t('infuserbook-what-bold', {}, 'Above all else, you have to understand that gene-mutants are usually very good at specific things, especially with their threshold bonuses.')}
           </b>
         </Stack.Item>
-        <Stack.Item fontSize="16px">I&apos;m sold! How do I do it?</Stack.Item>
+        <Stack.Item fontSize="16px">
+          {t('infuserbook-how', {}, 'I\'m sold! How do I do it?')}
+        </Stack.Item>
         <Stack.Item color="label">
-          1. Load a dead creature into the machine. This is what you&apos;re
-          infusing from.
+          {t('infuserbook-step-1', {}, '1. Load a dead creature into the machine. This is what you\'re infusing from.')}
           <br />
-          2. Enter the machine, like you would the DNA scanner.
+          {t('infuserbook-step-2', {}, '2. Enter the machine, like you would the DNA scanner.')}
           <br />
-          3. Have someone activate the machine externally.
+          {t('infuserbook-step-3', {}, '3. Have someone activate the machine externally.')}
           <br />
           <Box mt="10px" inline color="white">
-            And you&apos;re done! Note that the infusion source will be
-            obliterated in the process.
+            {t('infuserbook-done', {}, 'And you\'re done! Note that the infusion source will be obliterated in the process.')}
           </Box>
         </Stack.Item>
       </Stack>
@@ -244,17 +253,29 @@ type InfuserEntryProps = {
 
 const InfuserEntry = (props: InfuserEntryProps) => {
   const { entry } = props;
+  const t = useT();
 
   const tierData = TIER2TIERDATA[entry.tier];
 
   return (
     <Section
       fill
-      title={`${entry.name} Mutant`}
+      title={t(
+        'infuserbook-entry-title',
+        { name: entry.name },
+        `${entry.name} Mutant`,
+      )}
       height={PAGE_HEIGHT}
       buttons={
-        <Button tooltip={tierData.desc} icon={tierData.icon}>
-          {tierData.name}
+        <Button
+          tooltip={t(
+            `infuserbook-tier-${entry.tier}-desc`,
+            {},
+            tierData.desc,
+          )}
+          icon={tierData.icon}
+        >
+          {t(`infuserbook-tier-${entry.tier}-name`, {}, tierData.name)}
         </Button>
       }
     >
@@ -263,12 +284,18 @@ const InfuserEntry = (props: InfuserEntryProps) => {
           <BlockQuote>
             {entry.desc}{' '}
             {entry.threshold_desc && (
-              <>If a subject infuses with enough DNA, {entry.threshold_desc}</>
+              <>
+                {t(
+                  'infuserbook-threshold',
+                  { desc: entry.threshold_desc },
+                  `If a subject infuses with enough DNA, ${entry.threshold_desc}`,
+                )}
+              </>
             )}
           </BlockQuote>
         </Stack.Item>
         <Stack.Item grow>
-          Qualities:
+          {t('infuserbook-qualities', {}, 'Qualities:')}
           {entry.qualities.map((quality) => {
             return (
               <Box color="label" key={quality}>
@@ -279,11 +306,11 @@ const InfuserEntry = (props: InfuserEntryProps) => {
         </Stack.Item>
         <Stack.Divider />
         <Stack.Item>
-          Created from infusing{' '}
-          <Box inline color={entry.name === 'Rejected' ? 'red' : 'green'}>
-            {entry.infuse_mob_name}
-          </Box>{' '}
-          DNA into a subject.
+          {t(
+            'infuserbook-created',
+            { name: entry.infuse_mob_name },
+            `Created from infusing ${entry.infuse_mob_name} DNA into a subject.`,
+          )}
         </Stack.Item>
       </Stack>
     </Section>

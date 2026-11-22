@@ -8,6 +8,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -40,12 +41,13 @@ export const SatelliteControl = (props) => {
 /** Displays coverage info of the meteor shield */
 const ShieldInfo = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { meteor_shield_coverage, meteor_shield_coverage_max } = data;
 
   return (
     <Section>
       <LabeledList>
-        <LabeledList.Item label="Coverage">
+        <LabeledList.Item label={t('satellitecontrol-coverage', {}, 'Coverage')}>
           <ProgressBar
             value={meteor_shield_coverage / meteor_shield_coverage_max}
             ranges={{
@@ -63,10 +65,11 @@ const ShieldInfo = (props) => {
 /** Displays a map of satellites and their status */
 const SatelliteDisplay = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { satellites = [] } = data;
 
   return (
-    <Section title="Satellite Controls">
+    <Section title={t('satellitecontrol-title', {}, 'Satellite Controls')}>
       <Box mr={-1}>
         {satellites.map((satellite) => (
           <Button.Checkbox

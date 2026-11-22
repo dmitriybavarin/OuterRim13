@@ -1,4 +1,5 @@
 import { useBackend } from 'tgui/backend';
+import { useT } from 'tgui/i18n';
 import { Window } from 'tgui/layouts';
 import { Button, LabeledList, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
@@ -21,10 +22,11 @@ type Spawner = {
 
 export const SpawnersMenu = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { spawners = [] } = data;
 
   return (
-    <Window title="Spawners Menu" width={700} height={525}>
+    <Window title={t('spawners-title', {}, 'Spawners Menu')} width={700} height={525}>
       <Window.Content scrollable>
         <Stack vertical>
           {spawners.map((spawner) => (
@@ -37,16 +39,20 @@ export const SpawnersMenu = (props) => {
                   <Stack>
                     {spawner.infinite ? (
                       <Stack.Item fontSize="14px" color="green">
-                        Infinite
+                        {t('spawners-infinite', {}, 'Infinite')}
                       </Stack.Item>
                     ) : (
                       <Stack.Item fontSize="14px" color="green">
-                        {spawner.amount_left} left
+                        {t(
+                          'spawners-left',
+                          { count: spawner.amount_left },
+                          `${spawner.amount_left} left`,
+                        )}
                       </Stack.Item>
                     )}
                     <Stack.Item>
                       <Button
-                        content="Jump"
+                        content={t('spawners-jump', {}, 'Jump')}
                         onClick={() =>
                           act('jump', {
                             name: spawner.name,
@@ -54,7 +60,7 @@ export const SpawnersMenu = (props) => {
                         }
                       />
                       <Button
-                        content="Spawn"
+                        content={t('spawners-spawn', {}, 'Spawn')}
                         onClick={() =>
                           act('spawn', {
                             name: spawner.name,
@@ -67,19 +73,19 @@ export const SpawnersMenu = (props) => {
               >
                 <LabeledList>
                   {spawner.desc ? (
-                    <LabeledList.Item label="Description">
+                    <LabeledList.Item label={t('spawners-description', {}, 'Description')}>
                       {spawner.desc}
                     </LabeledList.Item>
                   ) : (
                     <div>
-                      <LabeledList.Item label="Origin">
-                        {spawner.you_are_text || 'Unknown'}
+                      <LabeledList.Item label={t('spawners-origin', {}, 'Origin')}>
+                        {spawner.you_are_text || t('spawners-unknown', {}, 'Unknown')}
                       </LabeledList.Item>
-                      <LabeledList.Item label="Directives">
-                        {spawner.flavor_text || 'None'}
+                      <LabeledList.Item label={t('spawners-directives', {}, 'Directives')}>
+                        {spawner.flavor_text || t('spawners-none', {}, 'None')}
                       </LabeledList.Item>
-                      <LabeledList.Item color="bad" label="Conditions">
-                        {spawner.important_text || 'None'}
+                      <LabeledList.Item color="bad" label={t('spawners-conditions', {}, 'Conditions')}>
+                        {spawner.important_text || t('spawners-none', {}, 'None')}
                       </LabeledList.Item>
                     </div>
                   )}

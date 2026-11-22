@@ -1,4 +1,5 @@
 import { useBackend } from 'tgui/backend';
+import { useT } from 'tgui/i18n';
 import { Window } from 'tgui/layouts';
 import {
   Button,
@@ -58,26 +59,39 @@ export function SimpleBot(props) {
 
 export function BotSettings(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { can_hack, locked } = data;
   const access = !locked || !!can_hack;
   return (
-    <Section title="Settings" buttons={<TabDisplay />}>
-      {!access ? <NoticeBox>Locked!</NoticeBox> : <SettingsDisplay />}
+    <Section
+      title={t('simplebot-settings', {}, 'Settings')}
+      buttons={<TabDisplay />}
+    >
+      {!access ? <NoticeBox>{t('simplebot-locked', {}, 'Locked!')}</NoticeBox> : <SettingsDisplay />}
     </Section>
   );
 }
 
 export function BotControl(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { custom_controls } = data;
   return (
-    <Section fill scrollable title="Controls">
+    <Section
+      fill
+      scrollable
+      title={t('simplebot-controls', {}, 'Controls')}
+    >
       <LabeledControls wrap>
         {Object.entries(custom_controls).map((control) => (
           <LabeledControls.Item
             pb={2}
             key={control[0]}
-            label={capitalizeAll(control[0].replace('_', ' '))}
+            label={t(
+              `simplebot-control-${control[0].replace(/_/g, '-')}`,
+              {},
+              capitalizeAll(control[0].replace('_', ' ')),
+            )}
           >
             <ControlHelper control={control} />
           </LabeledControls.Item>
@@ -89,6 +103,7 @@ export function BotControl(props) {
 /** Creates a lock button at the top of the controls */
 function TabDisplay(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     can_hack,
     emagged,
@@ -108,11 +123,21 @@ function TabDisplay(props) {
           selected={!emagged}
           tooltip={
             !emagged
-              ? 'Unlocks the safety protocols.'
-              : 'Resets the bot operating system.'
+              ? t(
+                  'simplebot-hack-tooltip',
+                  {},
+                  'Unlocks the safety protocols.',
+                )
+              : t(
+                  'simplebot-reset-tooltip',
+                  {},
+                  'Resets the bot operating system.',
+                )
           }
         >
-          {emagged ? 'Malfunctional' : 'Safety Lock'}
+          {emagged
+            ? t('simplebot-malfunctional', {}, 'Malfunctional')
+            : t('simplebot-safety-lock', {}, 'Safety Lock')}
         </Button>
       )}
       {!!allow_possession && <PaiButton />}
@@ -120,9 +145,13 @@ function TabDisplay(props) {
         color="transparent"
         icon="fa-poll-h"
         onClick={() => act('rename')}
-        tooltip="Update the bot's name registration."
+        tooltip={t(
+          'simplebot-rename-tooltip',
+          {},
+          "Update the bot's name registration.",
+        )}
       >
-        Rename
+        {t('simplebot-rename', {}, 'Rename')}
       </Button>
       <Button
         color="transparent"
@@ -130,9 +159,13 @@ function TabDisplay(props) {
         icon={locked ? 'lock' : 'lock-open'}
         onClick={() => act('lock')}
         selected={locked}
-        tooltip={`${locked ? 'Unlock' : 'Lock'} the control panel.`}
+        tooltip={
+          locked
+            ? t('simplebot-unlock-tooltip', {}, 'Unlock the control panel.')
+            : t('simplebot-lock-tooltip', {}, 'Lock the control panel.')
+        }
       >
-        Controls Lock
+        {t('simplebot-controls-lock', {}, 'Controls Lock')}
       </Button>
     </>
   );
@@ -141,6 +174,7 @@ function TabDisplay(props) {
 /** Creates a button indicating PAI status and offers the eject action */
 function PaiButton(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     settings: { pai_inserted },
   } = data;
@@ -150,9 +184,13 @@ function PaiButton(props) {
       <Button
         color="transparent"
         icon="robot"
-        tooltip={`Insert an active PAI card to control this device.`}
+        tooltip={t(
+          'simplebot-pai-insert-tooltip',
+          {},
+          'Insert an active PAI card to control this device.',
+        )}
       >
-        No PAI Inserted
+        {t('simplebot-no-pai', {}, 'No PAI Inserted')}
       </Button>
     );
   }
@@ -162,9 +200,9 @@ function PaiButton(props) {
       disabled={!pai_inserted}
       icon="eject"
       onClick={() => act('eject_pai')}
-      tooltip={`Ejects the current PAI.`}
+      tooltip={t('simplebot-pai-eject-tooltip', {}, 'Ejects the current PAI.')}
     >
-      Eject PAI
+      {t('simplebot-eject-pai', {}, 'Eject PAI')}
     </Button>
   );
 }
@@ -172,6 +210,7 @@ function PaiButton(props) {
 /** Displays the bot's standard settings: Power, patrol, etc. */
 function SettingsDisplay(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     settings: {
       airplane_mode,
@@ -185,8 +224,14 @@ function SettingsDisplay(props) {
 
   return (
     <LabeledControls>
-      <LabeledControls.Item label="Power">
-        <Tooltip content={`Powers ${power ? 'off' : 'on'} the bot.`}>
+      <LabeledControls.Item label={t('simplebot-power', {}, 'Power')}>
+        <Tooltip
+          content={
+            power
+              ? t('simplebot-power-off-tooltip', {}, 'Powers off the bot.')
+              : t('simplebot-power-on-tooltip', {}, 'Powers on the bot.')
+          }
+        >
           <Icon
             size={2}
             name="power-off"
@@ -195,11 +240,23 @@ function SettingsDisplay(props) {
           />
         </Tooltip>
       </LabeledControls.Item>
-      <LabeledControls.Item label="Airplane Mode">
+      <LabeledControls.Item
+        label={t('simplebot-airplane-mode', {}, 'Airplane Mode')}
+      >
         <Tooltip
-          content={`${
-            !airplane_mode ? 'Disables' : 'Enables'
-          } remote access via console.`}
+          content={
+            !airplane_mode
+              ? t(
+                  'simplebot-airplane-disable-tooltip',
+                  {},
+                  'Disables remote access via console.',
+                )
+              : t(
+                  'simplebot-airplane-enable-tooltip',
+                  {},
+                  'Enables remote access via console.',
+                )
+          }
         >
           <Icon
             size={2}
@@ -209,11 +266,23 @@ function SettingsDisplay(props) {
           />
         </Tooltip>
       </LabeledControls.Item>
-      <LabeledControls.Item label="Patrol Station">
+      <LabeledControls.Item
+        label={t('simplebot-patrol-station', {}, 'Patrol Station')}
+      >
         <Tooltip
-          content={`${
-            patrol_station ? 'Disables' : 'Enables'
-          } automatic station patrol.`}
+          content={
+            patrol_station
+              ? t(
+                  'simplebot-patrol-disable-tooltip',
+                  {},
+                  'Disables automatic station patrol.',
+                )
+              : t(
+                  'simplebot-patrol-enable-tooltip',
+                  {},
+                  'Enables automatic station patrol.',
+                )
+          }
         >
           <Icon
             size={2}
@@ -223,12 +292,22 @@ function SettingsDisplay(props) {
           />
         </Tooltip>
       </LabeledControls.Item>
-      <LabeledControls.Item label="Maintenance Lock">
+      <LabeledControls.Item
+        label={t('simplebot-maintenance-lock', {}, 'Maintenance Lock')}
+      >
         <Tooltip
           content={
             maintenance_lock
-              ? 'Opens the maintenance hatch for repairs.'
-              : 'Closes the maintenance hatch.'
+              ? t(
+                  'simplebot-maintenance-open-tooltip',
+                  {},
+                  'Opens the maintenance hatch for repairs.',
+                )
+              : t(
+                  'simplebot-maintenance-close-tooltip',
+                  {},
+                  'Closes the maintenance hatch.',
+                )
           }
         >
           <Icon
@@ -240,12 +319,22 @@ function SettingsDisplay(props) {
         </Tooltip>
       </LabeledControls.Item>
       {!!allow_possession && (
-        <LabeledControls.Item label="Personality">
+        <LabeledControls.Item
+          label={t('simplebot-personality', {}, 'Personality')}
+        >
           <Tooltip
             content={
               possession_enabled
-                ? 'Resets personality to factory default.'
-                : 'Enables download of a unique personality.'
+                ? t(
+                    'simplebot-personality-reset-tooltip',
+                    {},
+                    'Resets personality to factory default.',
+                  )
+                : t(
+                    'simplebot-personality-enable-tooltip',
+                    {},
+                    'Enables download of a unique personality.',
+                  )
             }
           >
             <Icon
@@ -300,10 +389,17 @@ function ControlHelper(props: ControlProps) {
 /** Slider button for medbot healing thresholds */
 function MedbotThreshold(props: ControlProps) {
   const { act } = useBackend<Data>();
+  const t = useT();
   const { control } = props;
 
   return (
-    <Tooltip content="Adjusts the sensitivity for damage treatment.">
+    <Tooltip
+      content={t(
+        'simplebot-threshold-tooltip',
+        {},
+        'Adjusts the sensitivity for damage treatment.',
+      )}
+    >
       <Slider
         minValue={5}
         maxValue={75}
@@ -324,6 +420,7 @@ function MedbotThreshold(props: ControlProps) {
 /** Tile stacks for floorbots - shows number and eject button */
 function FloorbotTiles(props: ControlProps) {
   const { act } = useBackend<Data>();
+  const t = useT();
   const { control } = props;
 
   return (
@@ -331,9 +428,13 @@ function FloorbotTiles(props: ControlProps) {
       disabled={!control[1]}
       icon={control[1] ? 'eject' : ''}
       onClick={() => act('eject_tiles')}
-      tooltip="Number of floor tiles contained in the bot."
+      tooltip={t(
+        'simplebot-tiles-tooltip',
+        {},
+        'Number of floor tiles contained in the bot.',
+      )}
     >
-      {control[1] ? `${control[1]}` : 'Empty'}
+      {control[1] ? `${control[1]}` : t('simplebot-empty', {}, 'Empty')}
     </Button>
   );
 }
@@ -341,10 +442,17 @@ function FloorbotTiles(props: ControlProps) {
 /** Direction indicator for floorbot when line mode is chosen. */
 function FloorbotLine(props: ControlProps) {
   const { act } = useBackend<Data>();
+  const t = useT();
   const { control } = props;
 
   return (
-    <Tooltip content="Enables straight line tiling mode.">
+    <Tooltip
+      content={t(
+        'simplebot-line-tooltip',
+        {},
+        'Enables straight line tiling mode.',
+      )}
+    >
       <Icon
         color={control[1] ? 'good' : 'gray'}
         name={control[1] ? 'compass' : 'toggle-off'}

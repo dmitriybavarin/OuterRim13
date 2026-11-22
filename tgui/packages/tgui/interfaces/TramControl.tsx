@@ -10,6 +10,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { slugify, useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -64,12 +65,13 @@ const dipUnderCircle = (dest, dep) => {
 
 export const TramControl = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { broken, moving, destinations = [], tram_location } = data;
 
   const [transitIndex, setTransitIndex] = useState(1);
 
   return (
-    <Window title="Tram Controls" width={600} height={300}>
+    <Window title={t('tramcontrol-title', {}, 'Tram Controls')} width={600} height={300}>
       <Window.Content>
         {(!!broken && <BrokenTramDimmer />) || (
           <Section fill>
@@ -81,7 +83,7 @@ export const TramControl = (props) => {
               justify="space-around"
               vertical
             >
-              <Stack.Item>Nanotrasen Transit System</Stack.Item>
+              <Stack.Item>{t('tramcontrol-transit', {}, 'Nanotrasen Transit System')}</Stack.Item>
               <Stack.Item>
                 <Stack fill>
                   {destinations.map((dest) => (
@@ -104,7 +106,7 @@ export const TramControl = (props) => {
                     })
                   }
                 >
-                  Send Tram
+                  {t('tramcontrol-send', {}, 'Send Tram')}
                 </Button>
               </Stack.Item>
             </Stack>
@@ -116,6 +118,8 @@ export const TramControl = (props) => {
 };
 
 const BrokenTramDimmer = () => {
+  const t = useT();
+
   return (
     <Dimmer>
       <Stack vertical>
@@ -123,7 +127,7 @@ const BrokenTramDimmer = () => {
           <Icon ml={7} color="red" name="triangle-exclamation" size={10} />
         </Stack.Item>
         <Stack.Item fontSize="14px" color="red">
-          Check Tram Controller!
+          {t('tramcontrol-check', {}, 'Check Tram Controller!')}
         </Stack.Item>
       </Stack>
     </Dimmer>
@@ -132,6 +136,7 @@ const BrokenTramDimmer = () => {
 
 const MovingTramDimmer = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { tram_location } = data;
 
   return (
@@ -141,7 +146,11 @@ const MovingTramDimmer = (props) => {
           <Icon ml={10} name="sync-alt" color="green" size={11} />
         </Stack.Item>
         <Stack.Item mt={5} fontSize="14px" color="green">
-          The tram is travelling to {tram_location}!
+          {t(
+            'tramcontrol-travelling',
+            { location: tram_location },
+            `The tram is travelling to ${tram_location}!`,
+          )}
         </Stack.Item>
       </Stack>
     </Dimmer>
@@ -151,6 +160,7 @@ const MovingTramDimmer = (props) => {
 const Destination = (props) => {
   const { dest, setTransitIndex, transitIndex } = props;
   const { data } = useBackend<Data>();
+  const t = useT();
   const { destinations = [], tram_location } = data;
 
   const getDestColor = (dest) => {
@@ -171,7 +181,15 @@ const Destination = (props) => {
           width={4.9}
           color={getDestColor(dest)}
           tooltipPosition="top"
-          tooltip={COLOR2BLURB[getDestColor(dest)]}
+          tooltip={
+            COLOR2BLURB[getDestColor(dest)]
+              ? t(
+                  `tramcontrol-blurb-${getDestColor(dest)}`,
+                  {},
+                  COLOR2BLURB[getDestColor(dest)],
+                )
+              : undefined
+          }
           onClick={() => setTransitIndex(destinations.indexOf(dest))}
         >
           <Icon ml={-0.75} fontSize="59px" name="circle-o" />
@@ -191,7 +209,7 @@ const Destination = (props) => {
                   color={DEPARTMENT2COLOR[dep]}
                   icon={dest.dest_icons[dep]}
                   tooltipPosition="bottom"
-                  tooltip={dep}
+                  tooltip={t(`tramcontrol-dept-${slugify(dep)}`, {}, dep)}
                   style={{
                     borderRadius: '5em',
                     border: '2px solid white',

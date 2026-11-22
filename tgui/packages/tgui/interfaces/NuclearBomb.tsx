@@ -2,6 +2,7 @@ import { Box, Button, Icon, Stack } from 'tgui-core/components';
 import { type BooleanLike, classes } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -59,6 +60,7 @@ export function NukeKeypad(props) {
 
 export function NuclearBomb(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { status1, status2 } = data;
 
   return (
@@ -103,7 +105,7 @@ export function NuclearBomb(props) {
                   className="NuclearBomb__Button NuclearBomb__Button--C"
                   onClick={() => act('arm')}
                 >
-                  ARM
+                  {t('nukebomb-arm', {}, 'ARM')}
                 </Button>
                 <Button
                   fluid
@@ -114,7 +116,7 @@ export function NuclearBomb(props) {
                   className="NuclearBomb__Button NuclearBomb__Button--E"
                   onClick={() => act('anchor')}
                 >
-                  ANCHOR
+                  {t('nukebomb-anchor', {}, 'ANCHOR')}
                 </Button>
                 <Box textAlign="center" color="#9C9987" fontSize="80px">
                   <Icon name="radiation" />

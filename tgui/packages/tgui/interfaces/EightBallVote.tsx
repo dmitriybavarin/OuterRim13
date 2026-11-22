@@ -11,6 +11,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { toTitleCase } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -28,6 +29,7 @@ type Answer = {
 export function EightBallVote(props) {
   const { data } = useBackend<Data>();
   const { shaking } = data;
+  const t = useT();
 
   const idealHeight = shaking ? 265 : 70;
   return (
@@ -35,12 +37,12 @@ export function EightBallVote(props) {
       <Window.Content pb={'2.5em'}>
         {!shaking ? (
           <NoticeBox danger textAlign={'center'}>
-            No question is currently being asked.
+            {t('eightball-no-question', {}, 'No question is currently being asked.')}
           </NoticeBox>
         ) : (
           <>
             <NoticeBox success textAlign={'center'}>
-              A question is currently being asked!
+              {t('eightball-question-asked', {}, 'A question is currently being asked!')}
             </NoticeBox>
             <EightBallVoteQuestion />
           </>

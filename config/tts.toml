@@ -1,0 +1,443 @@
+# Text-To-Speach Config
+
+enabled = false
+
+[connection]
+url = "http://127.0.0.1:5002"
+token = "local-piper"
+timeout_seconds = 30
+max_concurrent_requests = 4
+
+[server]
+host = "127.0.0.1"
+port = 5002
+voices_dir = ".TTS/voices"
+max_speakers_per_model = 150
+effect_speakers_per_model = 6
+out_rate = 44100
+out_bitrate = "128k"
+noise_scale = 0.45
+noise_w = 0.55
+length_scale = 1.0
+list = "personas"
+
+[voices]
+blacklist = []
+tram_announcer = ""
+computer = ""
+
+[[persona]]
+name = "Капитан Орлов"
+voice = "RU-Denis"
+effect = "deep"
+speed = 0.97
+
+[[persona]]
+name = "Доктор Вишнева"
+voice = "RU-Irina"
+
+[[persona]]
+name = "Старпом Громов"
+voice = "RU-Dmitri"
+speed = 0.95
+
+[[persona]]
+name = "Механик Бугор"
+voice = "RU-Ruslan"
+effect = "deep"
+speed = 1.05
+
+[[persona]]
+name = "Диспетчер Вега"
+voice = "RU-Irina"
+effect = "phone"
+
+[[persona]]
+name = "Радист Кузя"
+voice = "RU-Dmitri"
+effect = "phone"
+speed = 1.08
+
+[[persona]]
+name = "Андроид ЮНИТ-7"
+voice = "RU-Denis"
+effect = "robot"
+
+[[persona]]
+name = "ИИ Станции"
+voice = "RU-Irina"
+effect = "robot"
+speed = 0.95
+
+[[persona]]
+name = "Командир Синдиката"
+voice = "RU-Ruslan"
+effect = "demon"
+
+[[persona]]
+name = "Шепот Теней"
+voice = "RU-Irina"
+effect = "whisper"
+
+[[persona]]
+name = "Пришелец Зарг"
+voice = "RU-Dmitri"
+effect = "alien"
+
+[[persona]]
+name = "Старый Шахтер"
+voice = "RU-Ruslan"
+effect = "deep"
+speed = 1.18
+
+[[persona]]
+name = "Юный Стажер"
+voice = "RU-Denis"
+effect = "high"
+speed = 1.05
+
+[[persona]]
+name = "Охранник Борис"
+voice = "RU-Denis"
+speed = 1.1
+
+[[persona]]
+name = "Профессор Ноль"
+voice = "RU-Dmitri"
+speed = 1.12
+
+[[persona]]
+name = "Лада с Орбиты"
+voice = "UA-LADA"
+
+[[persona]]
+name = "Captain Redd"
+voice = "EN-US-Lessac"
+effect = "deep"
+speed = 0.97
+
+[[persona]]
+name = "Doctor Hale"
+voice = "EN-US-Ryan"
+
+[[persona]]
+name = "Sergeant Stone"
+voice = "EN-US-John"
+effect = "deep"
+speed = 0.95
+
+[[persona]]
+name = "Lady Vex"
+voice = "EN-US-Amy"
+
+[[persona]]
+name = "Dispatcher Kay"
+voice = "EN-US-Kristin"
+effect = "phone"
+
+[[persona]]
+name = "Unit Seven"
+voice = "EN-US-Lessac"
+effect = "robot"
+
+[[persona]]
+name = "Station Core"
+voice = "EN-GB-Alba"
+effect = "robot"
+speed = 0.95
+
+[[persona]]
+name = "Syndicate Warlord"
+voice = "EN-US-Norman"
+effect = "demon"
+
+[[persona]]
+name = "Void Whisper"
+voice = "EN-GB-Jenny-Dioco"
+effect = "whisper"
+
+[[persona]]
+name = "Zorg the Visitor"
+voice = "EN-GB-Alan"
+effect = "alien"
+
+[[persona]]
+name = "Miner Joe"
+voice = "EN-US-Joe"
+speed = 1.1
+
+[[persona]]
+name = "Intern Bryce"
+voice = "EN-US-Bryce"
+effect = "high"
+speed = 1.05
+
+[[persona]]
+name = "Professor Cori"
+voice = "EN-GB-Cori"
+
+[[persona]]
+name = "Herr Doktor"
+voice = "DE-Thorsten"
+
+[[persona]]
+name = "Echo"
+voice = "EN-US-Libritts-R-4535"
+
+[[persona]]
+name = "Nova"
+voice = "EN-US-Libritts-R-1638"
+
+[[persona]]
+name = "Sable"
+voice = "EN-US-Libritts-R-6104"
+
+[[persona]]
+name = "Quill"
+voice = "EN-US-Libritts-R-2573"
+
+[[persona]]
+name = "Onyx"
+voice = "EN-US-Libritts-R-8498"
+
+[[persona]]
+name = "Vesper"
+voice = "EN-US-Libritts-R-5909"
+
+[[persona]]
+name = "Rune"
+voice = "EN-US-Libritts-R-3307"
+
+[[persona]]
+name = "Cipher"
+voice = "EN-US-Libritts-R-8506"
+
+[[persona]]
+name = "Drift"
+voice = "EN-US-Libritts-R-501"
+
+[[persona]]
+name = "Ember"
+voice = "EN-US-Libritts-R-2853"
+
+[[persona]]
+name = "Flux"
+voice = "EN-US-Libritts-R-2053"
+
+[[persona]]
+name = "Glint"
+voice = "EN-US-Libritts-R-2592"
+
+[[persona]]
+name = "Halo"
+voice = "EN-US-Libritts-R-4957"
+
+[[persona]]
+name = "Ion"
+voice = "EN-US-Libritts-R-5717"
+
+[[persona]]
+name = "Jade"
+voice = "EN-US-Libritts-R-7188"
+
+[[persona]]
+name = "Kite"
+voice = "EN-US-Libritts-R-2598"
+
+[[persona]]
+name = "Lumen"
+voice = "EN-US-Libritts-R-1379"
+
+[[persona]]
+name = "Mirage"
+voice = "EN-US-Libritts-R-8118"
+
+[[persona]]
+name = "Nimbus"
+voice = "EN-US-Libritts-R-1283"
+
+[[persona]]
+name = "Orion"
+voice = "EN-US-Libritts-R-459"
+
+[[persona]]
+name = "Pixel"
+voice = "EN-US-Libritts-R-1313"
+
+[[persona]]
+name = "Quartz"
+voice = "EN-US-Libritts-R-6696"
+
+[[persona]]
+name = "Raven"
+voice = "EN-US-Libritts-R-2056"
+
+[[persona]]
+name = "Sparrow"
+voice = "EN-US-Libritts-R-4243"
+
+[[persona]]
+name = "Talon"
+voice = "EN-US-Libritts-R-7995"
+
+[[persona]]
+name = "Umbra"
+voice = "EN-US-Libritts-R-4592"
+
+[[persona]]
+name = "Vector"
+voice = "EN-US-Libritts-R-8152"
+
+[[persona]]
+name = "Wisp"
+voice = "EN-US-Libritts-R-3923"
+
+[[persona]]
+name = "Zephyr"
+voice = "EN-US-Libritts-R-56"
+
+[[persona]]
+name = "Atlas"
+voice = "EN-US-Libritts-R-3380"
+
+[[persona]]
+name = "Bolt"
+voice = "EN-GB-Vctk-P236"
+
+[[persona]]
+name = "Cinder"
+voice = "EN-GB-Vctk-P283"
+
+[[persona]]
+name = "Dune"
+voice = "EN-GB-Vctk-P231"
+
+[[persona]]
+name = "Aster"
+voice = "EN-GB-Vctk-P361"
+
+[[persona]]
+name = "Birch"
+voice = "EN-GB-Vctk-P334"
+
+[[persona]]
+name = "Cobalt"
+voice = "EN-GB-Vctk-P317"
+
+[[persona]]
+name = "Delta"
+voice = "EN-GB-Vctk-P318"
+
+[[persona]]
+name = "Fable"
+voice = "EN-GB-Vctk-P363"
+
+[[persona]]
+name = "Garnet"
+voice = "EN-GB-Vctk-P258"
+
+[[persona]]
+name = "Harbor"
+voice = "EN-GB-Vctk-P278"
+
+[[persona]]
+name = "Indigo"
+voice = "EN-GB-Vctk-P326"
+
+[[persona]]
+name = "Juniper"
+voice = "EN-GB-Vctk-P293"
+
+[[persona]]
+name = "Kestrel"
+voice = "EN-GB-Vctk-P229"
+
+[[persona]]
+name = "Lynx"
+voice = "EN-GB-Vctk-P251"
+
+[[persona]]
+name = "Marlow"
+voice = "EN-GB-Vctk-P303"
+
+[[persona]]
+name = "Nomad"
+voice = "EN-US-L2Arctic-TXHC"
+
+[[persona]]
+name = "Opal"
+voice = "EN-US-L2Arctic-ZHAA"
+
+[[persona]]
+name = "Pilot"
+voice = "EN-US-L2Arctic-ERMS"
+
+[[persona]]
+name = "Quasar"
+voice = "EN-US-L2Arctic-TNI"
+
+[[persona]]
+name = "Rook"
+voice = "EN-US-L2Arctic-LXC"
+
+[[persona]]
+name = "Sterling"
+voice = "EN-US-L2Arctic-YDCK"
+
+[[persona]]
+name = "Tundra"
+voice = "EN-US-L2Arctic-YBAA"
+
+[[persona]]
+name = "Valor"
+voice = "EN-US-L2Arctic-ABA"
+
+[[persona]]
+name = "Willow"
+voice = "EN-US-Arctic-RMS"
+
+[[persona]]
+name = "Yonder"
+voice = "EN-US-Arctic-LNH"
+
+[[persona]]
+name = "Zenith"
+voice = "EN-US-Arctic-RXR"
+
+[[persona]]
+name = "Beacon"
+voice = "EN-US-Arctic-AUP"
+
+[[persona]]
+name = "Comet"
+voice = "EN-GB-Aru-03"
+
+[[persona]]
+name = "Dagger"
+voice = "EN-GB-Aru-09"
+
+[[persona]]
+name = "Falcon"
+voice = "EN-GB-Aru-12"
+
+[language_effects]
+draconic = "demon"
+moffic = "high"
+nekomimetic = "high"
+shadowtongue = "whisper"
+terrum = "deep"
+voltaic = "robot"
+drone = "robot"
+"encoded audio language" = "robot"
+buzzwords = "alien"
+"nar'sian" = "demon"
+xenomorph = "alien"
+slime = "alien"
+calcic = "deep"
+sylvan = "whisper"
+beachtongue = "alien"
+carptongue = "alien"
+spinwarder = "deep"
+wormspeak = "alien"
+mushroom = "alien"
+gibbering = "alien"

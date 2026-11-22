@@ -13,6 +13,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { createSearch } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -50,12 +51,13 @@ type Blank = {
 };
 
 export const Photocopier = (props) => {
+  const t = useT();
   const [selectedBlank, setSelectedBlank] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
   return (
     <Window
-      title="Photocopier"
+      title={t('photocopier-title', {}, 'Photocopier')}
       width={selectedCategory ? 550 : 325}
       height={525}
     >
@@ -102,6 +104,7 @@ type StatusProps = {
 
 const Status = (props: StatusProps) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { selectedBlank } = props;
   const {
     has_toner,
@@ -124,19 +127,19 @@ const Status = (props: StatusProps) => {
   return (
     <Section
       fill
-      title="Status"
+      title={t('photocopier-status', {}, 'Status')}
       buttons={
         <Button
           icon="eject"
           disabled={!has_toner}
           onClick={() => act('remove_toner')}
         >
-          Eject Toner
+          {t('photocopier-eject-toner', {}, 'Eject Toner')}
         </Button>
       }
     >
       <LabeledList>
-        <LabeledList.Item label="Toner">
+        <LabeledList.Item label={t('photocopier-toner', {}, 'Toner')}>
           {has_toner ? (
             <ProgressBar
               minValue={0}
@@ -149,11 +152,11 @@ const Status = (props: StatusProps) => {
             />
           ) : (
             <ProgressBar color="bad" minValue={0} value={0} maxValue={1}>
-              No Cartridge
+              {t('photocopier-no-cartridge', {}, 'No Cartridge')}
             </ProgressBar>
           )}
         </LabeledList.Item>
-        <LabeledList.Item label="Paper Stored">
+        <LabeledList.Item label={t('photocopier-paper-stored', {}, 'Paper Stored')}>
           <ProgressBar
             minValue={0}
             value={paper_count}
@@ -166,21 +169,30 @@ const Status = (props: StatusProps) => {
             {paper_count} / {max_paper_count}
           </ProgressBar>
         </LabeledList.Item>
-        <LabeledList.Item label="Queue">
+        <LabeledList.Item label={t('photocopier-queue', {}, 'Queue')}>
           <ProgressBar
             verticalAlign="middle"
             minValue={0}
             value={copies_left}
             maxValue={num_copies}
           >
-            {copies_left ? `${copies_left} / ${num_copies}` : 'Empty'}
+            {copies_left
+              ? `${copies_left} / ${num_copies}`
+              : t('photocopier-queue-empty', {}, 'Empty')}
           </ProgressBar>
         </LabeledList.Item>
-        <LabeledList.Item label="Blank" textAlign="center">
-          <b>{selectedBlank ? selectedBlank : 'Not Selected'}</b>
+        <LabeledList.Item
+          label={t('photocopier-blank', {}, 'Blank')}
+          textAlign="center"
+        >
+          <b>
+            {selectedBlank
+              ? selectedBlank
+              : t('photocopier-blank-none', {}, 'Not Selected')}
+          </b>
         </LabeledList.Item>
 
-        <LabeledList.Item label="Paper Type">
+        <LabeledList.Item label={t('photocopier-paper-type', {}, 'Paper Type')}>
           <Stack align="center">
             {paper_types.map((paper) => (
               <Stack.Item grow key={paper.type}>
@@ -188,7 +200,11 @@ const Status = (props: StatusProps) => {
                   fluid
                   dmIcon={paper.icon}
                   dmIconState={paper.icon_state}
-                  tooltip={`${paper.name} amount is ${paper.amount}`}
+                  tooltip={t(
+                    'photocopier-paper-amount',
+                    { name: paper.name, amount: paper.amount },
+                    `${paper.name} amount is ${paper.amount}`,
+                  )}
                   imageSize={32}
                   disabled={!paper.amount}
                   selected={created_paper === paper.type && paper.amount}
@@ -213,6 +229,7 @@ type ActionsProps = {
 
 const Actions = (props: ActionsProps) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { selectedBlank } = props;
   const {
     has_item,
@@ -225,12 +242,12 @@ const Actions = (props: ActionsProps) => {
   } = data;
 
   return (
-    <Section fill title="Actions">
+    <Section fill title={t('photocopier-actions', {}, 'Actions')}>
       <Stack fill vertical textAlign="center">
         <Stack.Item>
           <Stack align="center" textAlign="left">
             <Stack.Item grow color="label">
-              Copies:
+              {t('photocopier-copies', {}, 'Copies:')}
             </Stack.Item>
             <Stack.Item grow>
               <Slider
@@ -256,7 +273,11 @@ const Actions = (props: ActionsProps) => {
               disabled={!can_AI_print}
               onClick={() => act('ai_photo', { code: selectedBlank })}
             >
-              Print photo from database
+              {t(
+                'photocopier-print-photo',
+                {},
+                'Print photo from database',
+              )}
             </Button>
           </Stack.Item>
         )}
@@ -269,7 +290,7 @@ const Actions = (props: ActionsProps) => {
                 disabled={!selectedBlank}
                 onClick={() => act('print_blank', { code: selectedBlank })}
               >
-                Print
+                {t('photocopier-print', {}, 'Print')}
               </Button>
             </Stack.Item>
             <Stack.Item grow>
@@ -279,7 +300,7 @@ const Actions = (props: ActionsProps) => {
                 disabled={!has_item}
                 onClick={() => act('make_copy')}
               >
-                Copy
+                {t('photocopier-copy', {}, 'Copy')}
               </Button>
             </Stack.Item>
           </Stack>
@@ -298,7 +319,7 @@ const Actions = (props: ActionsProps) => {
                     })
                   }
                 >
-                  Color
+                  {t('photocopier-color', {}, 'Color')}
                 </Button>
               </Stack.Item>
               <Stack.Item grow>
@@ -312,7 +333,7 @@ const Actions = (props: ActionsProps) => {
                     })
                   }
                 >
-                  Greyscale
+                  {t('photocopier-greyscale', {}, 'Greyscale')}
                 </Button>
               </Stack.Item>
             </Stack>
@@ -325,7 +346,7 @@ const Actions = (props: ActionsProps) => {
             disabled={!has_item}
             onClick={() => act('remove')}
           >
-            Eject Item
+            {t('photocopier-eject-item', {}, 'Eject Item')}
           </Button>
         </Stack.Item>
       </Stack>
@@ -340,17 +361,22 @@ type CategoriesProps = {
 
 const Categories = (props: CategoriesProps) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { selectedCategory, setSelectedCategory } = props;
 
   return (
     <Section
       fill
       scrollable
-      title="Blanks"
+      title={t('photocopier-blanks', {}, 'Blanks')}
       buttons={
         <Button
           icon="times"
-          tooltip="Close selected blank category"
+          tooltip={t(
+            'photocopier-close-category',
+            {},
+            'Close selected blank category',
+          )}
           disabled={!selectedCategory}
           onClick={() => {
             setSelectedCategory('');
@@ -369,7 +395,7 @@ const Categories = (props: CategoriesProps) => {
               setSelectedCategory('All Blanks');
             }}
           >
-            All Blanks
+            {t('photocopier-all-blanks', {}, 'All Blanks')}
           </Button>
         </Stack.Item>
         {data.categories.map((category) => (
@@ -400,6 +426,7 @@ type BlanksProps = {
 
 const Blanks = (props: BlanksProps) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { selectedCategory, selectedBlank, setSelectedBlank } = props;
   const { blanks } = data;
 
@@ -416,12 +443,16 @@ const Blanks = (props: BlanksProps) => {
     <Section
       fill
       scrollable
-      title={selectedCategory}
+      title={
+        selectedCategory === 'All Blanks'
+          ? t('photocopier-all-blanks', {}, 'All Blanks')
+          : selectedCategory
+      }
       buttons={
         <Input
           width={8.75}
           value={searchText}
-          placeholder="Search blank..."
+          placeholder={t('photocopier-search-blank', {}, 'Search blank...')}
           onChange={setSearchText}
         />
       }

@@ -30,12 +30,12 @@
 
 /datum/action/cooldown/spell/pointed/rust_construction/is_valid_target(atom/cast_on)
 	if(!isturf(cast_on))
-		cast_on.balloon_alert(owner, "not a wall or floor!")
+		cast_on.balloon_alert(owner, LOC_KEY("heretic-spell-rust_construction-invalid-balloon"))
 		return FALSE
 
 	if(!HAS_TRAIT(cast_on, TRAIT_RUSTY))
 		if(owner)
-			cast_on.balloon_alert(owner, "not rusted!")
+			cast_on.balloon_alert(owner, LOC_KEY("heretic-spell-rust_construction-clean-balloon"))
 		return FALSE
 
 	return TRUE
@@ -46,8 +46,8 @@
 		return
 
 	var/mob/living/living_owner = owner
-	invocation = span_danger("<b>[owner]</b> drags [owner.p_their()] hand[living_owner.usable_hands == 1 ? "":"s"] upwards as a wall of rust rises out of [cast_on]!")
-	invocation_self_message = span_notice("You drag [living_owner.usable_hands == 1 ? "a hand":"your hands"] upwards as a wall of rust rises out of [cast_on].")
+	invocation = span_danger((living_owner.usable_hands == 1 ? loc_key("heretic-spell-rust_construction-invoke-one", list(owner = owner, their = owner.p_their(), target = cast_on)) : loc_key("heretic-spell-rust_construction-invoke-many", list(owner = owner, their = owner.p_their(), target = cast_on))))
+	invocation_self_message = span_notice((living_owner.usable_hands == 1 ? loc_key("heretic-spell-rust_construction-self-one", list(target = cast_on)) : loc_key("heretic-spell-rust_construction-self-many", list(target = cast_on))))
 
 /datum/action/cooldown/spell/pointed/rust_construction/cast(turf/cast_on)
 	. = ..()
@@ -55,7 +55,7 @@
 
 	// If we casted at a wall we'll try to rust it. In the case of an enchanted wall it'll deconstruct it
 	if(isclosedturf(cast_on))
-		cast_on.visible_message(span_warning("\The [cast_on] quakes as the rust causes it to crumble!"))
+		cast_on.visible_message(span_warning(loc_key("heretic-spell-rust-construction-quake", list(target = cast_on))))
 		var/mob/living/living_owner = owner
 		living_owner?.do_rust_heretic_act(cast_on)
 		// ref transfers to floor

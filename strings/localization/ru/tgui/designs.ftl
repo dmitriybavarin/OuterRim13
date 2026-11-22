@@ -318,9 +318,9 @@ design-extinguisher-name = Огнетушитель
 
 design-pocketfireextinguisher-name = Карманный огнетушитель
 
-design-material_iron-name = Железо
+design-material_iron-name = Сталь
 
-design-material_rods-name = Железный стержень
+design-material_rods-name = Стальный стержень
 
 design-material_rglass-name = Армированное стекло
 
@@ -980,7 +980,7 @@ design-id-name = Идентификационная карта
 
 design-eng_gloves-name = Перчатки умельца
 
-design-lavarods-name = Лавоустойчивые железные стержни
+design-lavarods-name = Лавоустойчивые стальные стержни
 
 design-plasticducky-name = Резиновая уточка
 

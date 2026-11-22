@@ -1,6 +1,7 @@
 import { Button, LabeledList, Section } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { slugify, useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -56,6 +57,7 @@ const SUFFIXES = [
 
 export const CodexGigas = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { name, currentSection } = data;
 
   return (
@@ -68,9 +70,9 @@ export const CodexGigas = (props) => {
             <Titles />
             <Names />
             <Suffixes />
-            <LabeledList.Item label="Submit">
+            <LabeledList.Item label={t('codexgigas-submit', {}, 'Submit')}>
               <Button
-                content="Search"
+                content={t('codexgigas-search', {}, 'Search')}
                 disabled={currentSection < 4}
                 onClick={() => act('search')}
               />
@@ -84,14 +86,15 @@ export const CodexGigas = (props) => {
 
 const Prefixes = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { currentSection } = data;
 
   return (
-    <LabeledList.Item label="Prefix">
+    <LabeledList.Item label={t('codexgigas-prefix', {}, 'Prefix')}>
       {PREFIXES.map((prefix) => (
         <Button
           key={prefix.toLowerCase()}
-          content={prefix}
+          content={t(`codexgigas-prefix-${slugify(prefix)}`, {}, prefix)}
           disabled={currentSection !== 1}
           onClick={() => act(`${prefix} `)}
         />
@@ -102,14 +105,15 @@ const Prefixes = (props) => {
 
 const Titles = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { currentSection } = data;
 
   return (
-    <LabeledList.Item label="Title">
+    <LabeledList.Item label={t('codexgigas-title', {}, 'Title')}>
       {TITLES.map((title) => (
         <Button
           key={title.toLowerCase()}
-          content={title}
+          content={t(`codexgigas-title-${slugify(title)}`, {}, title)}
           disabled={currentSection !== 2}
           onClick={() => act(title)}
         />
@@ -120,10 +124,11 @@ const Titles = (props) => {
 
 const Names = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { currentSection } = data;
 
   return (
-    <LabeledList.Item label="Name">
+    <LabeledList.Item label={t('codexgigas-name', {}, 'Name')}>
       {NAMES.map((name) => (
         <Button
           key={name.toLowerCase()}
@@ -138,14 +143,15 @@ const Names = (props) => {
 
 const Suffixes = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { currentSection } = data;
 
   return (
-    <LabeledList.Item label="Suffix">
+    <LabeledList.Item label={t('codexgigas-suffix', {}, 'Suffix')}>
       {SUFFIXES.map((suffix) => (
         <Button
           key={suffix.toLowerCase()}
-          content={suffix}
+          content={t(`codexgigas-suffix-${slugify(suffix)}`, {}, suffix)}
           disabled={currentSection !== 4}
           onClick={() => act(` ${suffix}`)}
         />

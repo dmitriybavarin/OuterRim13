@@ -7,6 +7,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -19,6 +20,7 @@ type Data = {
 
 export const AtmosMixer = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     on,
     set_pressure,
@@ -32,15 +34,15 @@ export const AtmosMixer = (props) => {
       <Window.Content>
         <Section>
           <LabeledList>
-            <LabeledList.Item label="Power">
+            <LabeledList.Item label={t('atmos-power', {}, 'Power')}>
               <Button
                 icon={on ? 'power-off' : 'times'}
-                content={on ? 'On' : 'Off'}
+                content={on ? t('atmos-on', {}, 'On') : t('atmos-off', {}, 'Off')}
                 selected={on}
                 onClick={() => act('power')}
               />
             </LabeledList.Item>
-            <LabeledList.Item label="Output Pressure">
+            <LabeledList.Item label={t('atmos-output-pressure', {}, 'Output Pressure')}>
               <NumberInput
                 animated
                 value={set_pressure}
@@ -58,7 +60,7 @@ export const AtmosMixer = (props) => {
               <Button
                 ml={1}
                 icon="plus"
-                content="Max"
+                content={t('atmos-max', {}, 'Max')}
                 disabled={set_pressure === max_pressure}
                 onClick={() =>
                   act('pressure', {
@@ -67,7 +69,7 @@ export const AtmosMixer = (props) => {
                 }
               />
             </LabeledList.Item>
-            <LabeledList.Item label="Main Node" labelColor="green">
+            <LabeledList.Item label={t('atmosmixer-main-node', {}, 'Main Node')} labelColor="green">
               <NumberInput
                 animated
                 tickWhileDragging
@@ -85,7 +87,7 @@ export const AtmosMixer = (props) => {
                 }
               />
             </LabeledList.Item>
-            <LabeledList.Item label="Side Node" labelColor="blue">
+            <LabeledList.Item label={t('atmosmixer-side-node', {}, 'Side Node')} labelColor="blue">
               <NumberInput
                 animated
                 tickWhileDragging

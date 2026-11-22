@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, ByondUi, Stack, TextArea } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -11,9 +12,14 @@ type Data = {
 export const LingMMITalk = (props) => {
   const { data, act } = useBackend<Data>();
   const [mmiMessage, setmmiMessage] = useState('');
+  const t = useT();
 
   return (
-    <Window title="Decoy Brain MMI View" height={360} width={360}>
+    <Window
+      title={t('lingmmi-title', {}, 'Decoy Brain MMI View')}
+      height={360}
+      width={360}
+    >
       <Window.Content>
         <Stack vertical>
           <Stack.Item align="center">
@@ -32,7 +38,11 @@ export const LingMMITalk = (props) => {
                 <TextArea
                   fluid
                   height="60px"
-                  placeholder="Send a message to have our decoy brain speak."
+                  placeholder={t(
+                    'lingmmi-placeholder',
+                    {},
+                    'Send a message to have our decoy brain speak.',
+                  )}
                   onChange={setmmiMessage}
                   value={mmiMessage}
                 />
@@ -45,7 +55,7 @@ export const LingMMITalk = (props) => {
                     setmmiMessage('');
                   }}
                 >
-                  Send
+                  {t('lingmmi-send', {}, 'Send')}
                 </Button>
               </Stack.Item>
             </Stack>

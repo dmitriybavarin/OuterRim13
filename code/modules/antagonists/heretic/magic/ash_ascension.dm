@@ -149,13 +149,13 @@
 
 		for(var/mob/living/L in T.contents)
 			if(L.can_block_magic())
-				L.visible_message(span_danger("The spell bounces off of [L]!"), span_danger("The spell bounces off of you!"))
+				L.visible_message(span_danger(loc_key("heretic-spell-bounce-others", list(target = L))), span_danger(LOC_KEY("heretic-spell-bounce-self")))
 				continue
 			if((L in hit_list) || L == source)
 				continue
 			hit_list += L
 			L.adjust_fire_loss(20)
-			to_chat(L, span_userdanger("You're hit by [source]'s eldritch flames!"))
+			to_chat(L, span_userdanger(loc_key("heretic-spell-ash-flames-hit", list(source = source))))
 
 		new /obj/effect/hotspot(T)
 		T.hotspot_expose(700,50,1)

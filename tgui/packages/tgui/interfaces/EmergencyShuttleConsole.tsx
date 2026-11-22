@@ -2,6 +2,7 @@ import { Box, Button, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -20,6 +21,7 @@ type Authorization = {
 
 export function EmergencyShuttleConsole(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     authorizations = [],
     authorizations_remaining,
@@ -38,14 +40,20 @@ export function EmergencyShuttleConsole(props) {
           </Box>
           <Box textAlign="center" fontSize="16px" mb={1}>
             <Box inline bold>
-              ENGINES:
+              {t('shuttleconsole-engines', {}, 'ENGINES:')}
             </Box>
             <Box inline color={engines_started ? 'good' : 'average'} ml={1}>
-              {engines_started ? 'Online' : 'Idle'}
+              {engines_started
+                ? t('shuttleconsole-online', {}, 'Online')
+                : t('shuttleconsole-idle', {}, 'Idle')}
             </Box>
           </Box>
           <Section
-            title="Early Launch Authorization"
+            title={t(
+              'shuttleconsole-early-launch',
+              {},
+              'Early Launch Authorization',
+            )}
             buttons={
               <Button
                 color="bad"
@@ -53,7 +61,7 @@ export function EmergencyShuttleConsole(props) {
                 icon="times"
                 onClick={() => act('abort')}
               >
-                Repeal All
+                {t('shuttleconsole-repeal-all', {}, 'Repeal All')}
               </Button>
             }
           >
@@ -66,7 +74,7 @@ export function EmergencyShuttleConsole(props) {
                   icon="exclamation-triangle"
                   onClick={() => act('authorize')}
                 >
-                  AUTHORIZE
+                  {t('shuttleconsole-authorize', {}, 'AUTHORIZE')}
                 </Button>
               </Stack.Item>
               <Stack.Item grow>
@@ -76,22 +84,28 @@ export function EmergencyShuttleConsole(props) {
                   icon="minus"
                   onClick={() => act('repeal')}
                 >
-                  REPEAL
+                  {t('shuttleconsole-repeal', {}, 'REPEAL')}
                 </Button>
               </Stack.Item>
             </Stack>
             <Section
-              title="Authorizations"
+              title={t('shuttleconsole-authorizations', {}, 'Authorizations')}
               minHeight="150px"
               buttons={
                 <Box inline bold color={emagged ? 'bad' : 'good'}>
-                  {emagged ? 'ERROR' : `Remaining: ${authorizations_remaining}`}
+                  {emagged
+                    ? t('shuttleconsole-error', {}, 'ERROR')
+                    : t(
+                        'shuttleconsole-remaining',
+                        { amount: authorizations_remaining },
+                        `Remaining: ${authorizations_remaining}`,
+                      )}
                 </Box>
               }
             >
               {authorizations.length === 0 ? (
                 <Box bold textAlign="center" fontSize="16px" color="average">
-                  No Active Authorizations
+                  {t('shuttleconsole-none', {}, 'No Active Authorizations')}
                 </Box>
               ) : (
                 authorizations.map((authorization) => (

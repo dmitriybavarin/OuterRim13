@@ -2,6 +2,7 @@ import { Icon, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import {
   type Objective,
@@ -20,6 +21,7 @@ type NinjaInfo = {
 
 export const AntagInfoNinja = (props) => {
   const { data } = useBackend<NinjaInfo>();
+  const t = useT();
   const { objectives, can_change_objective } = data;
   return (
     <Window width={550} height={450} theme="hackerman">
@@ -35,22 +37,21 @@ export const AntagInfoNinja = (props) => {
         <Section scrollable fill>
           <Stack vertical textColor="green">
             <Stack.Item textAlign="center" fontSize="20px">
-              I am an elite mercenary of the Spider Clan.
-              <br />A <span style={ninja_emphasis}> SPACE NINJA</span>!
+              {t('antaginfo-ninja-intro')}
+              <br />
+              {t('antaginfo-ninja-title-prefix')}{' '}
+              <span style={ninja_emphasis}>{t('antaginfo-ninja-title-name')}</span>!
             </Stack.Item>
             <Stack.Item textAlign="center" italic>
-              Surprise is my weapon. Shadows are my armor. Without them, I am
-              nothing.
+              {t('antaginfo-ninja-motto')}
             </Stack.Item>
             <Stack.Item>
               <Section fill>
-                Your advanced ninja suit contains many powerful modules.
-                <br /> It can be recharged by right clicking on station APCs or
-                other power sources, in order to drain their battery.
+                {t('antaginfo-ninja-suit')}
                 <br />
-                Right clicking on some kinds of machines or items wearing your
-                suit will hack them, to varying effect. Experiment and find out
-                what you can do!
+                {t('antaginfo-ninja-recharge')}
+                <br />
+                {t('antaginfo-ninja-hack')}
               </Section>
             </Stack.Item>
             <Stack.Item>
@@ -59,7 +60,7 @@ export const AntagInfoNinja = (props) => {
                 objectiveFollowup={
                   <ReplaceObjectivesButton
                     can_change_objective={can_change_objective}
-                    button_title={'Adapt Mission Parameters'}
+                    button_title={t('antaginfo-ninja-adapt')}
                     button_colour={'green'}
                   />
                 }

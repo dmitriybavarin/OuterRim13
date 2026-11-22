@@ -86,15 +86,15 @@
 	if(.)
 		return
 	if(!linked_rune)
-		balloon_alert(user, "no linked rune!")
+		balloon_alert(user, LOC_KEY("heretic-spell-cosmic_rune-unlinked-balloon"))
 		fail_invoke()
 		return
 	if(!(user in get_turf(src)))
-		balloon_alert(user, "not close enough!")
+		balloon_alert(user, LOC_KEY("heretic-spell-cosmic_rune-far-balloon"))
 		fail_invoke()
 		return
 	if(user.has_status_effect(/datum/status_effect/star_mark))
-		balloon_alert(user, "blocked by star mark!")
+		balloon_alert(user, LOC_KEY("heretic-spell-cosmic_rune-marked-balloon"))
 		fail_invoke()
 		return
 	invoke(user)
@@ -144,7 +144,7 @@
 
 /// For if someone failed to invoke the rune
 /obj/effect/cosmic_rune/proc/fail_invoke()
-	visible_message(span_warning("The rune pulses with a small flash of purple light, then returns to normal."))
+	visible_message(span_warning(LOC_KEY("heretic-spell-cosmic-rune-pulse")))
 	var/oldcolor = rgb(255, 255, 255)
 	color = rgb(150, 50, 200)
 	animate(src, color = oldcolor, time = 5)

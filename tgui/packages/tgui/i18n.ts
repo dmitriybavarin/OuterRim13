@@ -12,8 +12,15 @@ export function useT() {
     translate(language, key, args, fallback);
 }
 
+const JOB_SLUG_ALIASES: Record<string, string> = {
+  'Представитель NanoTrasen': 'nanotrasen_representative',
+  'Офицер Синий Щит': 'blueshield',
+  'Офицер Специальных Операций': 'special_operations_officer',
+  'Директор Специальных Операций': 'special_operations_director',
+};
+
 export function jobKey(name: string, suffix: string): string {
-  const slug = name
+  const slug = JOB_SLUG_ALIASES[name] ?? name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '');
@@ -35,6 +42,14 @@ export function slugify(name: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '');
+}
+
+export function adminVerbKey(name: string): string {
+  return `adminverb-${slugify(name)}-name`;
+}
+
+export function adminVerbCategoryKey(name: string): string {
+  return `adminverb-category-${slugify(name)}`;
 }
 
 export function accessKey(name: string): string {
@@ -70,4 +85,16 @@ export function useNodeText() {
 export function useCategoryName() {
   const t = useT();
   return (name: string) => t(`design-category-${slugify(name)}`, {}, name);
+}
+
+export function useCraftText() {
+  const t = useT();
+  return (text: string) => t(`crafting-text-${slugify(text)}`, {}, text);
+}
+
+export function useServerText() {
+  const { config } = useBackend<Record<string, never>>();
+  const language = config?.language;
+  return (data: Record<string, any>, field: string): string =>
+    (language && data[`${field}_${language}`]) ?? data[field] ?? '';
 }

@@ -9,6 +9,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -22,16 +23,17 @@ type Data = {
 
 export const Clipboard = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { pen, integrated_pen, top_paper, top_paper_ref, paper, paper_ref } =
     data;
   return (
-    <Window title="Clipboard" width={400} height={500}>
+    <Window title={t('clipboard-title', {}, 'Clipboard')} width={400} height={500}>
       <Window.Content backgroundColor="#704D25" scrollable>
         <Section>
           {pen ? (
             <LabeledList>
               <LabeledList.Item
-                label="Pen"
+                label={t('clipboard-pen', {}, 'Pen')}
                 buttons={
                   <Button icon="eject" onClick={() => act('remove_pen')} />
                 }
@@ -41,11 +43,11 @@ export const Clipboard = (props) => {
             </LabeledList>
           ) : integrated_pen ? (
             <Box color="white" align="center">
-              There is a pen integrated into the clipboard&apos;s clip.
+              {t('clipboard-integrated-pen', {}, 'There is a pen integrated into the clipboard\'s clip.')}
             </Box>
           ) : (
             <Box color="white" align="center">
-              No pen attached!
+              {t('clipboard-no-pen', {}, 'No pen attached!')}
             </Box>
           )}
         </Section>
@@ -77,7 +79,7 @@ export const Clipboard = (props) => {
         ) : (
           <Section>
             <Box color="white" align="center">
-              The clipboard is empty!
+              {t('clipboard-empty', {}, 'The clipboard is empty!')}
             </Box>
           </Section>
         )}

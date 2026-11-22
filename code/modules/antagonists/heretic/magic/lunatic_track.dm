@@ -17,14 +17,14 @@
 	var/datum/antagonist/lunatic/lunatic_datum = IS_LUNATIC(owner)
 	var/mob/living/carbon/human/ascended_heretic = lunatic_datum.ascended_body
 	if(!(ascended_heretic))
-		owner.balloon_alert(owner, "what cruel fate, your master is gone...")
+		owner.balloon_alert(owner, LOC_KEY("heretic-spell-lunatic_track-gone-balloon"))
 		StartCooldown(1 SECONDS)
 		return FALSE
 	playsound(owner, 'sound/effects/singlebeat.ogg', 50, TRUE, SILENCED_SOUND_EXTRARANGE)
 	owner.balloon_alert(owner, get_balloon_message(ascended_heretic))
 
 	if(ascended_heretic.stat == DEAD)
-		to_chat(owner, span_mansus("[ascended_heretic] is dead. Weep for the lie has struck out."))
+		to_chat(owner, span_mansus(loc_key("heretic-spell-lunatic-track-dead", list(target = ascended_heretic))))
 
 	StartCooldown()
 	return TRUE

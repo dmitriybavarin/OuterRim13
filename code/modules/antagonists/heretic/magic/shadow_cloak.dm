@@ -29,7 +29,7 @@
 
 /datum/action/cooldown/spell/shadow_cloak/is_valid_target(atom/cast_on)
 	if(HAS_TRAIT(cast_on, TRAIT_HULK)) // Hulks are not stealthy. Need not apply
-		cast_on.balloon_alert(cast_on, "cannot cast while hulk!")
+		cast_on.balloon_alert(cast_on, LOC_KEY("heretic-spell-shadow_cloak-hulk-balloon"))
 		return FALSE
 	return isliving(cast_on)
 
@@ -71,8 +71,8 @@
 /datum/action/cooldown/spell/shadow_cloak/proc/cloak_mob(mob/living/cast_on)
 	playsound(cast_on, 'sound/effects/chemistry/ahaha.ogg', 50, TRUE, -1, extrarange = SILENCED_SOUND_EXTRARANGE, frequency = 0.5)
 	cast_on.visible_message(
-		span_warning("[cast_on] disappears into the shadows!"),
-		span_notice("You disappear into the shadows, becoming unidentifiable."),
+		span_warning(loc_key("heretic-spell-shadow_cloak-enter-others", list(user = cast_on))),
+		span_notice(LOC_KEY("heretic-spell-shadow_cloak-enter-self")),
 	)
 
 	active_cloak = cast_on.apply_status_effect(/datum/status_effect/shadow_cloak)
@@ -87,8 +87,8 @@
 	playsound(cast_on, 'sound/effects/curse/curseattack.ogg', 50)
 	if(show_message)
 		cast_on.visible_message(
-			span_warning("[cast_on] appears from the shadows!"),
-			span_notice("You appear from the shadows, identifiable once more."),
+			span_warning(loc_key("heretic-spell-shadow_cloak-exit-others", list(user = cast_on))),
+			span_notice(LOC_KEY("heretic-spell-shadow_cloak-exit-self")),
 		)
 
 	// Clear up the timer
@@ -102,8 +102,8 @@
 	var/mob/living/removed = source.owner
 	uncloak_mob(removed, show_message = FALSE)
 	removed.visible_message(
-		span_warning("[removed] is pulled from the shadows!"),
-		span_userdanger("You are pulled out of the shadows!"),
+		span_warning(loc_key("heretic-spell-shadow_cloak-pulled-others", list(user = removed))),
+		span_userdanger(LOC_KEY("heretic-spell-shadow_cloak-pulled-self")),
 	)
 
 	removed.Knockdown(0.5 SECONDS)

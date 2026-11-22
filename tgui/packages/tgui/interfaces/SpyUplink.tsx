@@ -9,6 +9,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Bounty = {
@@ -48,14 +49,22 @@ const BountyDimmer = (props: { text: string; color: string }) => {
 
 const BountyDisplay = (props: { bounty: Bounty }) => {
   const { bounty } = props;
+  const t = useT();
 
   return (
     <Section>
-      {!!bounty.claimed && <BountyDimmer color="bad" text="Claimed!" />}
+      {!!bounty.claimed && <BountyDimmer
+          color="bad"
+          text={t('spyuplink-claimed', {}, 'Claimed!')}
+        />}
       {!bounty.can_claim && !bounty.claimed && (
         <BountyDimmer
           color="average"
-          text="Your benefactors see you unfit to complete this."
+          text={t(
+            'spyuplink-unfit',
+            {},
+            'Your benefactors see you unfit to complete this.',
+          )}
         />
       )}
       <Stack vertical ml={1}>
@@ -72,7 +81,9 @@ const BountyDisplay = (props: { bounty: Bounty }) => {
         <Stack.Item>
           <BlockQuote italic>{bounty.help}</BlockQuote>
         </Stack.Item>
-        <Stack.Item italic>Reward: {bounty.reward}</Stack.Item>
+        <Stack.Item italic>
+          {t('spyuplink-reward', { reward: bounty.reward }, `Reward: ${bounty.reward}`)}
+        </Stack.Item>
       </Stack>
     </Section>
   );
@@ -95,6 +106,7 @@ const format_deciseconds = (deciseconds: number) => {
 export const SpyUplink = () => {
   const { data } = useBackend<Data>();
   const { bounties, time_left } = data;
+  const t = useT();
 
   return (
     <Window width={450} height={615} theme="ntos_darkmode">
@@ -105,11 +117,15 @@ export const SpyUplink = () => {
       >
         <Section
           fill
-          title="Spy Bounties"
+          title={t('spyuplink-title', {}, 'Spy Bounties')}
           scrollable
           buttons={
             <Box mt={0.4}>
-              Time until refresh: {format_deciseconds(time_left)}
+              {t(
+                'spyuplink-refresh',
+                { time: format_deciseconds(time_left) },
+                `Time until refresh: ${format_deciseconds(time_left)}`,
+              )}
             </Box>
           }
         >

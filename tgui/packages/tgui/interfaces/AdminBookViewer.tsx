@@ -1,4 +1,5 @@
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { MarkdownRenderer } from './MarkdownViewer';
 
@@ -11,8 +12,9 @@ type ViewerData = {
 
 export const AdminBookViewer = (_: any) => {
   const { data } = useBackend<ViewerData>();
+  const t = useT();
   return (
-    <Window title={`Reading: ${data.title}`} height={400} width={400}>
+    <Window title={t('adminbookviewer-title', { title: data.title }, 'Reading: { $title }')} height={400} width={400}>
       <Window.Content scrollable>
         {data.view_raw ? (
           data.content

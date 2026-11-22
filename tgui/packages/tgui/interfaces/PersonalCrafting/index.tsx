@@ -18,6 +18,7 @@ import { fetchRetry } from 'tgui-core/http';
 import { createSearch } from 'tgui-core/string';
 import { resolveAsset } from 'tgui-panel/events/handlers/assets';
 import { useBackend } from '../../backend';
+import { useCraftText, useT } from '../../i18n';
 import { Window } from '../../layouts';
 import { CATEGORY_ICONS_COOKING, CATEGORY_ICONS_CRAFTING } from './constants';
 import { FoodtypeContent } from './content/FoodtypeContent';
@@ -36,6 +37,8 @@ import {
 
 export function PersonalCrafting(props: any) {
   const { act, data } = useBackend<CraftingData>();
+  const t = useT();
+  const text = useCraftText();
   const {
     mode,
     forced_mode,
@@ -244,11 +247,12 @@ export function PersonalCrafting(props: any) {
                   <Input
                     autoFocus
                     expensive
-                    placeholder={
-                      'Search in ' +
-                      visibleRecipes.length +
-                      (mode === MODE.cooking ? ' recipes...' : ' designs...')
-                    }
+                    placeholder={t(
+                      mode === MODE.cooking
+                        ? 'crafting-search-recipes'
+                        : 'crafting-search-designs',
+                      { count: visibleRecipes.length },
+                    )}
                     value={searchText}
                     onChange={(value) => {
                       setPages(1);
@@ -274,7 +278,7 @@ export function PersonalCrafting(props: any) {
                         );
                       }}
                     >
-                      Category
+                      {t('crafting-tab-category', {}, 'Category')}
                     </Tabs.Tab>
                     <Tabs.Tab
                       selected={tabMode === TABS.material}
@@ -287,7 +291,9 @@ export function PersonalCrafting(props: any) {
                         setMaterial(sorted_material_occurences[0].atom_id);
                       }}
                     >
-                      {mode === MODE.cooking ? 'Ingredient' : 'Material'}
+                      {mode === MODE.cooking
+                        ? t('crafting-tab-ingredient', {}, 'Ingredient')
+                        : t('crafting-tab-material', {}, 'Material')}
                     </Tabs.Tab>
                   </Tabs>
                 </Stack.Item>
@@ -371,7 +377,7 @@ export function PersonalCrafting(props: any) {
                                         : 'default'
                                     }
                                   >
-                                    {category}
+                                    {text(category)}
                                   </Stack.Item>
                                   {category === 'Can Make' && (
                                     <Stack.Item>
@@ -411,7 +417,7 @@ export function PersonalCrafting(props: any) {
                                               mr={1}
                                               ml={0.5}
                                             />
-                                            {cuisine}
+                                            {text(cuisine)}
                                           </Button.Checkbox>
                                         </Stack.Item>
                                       ))}
@@ -440,7 +446,7 @@ export function PersonalCrafting(props: any) {
                                               mr={1}
                                               ml={0.5}
                                             />
-                                            {dish}
+                                            {text(dish)}
                                           </Button.Checkbox>
                                         </Stack.Item>
                                       ))}
@@ -469,7 +475,7 @@ export function PersonalCrafting(props: any) {
                                               mr={1}
                                               ml={0.5}
                                             />
-                                            {meal}
+                                            {text(meal)}
                                           </Button.Checkbox>
                                         </Stack.Item>
                                       ))}
@@ -525,14 +531,14 @@ export function PersonalCrafting(props: any) {
                       act('toggle_recipes');
                     }}
                   >
-                    Can make only
+                    {t('crafting-can-make-only', {}, 'Can make only')}
                   </Button.Checkbox>
                   <Button.Checkbox
                     fluid
                     checked={display_compact}
                     onClick={() => act('toggle_compact')}
                   >
-                    Compact list
+                    {t('crafting-compact-list', {}, 'Compact list')}
                   </Button.Checkbox>
                 </Stack.Item>
                 {!forced_mode && (
@@ -558,7 +564,7 @@ export function PersonalCrafting(props: any) {
                             act('toggle_mode');
                           }}
                         >
-                          Craft
+                          {t('crafting-mode-craft', {}, 'Craft')}
                         </Button.Checkbox>
                       </Stack.Item>
                       <Stack.Item grow>
@@ -581,7 +587,7 @@ export function PersonalCrafting(props: any) {
                             act('toggle_mode');
                           }}
                         >
-                          Cook
+                          {t('crafting-mode-cook', {}, 'Cook')}
                         </Button.Checkbox>
                       </Stack.Item>
                     </Stack>
@@ -623,7 +629,7 @@ export function PersonalCrafting(props: any) {
                 </VirtualList>
               ) : (
                 <NoticeBox m={1} p={1}>
-                  No recipes found.
+                  {t('crafting-no-recipes', {}, 'No recipes found.')}
                 </NoticeBox>
               )}
               {recipes.length > displayLimit && (

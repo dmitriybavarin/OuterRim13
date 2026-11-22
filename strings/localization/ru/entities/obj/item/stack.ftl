@@ -503,11 +503,11 @@ ent-obj-item-stack-pipe_cleaner_coil = моток синельной прово�
 
 # name: iron rod
 # desc: Some rods. Can be used for building or something.
-ent-obj-item-stack-rods = железный прут
-    .gen = железного прута
-    .dat = железному пруту
-    .ins = железным прутом
-    .pre = железном пруте
+ent-obj-item-stack-rods = стальный прут
+    .gen = стального прута
+    .dat = стальному пруту
+    .ins = стальным прутом
+    .pre = стальном пруте
     .desc = Какие-то прутья. Можно использовать для строительства или чего-то в этом роде.
 
 # name: heat resistant rod
@@ -517,7 +517,7 @@ ent-obj-item-stack-rods-lava = жаропрочный прут
     .dat = жаропрочному пруту
     .ins = жаропрочным прутом
     .pre = жаропрочном пруте
-    .desc = Обработанные специализированные железные прутья. Под воздействием вакуума космоса покрытие отслаивается, но они способны выдержать экстремальный жар активной лавы.
+    .desc = Обработанные специализированные стальные прутья. Под воздействием вакуума космоса покрытие отслаивается, но они способны выдержать экстремальный жар активной лавы.
 
 # name: shuttle frame rods
 # desc: Treated, specialized iron rods suitable for the construction of shuttle frames or the expansion of existing shuttles.
@@ -526,7 +526,7 @@ ent-obj-item-stack-rods-shuttle = прутья каркаса шаттла
     .dat = прутам каркаса шаттла
     .ins = прутами каркаса шаттла
     .pre = прутах каркаса шаттла
-    .desc = Обработанные специализированные железные прутья, пригодные для постройки каркасов шаттлов или расширения существующих шаттлов.
+    .desc = Обработанные специализированные стальные прутья, пригодные для постройки каркасов шаттлов или расширения существующих шаттлов.
 
 # name: sheet
 ent-obj-item-stack-sheet = лист
@@ -819,12 +819,12 @@ ent-obj-item-stack-sheet-hot_ice = горячий лед
 
 # name: iron
 # desc: Sheets made out of iron.
-ent-obj-item-stack-sheet-iron = железо
-    .gen = железа
-    .dat = железу
-    .ins = железом
-    .pre = железе
-    .desc = Листы из железа.
+ent-obj-item-stack-sheet-iron = сталь
+    .gen = стали
+    .dat = стали
+    .ins = сталью
+    .pre = стали
+    .desc = Листы из стали.
 
 # name: leather
 # desc: The by-product of mob grinding.
@@ -1050,7 +1050,7 @@ ent-obj-item-stack-sheet-plasteel = пластальный лист
     .dat = пластальному листу
     .ins = пластальным листом
     .pre = пластальном листе
-    .desc = Этот лист — сплав железа и плазмы.
+    .desc = Этот лист — сплав стали и плазмы.
 
 # name: plastic
 # desc: Compress dinosaur over millions of years, then refine, split and mold, and voila! You have plastic.
@@ -1564,12 +1564,12 @@ ent-obj-item-stack-tile-catwalk_tile = мостковое покрытие
     .desc = Пол, сквозь который видно, что под ним. Инженеры его обожают!
 
 # name: iron catwalk floor
-ent-obj-item-stack-tile-catwalk_tile-iron = железный мостковый пол
-    .gen = железного мосткового пола
-    .dat = железному мостковому полу
-    .acc = железного мосткового пола
-    .ins = железным мостковым полом
-    .pre = железном мостковом поле
+ent-obj-item-stack-tile-catwalk_tile-iron = стальный мостковый пол
+    .gen = стального мосткового пола
+    .dat = стальному мостковому полу
+    .acc = стального мосткового пола
+    .ins = стальным мостковым полом
+    .pre = стальном мостковом поле
 
 # name: dark catwalk floor
 ent-obj-item-stack-tile-catwalk_tile-iron_dark = темный мостковый пол
@@ -1580,12 +1580,12 @@ ent-obj-item-stack-tile-catwalk_tile-iron_dark = темный мостковый
     .pre = темном мостковом поле
 
 # name: smooth iron catwalk floor
-ent-obj-item-stack-tile-catwalk_tile-iron_smooth = гладкий железный мостковый пол
-    .gen = гладкого железного мосткового пола
-    .dat = гладкому железному мостковому полу
-    .acc = гладкого железного мосткового пола
-    .ins = гладким железным мостковым полом
-    .pre = гладком железном мостковом поле
+ent-obj-item-stack-tile-catwalk_tile-iron_smooth = гладкий стальный мостковый пол
+    .gen = гладкого стального мосткового пола
+    .dat = гладкому стальному мостковому полу
+    .acc = гладкого стального мосткового пола
+    .ins = гладким стальным мостковым полом
+    .pre = гладком стальном мостковом поле
 
 # name: white catwalk floor
 ent-obj-item-stack-tile-catwalk_tile-iron_white = белый мостковый пол

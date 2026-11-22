@@ -9,6 +9,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { slugify, useT } from '../i18n';
 import { Window } from '../layouts';
 import {
   ColorItem,
@@ -64,6 +65,7 @@ type Recipe = {
 
 const PipeTypeSection = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { categories = [] } = data;
   const [categoryName, setCategoryName] = useState(categories[0].cat_name);
   const shownCategory =
@@ -80,7 +82,11 @@ const PipeTypeSection = (props) => {
             selected={category.cat_name === shownCategory.cat_name}
             onClick={() => setCategoryName(category.cat_name)}
           >
-            {category.cat_name}
+            {t(
+              `rapid-category-${slugify(category.cat_name).replace(/_/g, '-')}`,
+              {},
+              category.cat_name,
+            )}
           </Tabs.Tab>
         ))}
       </Tabs>

@@ -332,7 +332,12 @@ function LoadoutPreviewSection() {
           </Button.Checkbox>
         </Stack.Item>
         <Stack.Item grow basis={0} minHeight={0} style={{ overflow: 'hidden' }}>
-          <CharacterPreview height="100%" id={data.character_preview_view} />
+          <Box
+            height="100%"
+            style={{ display: 'flex', justifyContent: 'center' }}
+          >
+            <CharacterPreview height="100%" id={data.character_preview_view} />
+          </Box>
         </Stack.Item>
         <Stack.Item align="center">
           <Stack g={1}>

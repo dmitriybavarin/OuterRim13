@@ -4,6 +4,7 @@ import { isEscape, KEY } from 'tgui-core/keys';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { slugify, useT } from '../i18n';
 import { Window } from '../layouts';
 import { Loader } from './common/Loader';
 
@@ -17,6 +18,12 @@ type Data = {
   title: string;
 };
 
+function useButtonLabel() {
+  const t = useT();
+  return (button: string) =>
+    t(`alertmodal-button-${slugify(button)}`, {}, button);
+}
+
 enum DIRECTION {
   Increment = 1,
   Decrement = -1,
@@ -24,6 +31,7 @@ enum DIRECTION {
 
 export function AlertModal(props) {
   const { act, data } = useBackend<Data>();
+  const label = useButtonLabel();
   const {
     autofocus,
     buttons = [],
@@ -53,7 +61,7 @@ export function AlertModal(props) {
   // At least one of the buttons has a long text message
   const isVerbose = buttons.some(
     (button) =>
-      textWidth(button, 'Verdana, Geneva', large_buttons ? 14 : 12) > // 14 is the larger font size for large buttons
+      textWidth(label(button), 'Verdana, Geneva', large_buttons ? 14 : 12) > // 14 is the larger font size for large buttons
       windowWidth / buttons.length - paddingMagicNumber,
   );
   const largeSpacing = isVerbose && large_buttons ? 20 : 15;
@@ -131,6 +139,7 @@ type ButtonDisplayProps = {
  */
 function HorizontalButtons(props: ButtonDisplayProps) {
   const { act, data } = useBackend<Data>();
+  const label = useButtonLabel();
   const { buttons = [], large_buttons, swapped_buttons } = data;
   const { selected } = props;
 
@@ -148,7 +157,7 @@ function HorizontalButtons(props: ButtonDisplayProps) {
             selected={selected === index}
             textAlign="center"
           >
-            {!large_buttons ? button : button.toUpperCase()}
+            {!large_buttons ? label(button) : label(button).toUpperCase()}
           </Button>
         </Stack.Item>
       ))}
@@ -162,6 +171,7 @@ function HorizontalButtons(props: ButtonDisplayProps) {
  */
 function VerticalButtons(props: ButtonDisplayProps) {
   const { act, data } = useBackend<Data>();
+  const label = useButtonLabel();
   const { buttons = [], large_buttons, swapped_buttons } = data;
   const { selected } = props;
 
@@ -190,7 +200,7 @@ function VerticalButtons(props: ButtonDisplayProps) {
             selected={selected === index}
             textAlign="center"
           >
-            {!large_buttons ? button : button.toUpperCase()}
+            {!large_buttons ? label(button) : label(button).toUpperCase()}
           </Button>
         </Stack.Item>
       ))}

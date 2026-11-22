@@ -286,12 +286,12 @@ ent-turf-open-floor-catwalk_floor = решетчатый пол
     .desc = Пол, сквозь который видно то, что под ним. Инженеры его обожают!
 
 # name: iron plated catwalk floor
-ent-turf-open-floor-catwalk_floor-iron = железный решетчатый пол
-    .gen = железного решетчатого пола
-    .dat = железному решетчатому полу
-    .acc = железного решетчатого пола
-    .ins = железным решетчатым полом
-    .pre = железном решетчатом поле
+ent-turf-open-floor-catwalk_floor-iron = стальный решетчатый пол
+    .gen = стального решетчатого пола
+    .dat = стальному решетчатому полу
+    .acc = стального решетчатого пола
+    .ins = стальным решетчатым полом
+    .pre = стальном решетчатом поле
 
 # name: dark plated catwalk floor
 ent-turf-open-floor-catwalk_floor-iron_dark = темный решетчатый пол

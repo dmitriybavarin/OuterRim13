@@ -13,6 +13,7 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
 import { Direction } from '../constants';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type AreaData = { name: string; ref: string };
@@ -127,14 +128,17 @@ const DirectionPad = (props: DirectionPadProps) => {
 const VisualizationToggle = (props: VisualizationToggleProps) => {
   const { visualizing } = props;
   const { act } = useBackend<ShuttleBlueprintsData>();
+  const t = useT();
   return (
     <Tooltip
-      content="Toggle a visualization of shuttle frames you can use to construct a shuttle.
-                Red tiles indicate frame parts built in invalid areas,
-                or parts of suitable areas that need frame parts built on them."
+      content={t(
+        'shuttlebp-visualization-hint',
+        {},
+        'Toggle a visualization of shuttle frames you can use to construct a shuttle. Red tiles indicate frame parts built in invalid areas, or parts of suitable areas that need frame parts built on them.',
+      )}
     >
       <Box inline>
-        Visualization:
+        {t('shuttlebp-visualization', {}, 'Visualization:')}
         <Button
           color="transparent"
           icon={visualizing ? 'toggle-on' : 'toggle-off'}
@@ -173,6 +177,7 @@ const ShuttleConstruction = () => {
     Direction.NORTH,
   );
   const { act, data } = useBackend<ShuttleBlueprintsData>();
+  const t = useT();
   if (data.linkedShuttle !== 0) {
     throw new Error('type guard failure - linkedShuttle must be 0');
   }
@@ -190,8 +195,12 @@ const ShuttleConstruction = () => {
     <Stack justify="space-around">
       <Stack.Item grow>
         <DirectionPad
-          title="Shuttle Direction"
-          tooltip="This specifies the direction that the shuttle being built is facing."
+          title={t('shuttlebp-direction', {}, 'Shuttle Direction')}
+          tooltip={t(
+            'shuttlebp-direction-hint',
+            {},
+            'This specifies the direction that the shuttle being built is facing.',
+          )}
           enabledDirections={Direction.ALL}
           selectedDirection={shuttleDirection}
           onSelect={(dir) => setShuttleDirection(dir)}
@@ -209,17 +218,48 @@ const ShuttleConstruction = () => {
                   disabled={!onShuttleFrame || tooManyShuttles || problems}
                   tooltip={
                     <ProblemsTooltip
-                      description="Create a new shuttle using a shuttle frame."
-                      problemHeader="The following problems prevent you from creating a shuttle with this frame."
+                      description={t(
+                        'shuttlebp-new-description',
+                        {},
+                        'Create a new shuttle using a shuttle frame.',
+                      )}
+                      problemHeader={t(
+                        'shuttlebp-new-problem-header',
+                        {},
+                        'The following problems prevent you from creating a shuttle with this frame.',
+                      )}
                       problems={problems ?? 0}
                       problemStrings={[
-                        'You are not on a shuttle frame.',
-                        'There are too many custom shuttles currently.',
-                        'This frame is too large.',
-                        'This frame includes the APC of a custom area, but does not enclose the entire area.\
-                         Remove the APC or add the rest of the area to the frame.',
-                        'This frame encroaches on an area custom shuttles may not dock at.',
-                        'This frame includes an APC belonging to a non-custom area.',
+                        t(
+                          'shuttlebp-new-problem-no-frame',
+                          {},
+                          'You are not on a shuttle frame.',
+                        ),
+                        t(
+                          'shuttlebp-new-problem-too-many',
+                          {},
+                          'There are too many custom shuttles currently.',
+                        ),
+                        t(
+                          'shuttlebp-problem-too-large',
+                          {},
+                          'This frame is too large.',
+                        ),
+                        t(
+                          'shuttlebp-problem-apc-partial',
+                          {},
+                          'This frame includes the APC of a custom area, but does not enclose the entire area. Remove the APC or add the rest of the area to the frame.',
+                        ),
+                        t(
+                          'shuttlebp-problem-encroach',
+                          {},
+                          'This frame encroaches on an area custom shuttles may not dock at.',
+                        ),
+                        t(
+                          'shuttlebp-problem-apc-foreign',
+                          {},
+                          'This frame includes an APC belonging to a non-custom area.',
+                        ),
                       ]}
                     />
                   }
@@ -227,7 +267,7 @@ const ShuttleConstruction = () => {
                     act('tryBuildShuttle', { dir: shuttleDirection })
                   }
                 >
-                  Build New Shuttle
+                  {t('shuttlebp-build-new', {}, 'Build New Shuttle')}
                 </Button.Confirm>
               </Stack.Item>
               {onShuttleFrame ? (
@@ -254,14 +294,21 @@ const ShuttleConstruction = () => {
               tooltip={
                 onCustomShuttle
                   ? masterExists
-                    ? 'The master blueprint for this shuttle still exists. \
-                          Whoever has it can copy it to this set of blueprints.'
+                    ? t(
+                        'shuttlebp-master-exists',
+                        {},
+                        'The master blueprint for this shuttle still exists. Whoever has it can copy it to this set of blueprints.',
+                      )
                     : null
-                  : 'You must be on a custom shuttle to do this.'
+                  : t(
+                      'shuttlebp-need-custom',
+                      {},
+                      'You must be on a custom shuttle to do this.',
+                    )
               }
               onClick={() => act('tryLinkShuttle')}
             >
-              Connect To Existing Shuttle
+              {t('shuttlebp-connect', {}, 'Connect To Existing Shuttle')}
             </Button.Confirm>
           </Stack.Item>
         </Stack>
@@ -275,6 +322,7 @@ const ShuttleConfiguration = () => {
   const [mergeArea = { name: '', ref: '' }, setMergeArea] =
     useState<AreaData>();
   const { act, data } = useBackend<ShuttleBlueprintsData>();
+  const t = useT();
   if (data.linkedShuttle === 0) {
     throw new Error('type guard failure - linkedShuttle must be non-zero');
   }
@@ -302,17 +350,21 @@ const ShuttleConfiguration = () => {
   return (
     <Stack fill vertical align="center" justify="space-around">
       <Stack.Item textAlign="center">
-        <h2>Current Area:</h2>
+        <h2>{t('shuttlebp-current-area', {}, 'Current Area:')}</h2>
         <h3>
           {onShuttle
             ? inDefaultArea
-              ? 'Default Area'
+              ? t('shuttlebp-default-area', {}, 'Default Area')
               : currentAreaName
-            : 'Not on Shuttle'}
+            : t('shuttlebp-not-on-shuttle', {}, 'Not on Shuttle')}
         </h3>
       </Stack.Item>
       <Stack.Item>
-        <Input fluid placeholder="New Area Name" onChange={setName} />
+        <Input
+          fluid
+          placeholder={t('shuttlebp-new-area-name', {}, 'New Area Name')}
+          onChange={setName}
+        />
         <Stack>
           <Stack.Item>
             <Button.Confirm
@@ -320,13 +372,25 @@ const ShuttleConfiguration = () => {
               tooltip={
                 onShuttle
                   ? inDefaultArea
-                    ? 'Designate a room within the shuttle as its own area.'
-                    : 'You can only designate a new area from the default area.'
-                  : 'You must be on the linked shuttle to do this.'
+                    ? t(
+                        'shuttlebp-designate-hint',
+                        {},
+                        'Designate a room within the shuttle as its own area.',
+                      )
+                    : t(
+                        'shuttlebp-designate-only-default',
+                        {},
+                        'You can only designate a new area from the default area.',
+                      )
+                  : t(
+                      'shuttlebp-need-linked',
+                      {},
+                      'You must be on the linked shuttle to do this.',
+                    )
               }
               onClick={() => act('createNewArea', { name: name })}
             >
-              Designate New Area
+              {t('shuttlebp-designate', {}, 'Designate New Area')}
             </Button.Confirm>
           </Stack.Item>
           <Stack.Item>
@@ -335,13 +399,21 @@ const ShuttleConfiguration = () => {
               tooltip={
                 onShuttle
                   ? inDefaultArea
-                    ? 'You cannot rename the default area.'
+                    ? t(
+                        'shuttlebp-rename-default',
+                        {},
+                        'You cannot rename the default area.',
+                      )
                     : null
-                  : 'You must be on the linked shuttle to do this.'
+                  : t(
+                      'shuttlebp-need-linked',
+                      {},
+                      'You must be on the linked shuttle to do this.',
+                    )
               }
               onClick={() => act('renameArea', { name: name })}
             >
-              Rename Current Area
+              {t('shuttlebp-rename', {}, 'Rename Current Area')}
             </Button.Confirm>
           </Stack.Item>
         </Stack>
@@ -350,7 +422,7 @@ const ShuttleConfiguration = () => {
         <Stack fill justify="center">
           <Stack.Item>
             <Dropdown
-              placeholder="Select Area"
+              placeholder={t('shuttlebp-select-area', {}, 'Select Area')}
               options={Object.entries(neighboringAreas).map(([ref, name]) => {
                 return {
                   displayText: name,
@@ -369,20 +441,36 @@ const ShuttleConfiguration = () => {
                 !(onShuttle && inDefaultArea && mergeArea) || mergeApcConflict
               }
               tooltip={
-                'Expand the selected area with the connected section of the default area.' +
+                t(
+                  'shuttlebp-expand-hint',
+                  {},
+                  'Expand the selected area with the connected section of the default area.',
+                ) +
                 (onShuttle
                   ? mergeArea
                     ? inDefaultArea
                       ? mergeApcConflict
-                        ? '\nBoth the selected area and the region that it would expand into have APCs. You must remove one first.'
+                        ? `\n${t(
+                            'shuttlebp-expand-both-apc',
+                            {},
+                            'Both the selected area and the region that it would expand into have APCs. You must remove one first.',
+                          )}`
                         : ''
-                      : '\nYou can only expand the selected area into the default area.'
+                      : `\n${t(
+                          'shuttlebp-expand-only-default',
+                          {},
+                          'You can only expand the selected area into the default area.',
+                        )}`
                     : ''
-                  : '\nYou must be on the linked shuttle to do this.')
+                  : `\n${t(
+                      'shuttlebp-need-linked',
+                      {},
+                      'You must be on the linked shuttle to do this.',
+                    )}`)
               }
               onClick={() => act('mergeIntoArea', { area: mergeAreaRef })}
             >
-              Expand Area
+              {t('shuttlebp-expand-area', {}, 'Expand Area')}
             </Button.Confirm>
           </Stack.Item>
         </Stack>
@@ -396,23 +484,58 @@ const ShuttleConfiguration = () => {
                   disabled={!(idle && onShuttleFrame) || problems || tooLarge}
                   tooltip={
                     <ProblemsTooltip
-                      description="Expand the linked shuttle with an adjacent shuttle frame."
-                      problemHeader="The following problems prevent you from expanding the shuttle."
+                      description={t(
+                        'shuttlebp-expand-description',
+                        {},
+                        'Expand the linked shuttle with an adjacent shuttle frame.',
+                      )}
+                      problemHeader={t(
+                        'shuttlebp-expand-problem-header',
+                        {},
+                        'The following problems prevent you from expanding the shuttle.',
+                      )}
                       problems={problems ?? 0}
                       problemStrings={[
-                        'You must be standing on the shuttle frame you wish to expand the shuttle with.',
-                        'This frame is not adjacent to the linked shuttle.',
-                        'This frame is too large.',
-                        'This frame includes the APC of a custom area, but does not enclose the entire area.\
-                         Remove the APC or add the rest of the area to the frame.',
-                        'This frame encroaches on an area custom shuttles may not dock at.',
-                        'This frame includes an APC belonging to a non-custom area.',
+                        t(
+                          'shuttlebp-expand-problem-no-frame',
+                          {},
+                          'You must be standing on the shuttle frame you wish to expand the shuttle with.',
+                        ),
+                        t(
+                          'shuttlebp-expand-problem-not-adjacent',
+                          {},
+                          'This frame is not adjacent to the linked shuttle.',
+                        ),
+                        t(
+                          'shuttlebp-problem-too-large',
+                          {},
+                          'This frame is too large.',
+                        ),
+                        t(
+                          'shuttlebp-problem-apc-partial',
+                          {},
+                          'This frame includes the APC of a custom area, but does not enclose the entire area. Remove the APC or add the rest of the area to the frame.',
+                        ),
+                        t(
+                          'shuttlebp-problem-encroach',
+                          {},
+                          'This frame encroaches on an area custom shuttles may not dock at.',
+                        ),
+                        t(
+                          'shuttlebp-problem-apc-foreign',
+                          {},
+                          'This frame includes an APC belonging to a non-custom area.',
+                        ),
                       ]}
                     />
                   }
                   onClick={() => act('expandWithFrame')}
                 >
-                  Expand Shuttle With Connected Frame
+                  {t(
+                    'shuttlebp-expand-frame',
+                    {},
+                    'Expand Shuttle With Connected Frame',
+                  )}
                 </Button.Confirm>
               </Stack.Item>
               <Stack.Item>
@@ -444,34 +567,65 @@ const ShuttleConfiguration = () => {
         <Button.Confirm
           disabled={!onShuttle || inDefaultArea || removalApcConflict}
           tooltip={
-            'Merge the current area into the default area.' +
+            t(
+              'shuttlebp-undesignate-hint',
+              {},
+              'Merge the current area into the default area.',
+            ) +
             (onShuttle
               ? inDefaultArea
-                ? '\nYou are already in the default area.'
+                ? `\n${t(
+                    'shuttlebp-undesignate-already',
+                    {},
+                    'You are already in the default area.',
+                  )}`
                 : removalApcConflict
-                  ? '\nBoth the current and default areas have APCs. You must remove one first.'
+                  ? `\n${t(
+                      'shuttlebp-undesignate-both-apc',
+                      {},
+                      'Both the current and default areas have APCs. You must remove one first.',
+                    )}`
                   : ''
-              : '\nYou must be on the linked shuttle to do this.')
+              : `\n${t(
+                  'shuttlebp-need-linked',
+                  {},
+                  'You must be on the linked shuttle to do this.',
+                )}`)
           }
           onClick={() => act('releaseArea')}
         >
-          Undesignate Area
+          {t('shuttlebp-undesignate', {}, 'Undesignate Area')}
         </Button.Confirm>
       </Stack.Item>
       <Stack.Item>
         <Button.Confirm
           disabled={!idle || !isMaster}
-          tooltip={`Remove all empty space from the shuttle.${
+          tooltip={`${t(
+            'shuttlebp-cleanup-hint',
+            {},
+            'Remove all empty space from the shuttle.',
+          )}${
             isMaster
               ? idle
-                ? '\nThis will delete any areas left without any space, \
-              and will decommission the shuttle entirely if there is nothing left of it.'
-                : '\nThe shuttle must be idle to do this.'
-              : '\nOnly the master blueprint can do this.'
+                ? `\n${t(
+                    'shuttlebp-cleanup-delete',
+                    {},
+                    'This will delete any areas left without any space, and will decommission the shuttle entirely if there is nothing left of it.',
+                  )}`
+                : `\n${t(
+                    'shuttlebp-cleanup-idle',
+                    {},
+                    'The shuttle must be idle to do this.',
+                  )}`
+              : `\n${t(
+                  'shuttlebp-cleanup-master',
+                  {},
+                  'Only the master blueprint can do this.',
+                )}`
           }`}
           onClick={() => act('cleanupEmptyTurfs')}
         >
-          Clean Up Empty Space
+          {t('shuttlebp-cleanup', {}, 'Clean Up Empty Space')}
         </Button.Confirm>
       </Stack.Item>
     </Stack>
@@ -481,6 +635,7 @@ const ShuttleConfiguration = () => {
 export const ShuttleBlueprints = (props) => {
   const { act, data } = useBackend<ShuttleBlueprintsData>();
   const { linkedShuttle, shuttles, masterExists, isMaster } = data;
+  const t = useT();
   return (
     <Window width={450} height={340}>
       <Window.Content>
@@ -491,14 +646,18 @@ export const ShuttleBlueprints = (props) => {
               {shuttles && (
                 <Dropdown
                   options={[
-                    { displayText: 'None', value: 0 },
+                    { displayText: t('shuttlebp-none', {}, 'None'), value: 0 },
                     ...Object.entries(shuttles).map(
                       ([ref, name]: [string, string]) => {
                         return { displayText: name, value: ref };
                       },
                     ),
                   ]}
-                  selected={linkedShuttle ? shuttles[linkedShuttle] : 'None'}
+                  selected={
+                    linkedShuttle
+                      ? shuttles[linkedShuttle]
+                      : t('shuttlebp-none', {}, 'None')
+                  }
                   onSelected={(value) => {
                     if (value === 0) {
                       act('unsetShuttle');
@@ -510,7 +669,7 @@ export const ShuttleBlueprints = (props) => {
               )}
               {!!linkedShuttle && !masterExists && !isMaster && (
                 <Button.Confirm onClick={() => act('promoteToMaster')}>
-                  Promote To Master Blueprint
+                  {t('shuttlebp-promote', {}, 'Promote To Master Blueprint')}
                 </Button.Confirm>
               )}
             </>

@@ -9,6 +9,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -26,9 +27,10 @@ type Data = {
 };
 
 export function CommandReport() {
+  const t = useT();
   return (
     <Window
-      title="Create Command Report"
+      title={t('commandreport-title', {}, 'Create Command Report')}
       width={325}
       height={685}
       theme="admin"
@@ -54,6 +56,7 @@ export function CommandReport() {
 
 /** Allows the user to set the "sender" of the message via dropdown */
 function CentComName(props) {
+  const t = useT();
   const { act, data } = useBackend<Data>();
   const { command_name, command_name_presets = [], custom_name } = data;
 
@@ -67,7 +70,10 @@ function CentComName(props) {
   }
 
   return (
-    <Section title="Set Central Command name" textAlign="center">
+    <Section
+      title={t('commandreport-section-name', {}, 'Set Central Command name')}
+      textAlign="center"
+    >
       <Dropdown
         width="100%"
         selected={name}
@@ -83,16 +89,24 @@ function CentComName(props) {
 
 /** Allows the user to set the "sender" of the message via dropdown */
 function SubHeader(props) {
+  const t = useT();
   const { act, data } = useBackend<Data>();
   const { subheader } = data;
 
   return (
-    <Section title="Set report subheader" textAlign="center">
+    <Section
+      title={t('commandreport-section-subheader', {}, 'Set report subheader')}
+      textAlign="center"
+    >
       <Input
         fluid
         mt={1}
         value={subheader}
-        placeholder="Keep blank to not include a subheader"
+        placeholder={t(
+          'commandreport-subheader-placeholder',
+          {},
+          'Keep blank to not include a subheader',
+        )}
         onBlur={(value) =>
           act('set_subheader', {
             new_subheader: value,
@@ -105,11 +119,15 @@ function SubHeader(props) {
 
 /** Features a section with dropdown for the announcement colour. */
 function AnnouncementColor(props) {
+  const t = useT();
   const { act, data } = useBackend<Data>();
   const { announcement_colors = [], announcement_color } = data;
 
   return (
-    <Section title="Set announcement color" textAlign="center">
+    <Section
+      title={t('commandreport-section-color', {}, 'Set announcement color')}
+      textAlign="center"
+    >
       <Dropdown
         width="100%"
         selected={announcement_color}
@@ -126,11 +144,15 @@ function AnnouncementColor(props) {
 
 /** Features a section with dropdown for sounds. */
 function AnnouncementSound(props) {
+  const t = useT();
   const { act, data } = useBackend<Data>();
   const { announcer_sounds = [], played_sound } = data;
 
   return (
-    <Section title="Set announcement sound" textAlign="center">
+    <Section
+      title={t('commandreport-section-sound', {}, 'Set announcement sound')}
+      textAlign="center"
+    >
       <Dropdown
         width="100%"
         selected={played_sound}
@@ -147,12 +169,17 @@ function AnnouncementSound(props) {
 
 /** Creates the report textarea with a submit button. */
 function ReportText(props) {
+  const t = useT();
   const { act, data } = useBackend<Data>();
   const { announce_contents, print_report, command_report_content } = data;
   const [commandReport, setCommandReport] = useState(command_report_content);
 
   return (
-    <Section fill title="Set report text" textAlign="center">
+    <Section
+      fill
+      title={t('commandreport-section-text', {}, 'Set report text')}
+      textAlign="center"
+    >
       <Stack fill vertical>
         <Stack.Item grow>
           <TextArea
@@ -160,7 +187,11 @@ function ReportText(props) {
             fluid
             onBlur={setCommandReport}
             value={commandReport}
-            placeholder="Enter report text here..."
+            placeholder={t(
+              'commandreport-text-placeholder',
+              {},
+              'Enter report text here...',
+            )}
           />
         </Stack.Item>
         <Stack.Item>
@@ -169,7 +200,7 @@ function ReportText(props) {
             checked={!!announce_contents}
             onClick={() => act('toggle_announce')}
           >
-            Announce Contents
+            {t('commandreport-announce', {}, 'Announce Contents')}
           </Button.Checkbox>
         </Stack.Item>
         <Stack.Item>
@@ -180,11 +211,15 @@ function ReportText(props) {
             onClick={() => act('toggle_printing')}
             tooltip={
               !announce_contents &&
-              "Printing the report is required since we aren't announcing its contents."
+              t(
+                'commandreport-print-tooltip',
+                {},
+                "Printing the report is required since we aren't announcing its contents.",
+              )
             }
             tooltipPosition="top"
           >
-            Print Report
+            {t('commandreport-print', {}, 'Print Report')}
           </Button.Checkbox>
         </Stack.Item>
         <Stack.Item>
@@ -194,7 +229,7 @@ function ReportText(props) {
             textAlign="center"
             onClick={() => act('submit_report', { report: commandReport })}
           >
-            Submit Report
+            {t('commandreport-submit', {}, 'Submit Report')}
           </Button.Confirm>
         </Stack.Item>
       </Stack>

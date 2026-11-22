@@ -9,6 +9,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -26,6 +27,7 @@ type Data = {
 
 export function DnaVault(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     animals_max,
     animals,
@@ -42,29 +44,41 @@ export function DnaVault(props) {
   return (
     <Window width={350} height={400}>
       <Window.Content>
-        <Section title="DNA Vault Database">
+        <Section title={t('dnavault-title', {}, 'DNA Vault Database')}>
           <LabeledList>
-            <LabeledList.Item label="Human DNA">
+            <LabeledList.Item label={t('dnavault-human', {}, 'Human DNA')}>
               <ProgressBar value={dna / dna_max}>
-                {`${dna} / ${dna_max} Samples`}
+                {t(
+                  'dnavault-samples',
+                  { count: dna, max: dna_max },
+                  `${dna} / ${dna_max} Samples`,
+                )}
               </ProgressBar>
             </LabeledList.Item>
-            <LabeledList.Item label="Plant DNA">
+            <LabeledList.Item label={t('dnavault-plant', {}, 'Plant DNA')}>
               <ProgressBar value={plants / plants_max}>
-                {`${plants} / ${plants_max} Samples`}
+                {t(
+                  'dnavault-samples',
+                  { count: plants, max: plants_max },
+                  `${plants} / ${plants_max} Samples`,
+                )}
               </ProgressBar>
             </LabeledList.Item>
-            <LabeledList.Item label="Animal DNA">
+            <LabeledList.Item label={t('dnavault-animal', {}, 'Animal DNA')}>
               <ProgressBar value={animals / animals_max}>
-                {`${animals} / ${animals_max} Samples`}
+                {t(
+                  'dnavault-samples',
+                  { count: animals, max: animals_max },
+                  `${animals} / ${animals_max} Samples`,
+                )}
               </ProgressBar>
             </LabeledList.Item>
           </LabeledList>
         </Section>
         {!!(completed && !used) && (
-          <Section title="Personal Gene Therapy">
+          <Section title={t('dnavault-therapy', {}, 'Personal Gene Therapy')}>
             <Box bold textAlign="center" mb={1}>
-              Applicable Gene Therapy Treatments
+              {t('dnavault-applicable', {}, 'Applicable Gene Therapy Treatments')}
             </Box>
             <Stack>
               <Stack.Item grow>

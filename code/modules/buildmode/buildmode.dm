@@ -41,7 +41,7 @@
 	mode.exit_mode(src)
 	holder.screen -= buttons
 	holder.click_intercept = null
-	holder.show_popup_menus = TRUE
+	holder.refresh_popup_menus()
 	qdel(src)
 
 /datum/buildmode/Destroy()

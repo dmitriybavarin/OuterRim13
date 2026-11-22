@@ -2,6 +2,7 @@ import { Button, LabeledList } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { AccessConfig, type Region } from './common/AccessConfig';
 
@@ -13,16 +14,21 @@ type Data = {
 
 export const CircuitAccessChecker = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { oneAccess, regions = [], accesses = [] } = data;
 
   return (
     <Window width={420} height={360}>
       <Window.Content>
         <LabeledList>
-          <LabeledList.Item label="Access Required">
+          <LabeledList.Item label={t('circuitaccess-required', {}, 'Access Required')}>
             <Button
               icon={oneAccess ? 'unlock' : 'lock'}
-              content={oneAccess ? 'One' : 'All'}
+              content={
+                oneAccess
+                  ? t('circuitaccess-one', {}, 'One')
+                  : t('circuitaccess-all', {}, 'All')
+              }
               onClick={() => act('one_access')}
             />
           </LabeledList.Item>

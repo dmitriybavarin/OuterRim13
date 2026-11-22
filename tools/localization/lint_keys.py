@@ -5,7 +5,7 @@ import sys
 
 import build_tgui
 
-ENTITY_PREFIX = "ent-"
+ENTITY_PREFIX = ("ent-", "datum-")
 KEY_LINE = re.compile(r"^([a-z][a-z0-9_-]*) = ?(.*)$")
 VARIABLE = re.compile(r"\$([a-z][a-z0-9_]*)")
 USED_STATIC = re.compile(r"(?:LOC_KEY|loc_key)\(\"([a-z][a-z0-9_-]*)\"")

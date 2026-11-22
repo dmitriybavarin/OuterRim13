@@ -12,6 +12,7 @@ import { toFixed } from 'tgui-core/math';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -42,6 +43,7 @@ type TramDestination = {
 
 export const TramController = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
 
   const {
     transportId,
@@ -66,34 +68,40 @@ export const TramController = (props) => {
   const [tripDestination, setTripDestination] = useState('');
 
   return (
-    <Window title="Tram Controller" width={778} height={327} theme="dark">
+    <Window title={t('tram-title', {}, 'Tram Controller')} width={778} height={327} theme="dark">
       <Window.Content>
         <Stack>
           <Stack.Item grow={4}>
-            <Section title="System Status">
+            <Section title={t('tram-system-status', {}, 'System Status')}>
               <LabeledList>
-                <LabeledList.Item label="System ID">
+                <LabeledList.Item label={t('tram-system-id', {}, 'System ID')}>
                   {transportId}
                 </LabeledList.Item>
                 <LabeledList.Item
-                  label="Controller Queue"
+                  label={t('tram-queue', {}, 'Controller Queue')}
                   color={controllerActive ? 'blue' : 'good'}
                 >
-                  {controllerActive ? 'Processing' : 'Ready'}
+                  {controllerActive
+                    ? t('tram-processing', {}, 'Processing')
+                    : t('tram-ready', {}, 'Ready')}
                 </LabeledList.Item>
                 <LabeledList.Item
-                  label="Mechanical Status"
+                  label={t('tram-mechanical', {}, 'Mechanical Status')}
                   color={controllerOperational ? 'good' : 'bad'}
                 >
-                  {controllerOperational ? 'Normal' : 'Fault'}
+                  {controllerOperational
+                    ? t('tram-normal', {}, 'Normal')
+                    : t('tram-fault', {}, 'Fault')}
                 </LabeledList.Item>
                 <LabeledList.Item
-                  label="Processor Status"
+                  label={t('tram-processor-status', {}, 'Processor Status')}
                   color={recoveryMode ? 'average' : 'good'}
                 >
-                  {recoveryMode ? 'Overload' : 'Normal'}
+                  {recoveryMode
+                    ? t('tram-overload', {}, 'Overload')
+                    : t('tram-normal', {}, 'Normal')}
                 </LabeledList.Item>
-                <LabeledList.Item label="Processor Load">
+                <LabeledList.Item label={t('tram-processor-load', {}, 'Processor Load')}>
                   <ProgressBar
                     value={currentLoad}
                     minValue={0}
@@ -105,7 +113,7 @@ export const TramController = (props) => {
                     }}
                   />
                 </LabeledList.Item>
-                <LabeledList.Item label="Current Speed">
+                <LabeledList.Item label={t('tram-speed', {}, 'Current Speed')}>
                   <ProgressBar
                     value={currentSpeed}
                     minValue={0}
@@ -117,24 +125,30 @@ export const TramController = (props) => {
                       white: [-Infinity, 0],
                     }}
                   >
-                    {`${toFixed(currentSpeed * 2.25, 0)} km/h`}
+                    {t(
+                      'tram-speed-value',
+                      { speed: toFixed(currentSpeed * 2.25, 0) },
+                      `${toFixed(currentSpeed * 2.25, 0)} km/h`,
+                    )}
                   </ProgressBar>
                 </LabeledList.Item>
               </LabeledList>
             </Section>
-            <Section title="Location Data">
+            <Section title={t('tram-location', {}, 'Location Data')}>
               <LabeledList>
-                <LabeledList.Item label="Direction">
-                  {travelDirection === 4 ? 'Outbound' : 'Inbound'}
+                <LabeledList.Item label={t('tram-direction', {}, 'Direction')}>
+                  {travelDirection === 4
+                    ? t('tram-outbound', {}, 'Outbound')
+                    : t('tram-inbound', {}, 'Inbound')}
                 </LabeledList.Item>
                 <LabeledList.Item
-                  label="Idle Platform"
+                  label={t('tram-idle-platform', {}, 'Idle Platform')}
                   color={controllerActive ? '' : 'blue'}
                 >
                   {idlePlatform}
                 </LabeledList.Item>
                 <LabeledList.Item
-                  label="Destination Platform"
+                  label={t('tram-destination-platform', {}, 'Destination Platform')}
                   color={controllerActive ? 'blue' : ''}
                 >
                   {destinationPlatform}
@@ -143,10 +157,13 @@ export const TramController = (props) => {
             </Section>
           </Stack.Item>
           <Stack.Item grow={6}>
-            <Section title="Controls">
+            <Section title={t('tram-controls', {}, 'Controls')}>
               <NoticeBox>
-                Nanotrasen is not responsible for any injuries or fatalities
-                caused by usage of the tram.
+                {t(
+                  'tram-disclaimer',
+                  {},
+                  'Nanotrasen is not responsible for any injuries or fatalities caused by usage of the tram.',
+                )}
               </NoticeBox>
               <Button
                 icon="arrows-rotate"
@@ -158,7 +175,7 @@ export const TramController = (props) => {
                 textAlign="center"
                 onClick={() => act('reset', {})}
               >
-                Reset/Enable
+                {t('tram-reset', {}, 'Reset/Enable')}
               </Button>
               <Button
                 icon="square"
@@ -170,7 +187,7 @@ export const TramController = (props) => {
                 textAlign="center"
                 onClick={() => act('estop', {})}
               >
-                E-Stop/Disable
+                {t('tram-estop', {}, 'E-Stop/Disable')}
               </Button>
               <Button
                 icon="play"
@@ -187,13 +204,13 @@ export const TramController = (props) => {
                   })
                 }
               >
-                Start: Destination
+                {t('tram-start', {}, 'Start: Destination')}
               </Button>
               <Dropdown
                 width="98.5%"
                 options={destinations.map((id) => id.name)}
                 selected={tripDestination}
-                placeholder="Pick a Destination"
+                placeholder={t('tram-pick', {}, 'Pick a Destination')}
                 onSelected={(value) => setTripDestination(value)}
               />
               <Button
@@ -206,7 +223,7 @@ export const TramController = (props) => {
                 textAlign="center"
                 onClick={() => act('dopen', {})}
               >
-                Open Doors
+                {t('tram-open-doors', {}, 'Open Doors')}
               </Button>
               <Button
                 icon="bars"
@@ -218,7 +235,7 @@ export const TramController = (props) => {
                 textAlign="center"
                 onClick={() => act('dclose', {})}
               >
-                Close Doors
+                {t('tram-close-doors', {}, 'Close Doors')}
               </Button>
               <Button
                 icon="bars"
@@ -230,10 +247,10 @@ export const TramController = (props) => {
                 textAlign="center"
                 onClick={() => act('togglesensors', {})}
               >
-                Bypass Door Sensors
+                {t('tram-bypass', {}, 'Bypass Door Sensors')}
               </Button>
             </Section>
-            <Section title="Operational">
+            <Section title={t('tram-operational', {}, 'Operational')}>
               <Button
                 color={statusES ? 'red' : 'transparent'}
                 my={1}
@@ -242,7 +259,7 @@ export const TramController = (props) => {
                 minHeight={2}
                 textAlign="center"
               >
-                ESTOP
+                {t('tram-lamp-estop', {}, 'ESTOP')}
               </Button>
               <Button
                 color={statusSF ? 'yellow' : 'transparent'}
@@ -252,7 +269,7 @@ export const TramController = (props) => {
                 minHeight={2}
                 textAlign="center"
               >
-                FAULT
+                {t('tram-lamp-fault', {}, 'FAULT')}
               </Button>
               <Button
                 color={statusCE ? 'teal' : 'transparent'}
@@ -262,7 +279,7 @@ export const TramController = (props) => {
                 minHeight={2}
                 textAlign="center"
               >
-                COMMS
+                {t('tram-lamp-comms', {}, 'COMMS')}
               </Button>
               <Button
                 color={statusPD ? 'blue' : 'transparent'}
@@ -272,7 +289,7 @@ export const TramController = (props) => {
                 minHeight={2}
                 textAlign="center"
               >
-                RQST
+                {t('tram-lamp-rqst', {}, 'RQST')}
               </Button>
               <Button
                 color={statusDR ? 'transparent' : 'blue'}
@@ -282,7 +299,7 @@ export const TramController = (props) => {
                 minHeight={2}
                 textAlign="center"
               >
-                DOORS
+                {t('tram-lamp-doors', {}, 'DOORS')}
               </Button>
               <Button
                 color={statusCL ? 'blue' : 'transparent'}
@@ -292,7 +309,7 @@ export const TramController = (props) => {
                 minHeight={2}
                 textAlign="center"
               >
-                BUSY
+                {t('tram-lamp-busy', {}, 'BUSY')}
               </Button>
             </Section>
           </Stack.Item>

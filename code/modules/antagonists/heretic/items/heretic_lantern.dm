@@ -44,11 +44,11 @@
 	if(!IS_HERETIC(user) && !isobserver(user))
 		return
 	if(!COOLDOWN_FINISHED(src, unleash_cooldown))
-		. += span_notice("It will be able to unleash another flash in [span_bold(DisplayTimeText(COOLDOWN_TIMELEFT(src, unleash_cooldown)))].")
+		. += span_notice(loc_key("heretic-item-lantern-examine-cooldown", list(time = span_bold(loc_duration(COOLDOWN_TIMELEFT(src, unleash_cooldown), 1)))))
 	else if(stored_stacks >= LANTERN_MAX_STACKS)
-		. += span_notice("It has enough fire stored within to unleash a flash!")
+		. += span_notice(LOC_KEY("heretic-item-lantern-examine-ready"))
 	else
-		. += span_notice("It has not stored enough fire to unlesh a flash yet.")
+		. += span_notice(LOC_KEY("heretic-item-lantern-examine-charging"))
 
 /obj/item/flashlight/lantern/heretic/init_slapcrafting()
 	return
@@ -61,13 +61,13 @@
 		update_weight_class(WEIGHT_CLASS_BULKY)
 		var/atom/message_loc = isturf(loc) ? src : loc
 		message_loc.visible_message(
-			span_notice("[isturf(loc) ? src : "[loc]'s [src]"] flickers to life, casting eerie shadows around it.")
+			span_notice(isturf(loc) ? loc_key("heretic-item-lantern-on-ground", list(item = src)) : loc_key("heretic-item-lantern-on-held", list(owner = loc, item = src)))
 		)
 	else
 		update_weight_class(WEIGHT_CLASS_NORMAL)
 		var/atom/message_loc = isturf(loc) ? src : loc
 		message_loc.visible_message(
-			span_notice("[isturf(loc) ? src : "[loc]'s [src]"] flickers out, the shadows retreating.")
+			span_notice(isturf(loc) ? loc_key("heretic-item-lantern-off-ground", list(item = src)) : loc_key("heretic-item-lantern-off-held", list(owner = loc, item = src)))
 		)
 
 /obj/item/flashlight/lantern/heretic/Destroy()
@@ -122,7 +122,7 @@
 	update_appearance(UPDATE_ICON)
 	update_item_action_buttons()
 	if(new_stacks == LANTERN_MAX_STACKS && old_stacks < LANTERN_MAX_STACKS && ismob(loc))
-		balloon_alert(loc, "lantern fully charged!")
+		balloon_alert(loc, LOC_KEY("heretic-item-lantern-charged"))
 
 /obj/item/flashlight/lantern/heretic/process(seconds_per_tick)
 	if(!COOLDOWN_FINISHED(src, unleash_cooldown))
@@ -150,20 +150,20 @@
 	if(!isliving(user) || !IS_HERETIC(user) || !user.is_holding(src))
 		return
 	if(!COOLDOWN_FINISHED(src, unleash_cooldown))
-		balloon_alert(user, "still recovering, wait [DisplayTimeText(COOLDOWN_TIMELEFT(src, unleash_cooldown))]!")
+		balloon_alert(user, loc_key("heretic-item-lantern-recovering", list(time = loc_duration(COOLDOWN_TIMELEFT(src, unleash_cooldown), 1))))
 		return
 	if(stored_stacks < LANTERN_MAX_STACKS)
-		balloon_alert(user, "not fully charged")
+		balloon_alert(user, LOC_KEY("heretic-item-lantern-not-charged"))
 		return
 
 	set_stacks(0)
 	COOLDOWN_START(src, unleash_cooldown, 2 MINUTES)
 	addtimer(CALLBACK(src, PROC_REF(update_item_action_buttons)), 2 MINUTES, TIMER_DELETE_ME)
-	balloon_alert(user, "2 minutes until next unleash!")
+	balloon_alert(user, LOC_KEY("heretic-item-lantern-next-unleash"))
 	playsound(user, 'sound/effects/magic/fireball.ogg', 100, TRUE)
 	user.visible_message(
-		span_danger("[user] thrusts [src] forward, and it erupts in a blinding wave of fire-lit light!"),
-		span_notice("You unleash the lantern's stored flame!"),
+		span_danger(loc_key("heretic-item-lantern-unleash-others", list(user = user, item = src))),
+		span_notice(LOC_KEY("heretic-item-lantern-unleash-self")),
 	)
 
 	new /obj/effect/temp_visual/circle_wave/heretic_lantern(get_turf(src))
@@ -241,18 +241,18 @@
 	var/seer_stam = seer.get_stamina_loss()
 	var/stack_scale = 1 + (stored_stacks - 1) * 0.25
 
-	var/msg_source = (src == center) ? src : "[center]'s [src]"
+	var/msg_source = (src == center) ? src : loc_key("heretic-item-lantern-source-held", list(owner = center, item = src))
 	switch(seer_eye_prot)
 		if(FLASH_PROTECTION_WELDER_SENSITIVE to INFINITY)
-			to_chat(seer, span_notice("[msg_source] emits a bright flash of light."))
+			to_chat(seer, span_notice(loc_key("heretic-item-lantern-flash-safe", list(source = msg_source))))
 			return
 
 		if(FLASH_PROTECTION_WELDER)
-			to_chat(seer, span_danger("[msg_source] emits a bright flash of light, causing you to flinch."))
+			to_chat(seer, span_danger(loc_key("heretic-item-lantern-flash-flinch", list(source = msg_source))))
 			seer.adjust_organ_loss(ORGAN_SLOT_EYES, 3, maximum = 30)
 
 		if(FLASH_PROTECTION_FLASH)
-			to_chat(seer, span_danger("[msg_source] emits a bright flash of light, causing you to flinch."))
+			to_chat(seer, span_danger(loc_key("heretic-item-lantern-flash-flinch", list(source = msg_source))))
 			seer.adjust_organ_loss(ORGAN_SLOT_EYES, 4, maximum = 40)
 			seer.adjust_eye_blur(2 SECONDS * stack_scale)
 			if(tick_count > 2 && (seer_stam < 60 || (tick_count > 8 && seer_stam < 100)))
@@ -261,7 +261,7 @@
 				seer.adjust_confusion(2 SECONDS * stack_scale)
 
 		if(FLASH_PROTECTION_NONE)
-			to_chat(seer, span_danger("A bright flash of light from [msg_source] blinds you for a moment!"))
+			to_chat(seer, span_danger(loc_key("heretic-item-lantern-blind-moment", list(source = msg_source))))
 			seer.adjust_organ_loss(ORGAN_SLOT_EYES, 5)
 			seer.adjust_temp_blindness(1 SECONDS * stack_scale)
 			seer.adjust_eye_blur(4 SECONDS * stack_scale)
@@ -271,7 +271,7 @@
 				seer.adjust_confusion(4 SECONDS * stack_scale)
 
 		if(FLASH_PROTECTION_SENSITIVE)
-			to_chat(seer, span_danger("A bright flash of light from [msg_source] blinds you!"))
+			to_chat(seer, span_danger(loc_key("heretic-item-lantern-flash-blind", list(source = msg_source))))
 			seer.adjust_organ_loss(ORGAN_SLOT_EYES, 8)
 			seer.adjust_temp_blindness(2 SECONDS * stack_scale)
 			seer.adjust_eye_blur(8 SECONDS * stack_scale)
@@ -281,7 +281,7 @@
 				seer.adjust_confusion((tick_count > 3 ? 8 SECONDS : 4 SECONDS) * stack_scale)
 
 		if(-INFINITY to FLASH_PROTECTION_HYPER_SENSITIVE)
-			to_chat(seer, span_danger("A bright flash of light from [msg_source] blinds you!"))
+			to_chat(seer, span_danger(loc_key("heretic-item-lantern-flash-blind", list(source = msg_source))))
 			seer.adjust_organ_loss(ORGAN_SLOT_EYES, 15)
 			seer.adjust_temp_blindness(4 SECONDS * stack_scale)
 			seer.adjust_eye_blur(12 SECONDS * stack_scale)
@@ -314,11 +314,11 @@
 		return FALSE
 	if(!COOLDOWN_FINISHED(lantern, unleash_cooldown))
 		if(feedback)
-			owner.balloon_alert(owner, "still recovering, wait [DisplayTimeText(COOLDOWN_TIMELEFT(lantern, unleash_cooldown))]!")
+			owner.balloon_alert(owner, loc_key("heretic-item-lantern-recovering", list(time = loc_duration(COOLDOWN_TIMELEFT(lantern, unleash_cooldown), 1))))
 		return FALSE
 	if(lantern.stored_stacks < LANTERN_MAX_STACKS)
 		if(feedback)
-			owner.balloon_alert(owner, "not fully charged")
+			owner.balloon_alert(owner, LOC_KEY("heretic-item-lantern-not-charged"))
 		return FALSE
 	return TRUE
 

@@ -469,7 +469,7 @@ GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 		if(M.client)
 			if(!M.client.prefs.read_preference(/datum/preference/toggle/enable_runechat) || (SSlag_switch.measures[DISABLE_RUNECHAT] && !HAS_TRAIT(src, TRAIT_BYPASS_MEASURES)))
 				speech_bubble_recipients.Add(M.client)
-	do_tts_message(tts_message_to_use, message_language, message_mods, tts_filter, listened)
+	do_tts_message(tts_message_to_use, message_language, message_mods, tts_filter, listened, message_range)
 	var/image/say_popup = image('icons/mob/effects/talk.dmi', src, "[bubble_type][talk_icon_state]", FLY_LAYER)
 	SET_PLANE_EXPLICIT(say_popup, ABOVE_GAME_PLANE, src)
 	say_popup.appearance_flags = APPEARANCE_UI_IGNORE_ALPHA

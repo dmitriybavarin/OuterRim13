@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Box, Button, Input, Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -22,6 +23,7 @@ alert pAI cards of your candidacy.`;
 export const PaiSubmit = (props) => {
   const { data } = useBackend<Data>();
   const { comments, description, name } = data;
+  const t = useT();
   const [input, setInput] = useState({
     comments,
     description,
@@ -29,7 +31,11 @@ export const PaiSubmit = (props) => {
   });
 
   return (
-    <Window width={400} height={460} title="pAI Candidacy Menu">
+    <Window
+      width={400}
+      height={460}
+      title={t('paisubmit-title', {}, 'pAI Candidacy Menu')}
+    >
       <Window.Content>
         <Stack fill vertical>
           <Stack.Item grow>
@@ -49,13 +55,18 @@ export const PaiSubmit = (props) => {
 
 /** Displays basic info about playing pAI */
 const DetailsDisplay = (props) => {
+  const t = useT();
   return (
-    <Section fill scrollable title="Details">
+    <Section
+      fill
+      scrollable
+      title={t('paisubmit-details', {}, 'Details')}
+    >
       <Box color="label">
-        {PAI_DESCRIPTION}
+        {t('paisubmit-description', {}, PAI_DESCRIPTION)}
         <br />
         <br />
-        {PAI_RULES}
+        {t('paisubmit-rules', {}, PAI_RULES)}
       </Box>
     </Section>
   );
@@ -65,13 +76,14 @@ const DetailsDisplay = (props) => {
 const InputDisplay = (props) => {
   const { input, setInput } = props;
   const { name, description, comments } = input;
+  const t = useT();
 
   return (
-    <Section fill title="Input">
+    <Section fill title={t('paisubmit-input', {}, 'Input')}>
       <Stack fill vertical>
         <Stack.Item>
           <Box bold color="label">
-            Name
+            {t('paisubmit-name', {}, 'Name')}
           </Box>
           <Input
             fluid
@@ -82,7 +94,7 @@ const InputDisplay = (props) => {
         </Stack.Item>
         <Stack.Item>
           <Box bold color="label">
-            Description
+            {t('paisubmit-field-description', {}, 'Description')}
           </Box>
           <Input
             fluid
@@ -93,7 +105,7 @@ const InputDisplay = (props) => {
         </Stack.Item>
         <Stack.Item>
           <Box bold color="label">
-            OOC Comments
+            {t('paisubmit-ooc-comments', {}, 'OOC Comments')}
           </Box>
           <Input
             fluid
@@ -112,6 +124,7 @@ const ButtonsDisplay = (props) => {
   const { act } = useBackend<Data>();
   const { input } = props;
   const { comments, description, name } = input;
+  const t = useT();
 
   return (
     <Section fill>
@@ -119,17 +132,25 @@ const ButtonsDisplay = (props) => {
         <Stack.Item>
           <Button
             onClick={() => act('save', { comments, description, name })}
-            tooltip="Saves your candidate data locally."
+            tooltip={t(
+              'paisubmit-save-tooltip',
+              {},
+              'Saves your candidate data locally.',
+            )}
           >
-            SAVE
+            {t('paisubmit-save', {}, 'SAVE')}
           </Button>
         </Stack.Item>
         <Stack.Item>
           <Button
             onClick={() => act('load')}
-            tooltip="Loads saved candidate data, if any."
+            tooltip={t(
+              'paisubmit-load-tooltip',
+              {},
+              'Loads saved candidate data, if any.',
+            )}
           >
-            LOAD
+            {t('paisubmit-load', {}, 'LOAD')}
           </Button>
         </Stack.Item>
         <Stack.Item>
@@ -142,15 +163,19 @@ const ButtonsDisplay = (props) => {
               })
             }
           >
-            SUBMIT
+            {t('paisubmit-submit', {}, 'SUBMIT')}
           </Button>
         </Stack.Item>
         <Stack.Item>
           <Button
             onClick={() => act('withdraw')}
-            tooltip="Withdraws your pAI candidacy, if any."
+            tooltip={t(
+              'paisubmit-withdraw-tooltip',
+              {},
+              'Withdraws your pAI candidacy, if any.',
+            )}
           >
-            WITHDRAW
+            {t('paisubmit-withdraw', {}, 'WITHDRAW')}
           </Button>
         </Stack.Item>
       </Stack>

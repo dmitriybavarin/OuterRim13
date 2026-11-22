@@ -10,6 +10,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type RulesetReport = {
@@ -45,6 +46,7 @@ export const DynamicTester = () => {
   } = data;
 
   const [tab, setTab] = useState(Object.keys(TABS)[0]);
+  const t = useT();
 
   const ruleset_report =
     tab === TABS.Roundstart
@@ -67,12 +69,12 @@ export const DynamicTester = () => {
   });
 
   return (
-    <Window width={500} height={400} title="Dynamic Weight Tester">
+    <Window width={500} height={400} title={t('dynamictester-title', {}, 'Dynamic Weight Tester')}>
       <Window.Content>
         <Section scrollable height="100%" width="100%">
           <Stack vertical fill>
             <Stack.Item>
-              Tier:
+              {t('dynamictester-tier', {}, 'Tier:')}
               <NumberInput
                 ml={0.5}
                 value={tier}
@@ -83,7 +85,7 @@ export const DynamicTester = () => {
               />
             </Stack.Item>
             <Stack.Item>
-              Number of players:
+              {t('dynamictester-players', {}, 'Number of players:')}
               <NumberInput
                 ml={0.5}
                 value={num_players}
@@ -102,7 +104,7 @@ export const DynamicTester = () => {
                     selected={tab === tabName}
                     onClick={() => setTab(tabName)}
                   >
-                    {TABS[tabName]}
+                    {t(`dynamictester-tab-${tabName.toLowerCase()}`, {}, TABS[tabName])}
                   </Tabs.Tab>
                 ))}
               </Tabs>
@@ -110,11 +112,11 @@ export const DynamicTester = () => {
             <Stack.Item>
               <Table>
                 <Table.Row header>
-                  <Table.Cell>Ruleset</Table.Cell>
-                  <Table.Cell>Weight</Table.Cell>
-                  <Table.Cell>Odds</Table.Cell>
-                  <Table.Cell>Max Antags</Table.Cell>
-                  <Table.Cell>Min Antags</Table.Cell>
+                  <Table.Cell>{t('dynamictester-ruleset', {}, 'Ruleset')}</Table.Cell>
+                  <Table.Cell>{t('dynamictester-weight', {}, 'Weight')}</Table.Cell>
+                  <Table.Cell>{t('dynamictester-odds', {}, 'Odds')}</Table.Cell>
+                  <Table.Cell>{t('dynamictester-max', {}, 'Max Antags')}</Table.Cell>
+                  <Table.Cell>{t('dynamictester-min', {}, 'Min Antags')}</Table.Cell>
                 </Table.Row>
                 {rulesets_with_weight_percentages
                   .sort((a, b) => (a.name > b.name ? 1 : -1))

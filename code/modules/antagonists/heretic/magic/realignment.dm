@@ -24,7 +24,7 @@
 /datum/action/cooldown/spell/realignment/cast(mob/living/cast_on)
 	. = ..()
 	cast_on.apply_status_effect(/datum/status_effect/realignment)
-	to_chat(cast_on, span_notice("We begin to realign ourselves."))
+	to_chat(cast_on, span_notice(LOC_KEY("heretic-spell-realignment-begin")))
 
 /datum/action/cooldown/spell/realignment/after_cast(atom/cast_on)
 	. = ..()
@@ -58,7 +58,7 @@
 	var/list/realignment_traits = list(TRAIT_BATON_RESISTANCE, TRAIT_PACIFISM)
 
 /datum/status_effect/realignment/get_examine_text(mob/examiner)
-	return span_notice("[owner.p_Theyre()] glowing a soft white.")
+	return span_notice(loc_key("heretic-spell-realignment-examine", list(theyre = owner.p_Theyre())))
 
 /datum/status_effect/realignment/on_apply()
 	owner.add_traits(realignment_traits, TRAIT_STATUS_EFFECT(id))

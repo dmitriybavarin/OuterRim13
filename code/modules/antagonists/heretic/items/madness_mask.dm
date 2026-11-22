@@ -19,10 +19,10 @@
 /obj/item/clothing/mask/madness_mask/examine(mob/user)
 	. = ..()
 	if(IS_HERETIC_OR_MONSTER(user))
-		. += span_notice("Actively drains the sanity and stamina of nearby non-heretics when worn.")
-		. += span_notice("If forced onto the face of a non-heretic, they will be unable to remove it willingly.")
+		. += span_notice(LOC_KEY("heretic-item-mask-examine-drain"))
+		. += span_notice(LOC_KEY("heretic-item-mask-examine-force"))
 	else
-		. += span_danger("The eyes fill you with dread... You best avoid it.")
+		. += span_danger(LOC_KEY("heretic-item-mask-examine-dread"))
 
 /obj/item/clothing/mask/madness_mask/equipped(mob/user, slot)
 	. = ..()
@@ -38,7 +38,7 @@
 		return
 
 	ADD_TRAIT(src, TRAIT_NODROP, CLOTHING_TRAIT)
-	to_chat(user, span_userdanger("[src] clamps tightly to your face as you feel your soul draining away!"))
+	to_chat(user, span_userdanger(loc_key("heretic-item-mask-clamp", list(item = src))))
 
 /obj/item/clothing/mask/madness_mask/dropped(mob/M)
 	local_user = null

@@ -11,6 +11,7 @@ import { clamp } from 'tgui-core/math';
 import { createSearch, toTitleCase } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { SearchBar } from './common/SearchBar';
 
@@ -108,6 +109,7 @@ const filterRecipeList = (
 
 export const StackCrafting = (_props) => {
   const { data } = useBackend<StackCraftingProps>();
+  const t = useT();
   const { amount, recipes = {} } = data;
 
   const [searchText, setSearchText] = useState('');
@@ -122,7 +124,7 @@ export const StackCrafting = (_props) => {
         <Section
           fill
           scrollable
-          title={`Amount: ${amount}`}
+          title={t('stackcrafting-amount', { amount }, `Amount: ${amount}`)}
           buttons={
             <SearchBar
               expensive
@@ -135,7 +137,7 @@ export const StackCrafting = (_props) => {
           {filteredRecipes ? (
             <RecipeListBox recipes={filteredRecipes} />
           ) : (
-            <NoticeBox>No recipes found.</NoticeBox>
+            <NoticeBox>{t('stackcrafting-empty', {}, 'No recipes found.')}</NoticeBox>
           )}
         </Section>
       </Window.Content>
@@ -242,6 +244,7 @@ const Multipliers = (props: MultiplierProps) => {
 
 const RecipeBox = (props: RecipeBoxProps) => {
   const { act, data } = useBackend<StackCraftingProps>();
+  const t = useT();
   const { amount } = data;
   const { recipe, title } = props;
   const {
@@ -255,9 +258,12 @@ const RecipeBox = (props: RecipeBoxProps) => {
   } = recipe;
 
   const resAmountLabel = res_amount > 1 ? `${res_amount}x ` : '';
-  const sheetSuffix = req_amount > 1 ? 's' : '';
   const buttonName = `${resAmountLabel}${title}`;
-  const reqSheets = `${req_amount} sheet${sheetSuffix}`;
+  const reqSheets = t(
+    'stackcrafting-sheets',
+    { count: req_amount },
+    `${req_amount} sheet${req_amount > 1 ? 's' : ''}`,
+  );
 
   const maxMultiplier = buildMultiplier(recipe, amount);
 

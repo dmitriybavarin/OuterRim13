@@ -14,6 +14,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { NtosWindow } from '../layouts';
 
 type Data = {
@@ -43,10 +44,11 @@ type CurrentBets = {
 export const NtosSpaceBetting = () => {
   const { act, data } = useBackend<Data>();
   const { bank_name, bank_money, can_create_bet } = data;
+  const t = useT();
   return (
     <NtosWindow width={500} height={620}>
       <NtosWindow.Content scrollable>
-        <Section title="User Information">
+        <Section title={t('ntosspacebetting-user', {}, 'User Information')}>
           <Stack>
             <Stack.Item mr={1.5}>
               <Icon
@@ -57,8 +59,20 @@ export const NtosSpaceBetting = () => {
               />
             </Stack.Item>
             <Stack fill vertical>
-              <Stack.Item>Username: {bank_name}</Stack.Item>
-              <Stack.Item>Money Available: {bank_money}cr</Stack.Item>
+              <Stack.Item>
+                {t(
+                  'ntosspacebetting-username',
+                  { name: bank_name },
+                  `Username: ${bank_name}`,
+                )}
+              </Stack.Item>
+              <Stack.Item>
+                {t(
+                  'ntosspacebetting-money',
+                  { money: bank_money },
+                  `Money Available: ${bank_money}cr`,
+                )}
+              </Stack.Item>
             </Stack>
           </Stack>
         </Section>
@@ -72,12 +86,17 @@ export const NtosSpaceBetting = () => {
 export const PollsSection = () => {
   const { act, data } = useBackend<Data>();
   const { active_bets = [] } = data;
+  const t = useT();
   const [Winner, set_winner] = useState('');
   return (
     <Section>
       {!active_bets.length ? (
         <Box>
-          There&apos;s currently no active polls to bet on, create one below!
+          {t(
+            'ntosspacebetting-no-polls',
+            {},
+            "There's currently no active polls to bet on, create one below!",
+          )}
         </Box>
       ) : (
         active_bets.map(
@@ -85,7 +104,11 @@ export const PollsSection = () => {
             { name, description, owner, creator, current_bets = [], locked },
             index,
           ) => (
-            <Section title={`${name} - Created by ${creator}`} key={name}>
+            <Section title={t(
+                'ntosspacebetting-poll-title',
+                { name, creator },
+                `${name} - Created by ${creator}`,
+              )} key={name}>
               <Stack>
                 <Stack.Item grow>
                   <Stack.Item grow>{description}</Stack.Item>
@@ -103,7 +126,11 @@ export const PollsSection = () => {
                       >
                         <Stack.Item>
                           <Stack.Item my={1}>
-                            {option_name} (Has {total_amount || 0}cr bet on it)
+                            {t(
+                              'ntosspacebetting-option',
+                              { name: option_name, amount: total_amount || 0 },
+                              `${option_name} (Has ${total_amount || 0}cr bet on it)`,
+                            )}
                             {!owner ? (
                               <NumberInput
                                 value={personally_invested}
@@ -123,7 +150,11 @@ export const PollsSection = () => {
                               />
                             ) : (
                               <Button.Checkbox
-                                tooltip="Whether this answer won."
+                                tooltip={t(
+                                  'ntosspacebetting-winner-tooltip',
+                                  {},
+                                  'Whether this answer won.',
+                                )}
                                 checked={Winner === option_name}
                                 key={option_name}
                                 onClick={() => set_winner(option_name)}
@@ -140,19 +171,27 @@ export const PollsSection = () => {
                         <Button.Confirm
                           fluid
                           icon="minus"
-                          tooltip="Lock the ability to place/retract bets. This is irreversible!"
+                          tooltip={t(
+                            'ntosspacebetting-lock-tooltip',
+                            {},
+                            'Lock the ability to place/retract bets. This is irreversible!',
+                          )}
                           onClick={() =>
                             act('lock_betting', { bet_selected: name })
                           }
                         >
-                          Lock Betting
+                          {t('ntosspacebetting-lock', {}, 'Lock Betting')}
                         </Button.Confirm>
                       </Stack.Item>
                     ) : (
                       <Button.Confirm
                         fluid
                         icon="plus"
-                        tooltip="Finalize results as the checked answer being the winner."
+                        tooltip={t(
+                          'ntosspacebetting-finalize-tooltip',
+                          {},
+                          'Finalize results as the checked answer being the winner.',
+                        )}
                         onClick={() =>
                           act('select_winner', {
                             bet_selected: name,
@@ -160,7 +199,11 @@ export const PollsSection = () => {
                           })
                         }
                       >
-                        Finalize Results
+                        {t(
+                          'ntosspacebetting-finalize',
+                          {},
+                          'Finalize Results',
+                        )}
                       </Button.Confirm>
                     ))}
                 </Stack.Item>
@@ -169,10 +212,14 @@ export const PollsSection = () => {
                     fluid
                     icon="minus"
                     disabled={locked}
-                    tooltip="If you have any bets, this will remove them and refund the money."
+                    tooltip={t(
+                      'ntosspacebetting-cancel-tooltip',
+                      {},
+                      'If you have any bets, this will remove them and refund the money.',
+                    )}
                     onClick={() => act('cancel_bet', { bet_selected: name })}
                   >
-                    Cancel Bet
+                    {t('ntosspacebetting-cancel', {}, 'Cancel Bet')}
                   </Button>
                 </Stack.Item>
               </Stack>
@@ -187,6 +234,7 @@ export const PollsSection = () => {
 export const BettingCreation = () => {
   const { act, data } = useBackend<Data>();
   const { max_title_length, max_description_length } = data;
+  const t = useT();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [option1, setOption1] = useState('');
@@ -195,12 +243,12 @@ export const BettingCreation = () => {
   const [option4, setOption4] = useState('');
 
   return (
-    <Collapsible title="Bet Creation">
+    <Collapsible title={t('ntosspacebetting-create-title', {}, 'Bet Creation')}>
       <Stack fill vertical>
         <Stack.Item grow>
           <Input
             fluid
-            placeholder="Title"
+            placeholder={t('ntosspacebetting-field-title', {}, 'Title')}
             maxLength={max_title_length}
             onChange={setTitle}
           />
@@ -208,7 +256,11 @@ export const BettingCreation = () => {
         <Stack.Item grow>
           <TextArea
             fluid
-            placeholder="Description"
+            placeholder={t(
+              'ntosspacebetting-field-description',
+              {},
+              'Description',
+            )}
             height="100px"
             width="100%"
             maxLength={max_description_length}
@@ -219,25 +271,33 @@ export const BettingCreation = () => {
         </Stack.Item>
         <Input
           fluid
-          placeholder="Option 1"
+          placeholder={t('ntosspacebetting-option-1', {}, 'Option 1')}
           maxLength={max_title_length}
           onChange={setOption1}
         />
         <Input
           fluid
-          placeholder="Option 2"
+          placeholder={t('ntosspacebetting-option-2', {}, 'Option 2')}
           maxLength={max_title_length}
           onChange={setOption2}
         />
         <Input
           fluid
-          placeholder="Option 3 (Optional)"
+          placeholder={t(
+            'ntosspacebetting-option-3',
+            {},
+            'Option 3 (Optional)',
+          )}
           maxLength={max_title_length}
           onChange={setOption3}
         />
         <Input
           fluid
-          placeholder="Option 4 (Optional)"
+          placeholder={t(
+            'ntosspacebetting-option-4',
+            {},
+            'Option 4 (Optional)',
+          )}
           maxLength={max_title_length}
           onChange={setOption4}
         />
@@ -255,7 +315,7 @@ export const BettingCreation = () => {
               })
             }
           >
-            Create Bet!
+            {t('ntosspacebetting-create', {}, 'Create Bet!')}
           </Button>
         </Stack.Item>
       </Stack>

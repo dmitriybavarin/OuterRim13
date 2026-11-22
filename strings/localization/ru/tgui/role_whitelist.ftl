@@ -1,4 +1,4 @@
-rolewhitelist-title = Whitelist ролей
+rolewhitelist-title = Белый список ролей
 
 rolewhitelist-tab-roles = Роли
 
@@ -16,11 +16,11 @@ rolewhitelist-category-create = Новая категория...
 
 rolewhitelist-hint = Замок закрывает роль для всех, кому ее не выдали. Глаз скрывает ее в меню выбора. Категорией может быть любой отдел игры или своя категория: роль переезжает туда в окне выбора роли и в предпочтениях.
 
-rolewhitelist-locked = Нужен whitelist (нажмите, чтобы открыть)
+rolewhitelist-locked = Нужен белый список (нажмите, чтобы открыть)
 
 rolewhitelist-open = Открыта для всех (нажмите, чтобы закрыть)
 
-rolewhitelist-hidden = Скрыта без whitelist (нажмите, чтобы показать)
+rolewhitelist-hidden = Скрыта без белого списка (нажмите, чтобы показать)
 
 rolewhitelist-visible = Видна в меню (нажмите, чтобы скрыть)
 
@@ -34,7 +34,7 @@ rolewhitelist-holders = { $count } { $count ->
 
 rolewhitelist-grant-title = Выдать доступ
 
-rolewhitelist-grant-ckey = Ckey игрока
+rolewhitelist-grant-ckey = Ключ игрока (ckey)
 
 rolewhitelist-grant-role = Выберите закрытую роль
 
@@ -44,4 +44,4 @@ rolewhitelist-players-title = Игроки с доступом
 
 rolewhitelist-players-search = Поиск...
 
-preferences-jobs-whitelist = Нужен whitelist
+preferences-jobs-whitelist = Нужен белый список

@@ -13,6 +13,7 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { resolveAsset } from '../assets';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { NtosWindow } from '../layouts';
 
 type Data = {
@@ -27,10 +28,14 @@ type Data = {
 };
 
 export function NtosArcade(props) {
+  const t = useT();
   return (
     <NtosWindow width={450} height={350}>
       <NtosWindow.Content>
-        <Section title="Outbomb Cuban Pete Ultra" textAlign="center">
+        <Section
+          title={t('ntosarcade-title', {}, 'Outbomb Cuban Pete Ultra')}
+          textAlign="center"
+        >
           <Stack fill>
             <Stack.Item>
               <PlayerStats />
@@ -49,11 +54,12 @@ export function NtosArcade(props) {
 function PlayerStats(props) {
   const { data } = useBackend<Data>();
   const { PauseState, PlayerHitpoints, PlayerMP, Status } = data;
+  const t = useT();
 
   return (
     <>
       <LabeledList>
-        <LabeledList.Item label="Player Health">
+        <LabeledList.Item label={t('ntosarcade-player-health', {}, 'Player Health')}>
           <ProgressBar
             value={PlayerHitpoints}
             minValue={0}
@@ -65,10 +71,11 @@ function PlayerStats(props) {
               bad: [-Infinity, 10],
             }}
           >
-            {PlayerHitpoints}HP
+            {PlayerHitpoints}
+            {t('ntosarcade-hp', {}, 'HP')}
           </ProgressBar>
         </LabeledList.Item>
-        <LabeledList.Item label="Player Magic">
+        <LabeledList.Item label={t('ntosarcade-player-magic', {}, 'Player Magic')}>
           <ProgressBar
             value={PlayerMP}
             minValue={0}
@@ -79,7 +86,8 @@ function PlayerStats(props) {
               bad: [-Infinity, 3],
             }}
           >
-            {PlayerMP}MP
+            {PlayerMP}
+            {t('ntosarcade-mp', {}, 'MP')}
           </ProgressBar>
         </LabeledList.Item>
       </LabeledList>
@@ -91,6 +99,7 @@ function PlayerStats(props) {
 
 function BossBar(props) {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { BossID, Hitpoints } = data;
 
   return (
@@ -106,7 +115,7 @@ function BossBar(props) {
         }}
       >
         <AnimatedNumber value={Hitpoints} />
-        HP
+        {t('ntosarcade-hp', {}, 'HP')}
       </ProgressBar>
       <Box m={1} />
       <Section inline width="156px" textAlign="center">
@@ -119,59 +128,76 @@ function BossBar(props) {
 function BottomButtons(props) {
   const { act, data } = useBackend<Data>();
   const { GameActive, PauseState, TicketCount } = data;
+  const t = useT();
 
   return (
     <>
       <Button
         icon="fist-raised"
-        tooltip="Go in for the kill!"
+        tooltip={t('ntosarcade-attack-tooltip', {}, 'Go in for the kill!')}
         tooltipPosition="top"
         disabled={!GameActive || !!PauseState}
         onClick={() => act('Attack')}
       >
-        Attack!
+        {t('ntosarcade-attack', {}, 'Attack!')}
       </Button>
       <Button
         icon="band-aid"
-        tooltip="Heal yourself!"
+        tooltip={t('ntosarcade-heal-tooltip', {}, 'Heal yourself!')}
         tooltipPosition="top"
         disabled={!GameActive || !!PauseState}
         onClick={() => act('Heal')}
       >
-        Heal!
+        {t('ntosarcade-heal', {}, 'Heal!')}
       </Button>
       <Button
         icon="magic"
-        tooltip="Recharge your magic!"
+        tooltip={t(
+          'ntosarcade-recharge-tooltip',
+          {},
+          'Recharge your magic!',
+        )}
         tooltipPosition="top"
         disabled={!GameActive || !!PauseState}
         onClick={() => act('Recharge_Power')}
       >
-        Recharge!
+        {t('ntosarcade-recharge', {}, 'Recharge!')}
       </Button>
 
       <Box>
         <Button
           icon="sync-alt"
-          tooltip="One more game couldn't hurt."
+          tooltip={t(
+            'ntosarcade-begin-tooltip',
+            {},
+            "One more game couldn't hurt.",
+          )}
           tooltipPosition="top"
           disabled={!!GameActive}
           onClick={() => act('Start_Game')}
         >
-          Begin Game
+          {t('ntosarcade-begin', {}, 'Begin Game')}
         </Button>
         <Button
           icon="ticket-alt"
-          tooltip="Claim at your local Arcade Computer for Prizes!"
+          tooltip={t(
+            'ntosarcade-tickets-tooltip',
+            {},
+            'Claim at your local Arcade Computer for Prizes!',
+          )}
           tooltipPosition="top"
           disabled={!!GameActive}
           onClick={() => act('Dispense_Tickets')}
         >
-          Claim Tickets
+          {t('ntosarcade-tickets', {}, 'Claim Tickets')}
         </Button>
       </Box>
       <Box color={TicketCount >= 1 ? 'good' : 'normal'}>
-        Earned Tickets: {TicketCount}
+        {t(
+          'ntosarcade-earned',
+          { count: TicketCount },
+          `Earned Tickets: ${TicketCount}`,
+        )}
       </Box>
     </>
   );

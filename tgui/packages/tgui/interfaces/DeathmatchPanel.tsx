@@ -11,6 +11,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Lobby = {
@@ -30,16 +31,20 @@ type Data = {
 
 export function DeathmatchPanel(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { hosting } = data;
 
   return (
-    <Window title="Deathmatch Lobbies" width={360} height={400}>
+    <Window title={t('deathmatch-title', {}, 'Deathmatch Lobbies')} width={360} height={400}>
       <Window.Content>
         <Stack fill vertical>
           <Stack.Item>
             <NoticeBox danger>
-              If you play, you can still possibly be returned to your body (No
-              Guarantees)!
+              {t(
+                'deathmatch-warning',
+                {},
+                'If you play, you can still possibly be returned to your body (No Guarantees)!',
+              )}
             </NoticeBox>
           </Stack.Item>
           <Stack.Item grow>
@@ -53,7 +58,7 @@ export function DeathmatchPanel(props) {
               color="good"
               onClick={() => act('host')}
             >
-              Create Lobby
+              {t('deathmatch-create', {}, 'Create Lobby')}
             </Button>
           </Stack.Item>
         </Stack>
@@ -64,16 +69,17 @@ export function DeathmatchPanel(props) {
 
 function LobbyPane(props) {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { lobbies = [] } = data;
 
   return (
     <Section fill scrollable>
       <Table>
         <Table.Row header>
-          <Table.Cell>Host</Table.Cell>
-          <Table.Cell>Map</Table.Cell>
+          <Table.Cell>{t('deathmatch-host', {}, 'Host')}</Table.Cell>
+          <Table.Cell>{t('deathmatch-map', {}, 'Map')}</Table.Cell>
           <Table.Cell>
-            <Tooltip content="Players">
+            <Tooltip content={t('deathmatch-players', {}, 'Players')}>
               <Icon name="users" />
             </Tooltip>
           </Table.Cell>
@@ -86,7 +92,7 @@ function LobbyPane(props) {
           <Table.Row>
             <Table.Cell colSpan={4}>
               <NoticeBox textAlign="center">
-                No lobbies found. Start one!
+                {t('deathmatch-no-lobbies', {}, 'No lobbies found. Start one!')}
               </NoticeBox>
             </Table.Cell>
           </Table.Row>
@@ -102,6 +108,7 @@ function LobbyPane(props) {
 
 function LobbyDisplay(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { admin, playing, hosting } = data;
   const { lobby } = props;
 
@@ -117,7 +124,16 @@ function LobbyDisplay(props) {
             width={10}
             noChevron
             selected={lobby.name}
-            options={['Close', 'View']}
+            options={[
+              {
+                displayText: t('deathmatch-close', {}, 'Close'),
+                value: 'Close',
+              },
+              {
+                displayText: t('deathmatch-view', {}, 'View'),
+                value: 'View',
+              },
+            ]}
             onSelected={(value) =>
               act('admin', {
                 id: lobby.name,
@@ -140,7 +156,9 @@ function LobbyDisplay(props) {
             width="100%"
             textAlign="center"
           >
-            {playing === lobby.name ? 'View' : 'Join'}
+            {playing === lobby.name
+              ? t('deathmatch-view', {}, 'View')
+              : t('deathmatch-join', {}, 'Join')}
           </Button>
         ) : (
           <Button
@@ -148,7 +166,7 @@ function LobbyDisplay(props) {
             color="good"
             onClick={() => act('spectate', { id: lobby.name })}
           >
-            Spectate
+            {t('deathmatch-spectate', {}, 'Spectate')}
           </Button>
         )}
       </Table.Cell>

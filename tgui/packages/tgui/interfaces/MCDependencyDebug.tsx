@@ -4,6 +4,7 @@ import { classes } from 'tgui-core/react';
 
 import { resolveAsset } from '../assets';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import {
   type Connection,
@@ -170,6 +171,7 @@ function evaluateSubsystemLayer(
 
 export function MCDependencyDebug(props) {
   const { data } = useBackend<DependencyData>();
+  const t = useT();
   const { subsystems } = data;
   const connectionDom = useRef<ConnectionRef>({});
   const [connectionData, setConnectionData] = useState<ConnectionData>({});
@@ -247,7 +249,7 @@ export function MCDependencyDebug(props) {
   }
 
   return (
-    <Window width={1200} height={800} title="Subsystem Dependency Graph">
+    <Window width={1200} height={800} title={t('mcdependency-title', {}, 'Subsystem Dependency Graph')}>
       <Window.Content
         style={{
           backgroundImage: 'none',
@@ -262,7 +264,7 @@ export function MCDependencyDebug(props) {
           initialTop={0}
         >
           <Box position={'absolute'} left={'-30px'} top={0}>
-            First
+            {t('mcdependency-first', {}, 'First')}
           </Box>
           {subsystems.map((subsystem, y) => (
             <GraphNode
@@ -289,7 +291,7 @@ export function MCDependencyDebug(props) {
             left={'-30px'}
             top={`${(subsystems.length - 1) * 50}px`}
           >
-            Last
+            {t('mcdependency-last', {}, 'Last')}
           </Box>
           <Connections connections={connections} />
         </InfinitePlane>

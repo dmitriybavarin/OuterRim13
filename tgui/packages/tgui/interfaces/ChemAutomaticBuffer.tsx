@@ -1,5 +1,6 @@
 import { useBackend } from 'tgui/backend';
 import { Button, LabeledList, NumberInput } from 'tgui-core/components';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -9,12 +10,13 @@ type Data = {
 
 export const ChemAutomaticBuffer = () => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { threshold, connections } = data;
   return (
     <Window width={250} height={120}>
       <Window.Content>
         <LabeledList>
-          <LabeledList.Item label="Threshold">
+          <LabeledList.Item label={t('chemautomaticbuffer-threshold', {}, 'Threshold')}>
             <NumberInput
               minValue={1}
               maxValue={200}
@@ -27,11 +29,13 @@ export const ChemAutomaticBuffer = () => {
               }
             />
           </LabeledList.Item>
-          <LabeledList.Item label="Connections">
-            {connections || 'N/A'}
+          <LabeledList.Item label={t('chemautomaticbuffer-connections', {}, 'Connections')}>
+            {connections || t('chemautomaticbuffer-connections-none', {}, 'N/A')}
           </LabeledList.Item>
-          <LabeledList.Item label="Sync">
-            <Button onClick={() => act('sync')}>Sync Values</Button>
+          <LabeledList.Item label={t('chemautomaticbuffer-sync', {}, 'Sync')}>
+            <Button onClick={() => act('sync')}>
+              {t('chemautomaticbuffer-sync-values', {}, 'Sync Values')}
+            </Button>
           </LabeledList.Item>
         </LabeledList>
       </Window.Content>

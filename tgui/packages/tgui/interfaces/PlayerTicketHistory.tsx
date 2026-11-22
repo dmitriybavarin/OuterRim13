@@ -11,6 +11,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -41,6 +42,7 @@ enum Pages {
 
 export const PlayerTicketHistory = (props: any) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
 
   const [page, setPage] = useState(
     data.target_ckey ? Pages.TicketHistory : Pages.Cache,
@@ -51,9 +53,15 @@ export const PlayerTicketHistory = (props: any) => {
 
   if (!data.db_connected) {
     return (
-      <Window title="Player Ticket History" width={300} height={300}>
+      <Window
+        title={t('tickethistory-title', {}, 'Player Ticket History')}
+        width={300}
+        height={300}
+      >
         <Window.Content>
-          <NoticeBox>The database is not connected.</NoticeBox>
+          <NoticeBox>
+            {t('tickethistory-no-db', {}, 'The database is not connected.')}
+          </NoticeBox>
         </Window.Content>
       </Window>
     );
@@ -63,9 +71,15 @@ export const PlayerTicketHistory = (props: any) => {
     <Window
       width={300}
       height={300}
-      title={`Player Ticket History${
-        data.target_ckey ? ` - ${data.target_ckey}` : ''
-      }`}
+      title={
+        data.target_ckey
+          ? t(
+              'tickethistory-title-target',
+              { ckey: data.target_ckey },
+              'Player Ticket History - { $ckey }',
+            )
+          : t('tickethistory-title', {}, 'Player Ticket History')
+      }
     >
       <Window.Content>
         <Tabs>
@@ -74,14 +88,14 @@ export const PlayerTicketHistory = (props: any) => {
             selected={page === Pages.Cache}
             onClick={() => setPage(Pages.Cache)}
           >
-            Cache
+            {t('tickethistory-cache', {}, 'Cache')}
           </Tabs.Tab>
           <Tabs.Tab
             key={Pages.TicketHistory}
             selected={page === Pages.TicketHistory}
             onClick={() => setPage(Pages.TicketHistory)}
           >
-            Ticket History
+            {t('tickethistory-history', {}, 'Ticket History')}
           </Tabs.Tab>
         </Tabs>
         {page === Pages.TicketHistory && <TicketHistory />}
@@ -100,11 +114,14 @@ export const PlayerTicketHistory = (props: any) => {
 
 const TicketHistory = (props: any) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
 
   if (data.ticket_cache === undefined) {
     return (
       <Section>
-        <NoticeBox>No player selected.</NoticeBox>
+        <NoticeBox>
+          {t('tickethistory-no-player', {}, 'No player selected.')}
+        </NoticeBox>
       </Section>
     );
   }
@@ -121,7 +138,11 @@ const TicketHistory = (props: any) => {
 
   return (
     <Section>
-      Tickets in order of most recent to oldest:
+      {t(
+        'tickethistory-order',
+        {},
+        'Tickets in order of most recent to oldest:',
+      )}
       <hr />
       <Section scrollableHorizontal>
         <Stack>
@@ -146,7 +167,9 @@ const TicketHistory = (props: any) => {
       </Section>
       <hr />
       {activeTicket === undefined ? (
-        <NoticeBox>No ticket selected.</NoticeBox>
+        <NoticeBox>
+          {t('tickethistory-no-ticket', {}, 'No ticket selected.')}
+        </NoticeBox>
       ) : (
         <TicketView ticket={activeTicket} />
       )}
@@ -163,11 +186,12 @@ type CacheProps = {
 
 const Cache = (props: CacheProps) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
 
   return (
     <Section>
       <div>
-        Query and cache:&nbsp;
+        {t('tickethistory-query', {}, 'Query and cache:')}&nbsp;
         <Input
           value={props.cacheInput}
           onBlur={(value) => props.setCacheInput(value.toLowerCase())}

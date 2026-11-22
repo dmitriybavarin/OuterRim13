@@ -1,4 +1,5 @@
 import { useBackend } from 'tgui/backend';
+import { useT } from 'tgui/i18n';
 import { Box, Section, Stack } from 'tgui-core/components';
 import { type BookEntry, BookUI, type TOCEntry } from './common/PaginatedBook';
 import '../styles/interfaces/DeForestLogo.scss';
@@ -35,7 +36,10 @@ function estimateHeight(entry: BookEntry<Trauma>) {
   );
 }
 
-function renderDSMEntry(entry: BookEntry<Trauma>) {
+function renderDSMEntry(
+  entry: BookEntry<Trauma>,
+  t: ReturnType<typeof useT>,
+) {
   return (
     <Section
       width="100%"
@@ -46,7 +50,13 @@ function renderDSMEntry(entry: BookEntry<Trauma>) {
         <Stack vertical>
           <Stack.Item>{entry.full_name}</Stack.Item>
           {!checkIdenticalTraumaNames(entry) && (
-            <Stack.Item fontSize="10px">...aka "{entry.scan_name}"</Stack.Item>
+            <Stack.Item fontSize="10px">
+              {t(
+                'dsmbook-aka',
+                { name: entry.scan_name },
+                `...aka "${entry.scan_name}"`,
+              )}
+            </Stack.Item>
           )}
         </Stack>
       }
@@ -54,13 +64,13 @@ function renderDSMEntry(entry: BookEntry<Trauma>) {
       <Stack vertical backgroundColor="white" p={1} width="100%">
         <Stack.Item>
           <Box inline color="label">
-            Description:
+            {t('dsmbook-description', {}, 'Description:')}
           </Box>{' '}
           {entry.desc}
         </Stack.Item>
         <Stack.Item>
           <Box inline color="label">
-            Diagnosis:
+            {t('dsmbook-diagnosis', {}, 'Diagnosis:')}
           </Box>{' '}
           {entry.symptoms}
         </Stack.Item>
@@ -98,6 +108,7 @@ const blankDSMPage = (
 export const DSMBook = () => {
   const { data } = useBackend<TraumaData>();
   const { traumas } = data;
+  const t = useT();
 
   const traumaEntries: BookEntry<Trauma>[] = traumas
     .map((trauma) => ({
@@ -114,7 +125,7 @@ export const DSMBook = () => {
       bookData={traumaEntries}
       title="SDSM-35"
       estimateHeight={estimateHeight}
-      renderEntry={renderDSMEntry}
+      renderEntry={(entry) => renderDSMEntry(entry, t)}
       renderTOCEntry={renderTOCEntry}
       blankPage={blankDSMPage}
     />

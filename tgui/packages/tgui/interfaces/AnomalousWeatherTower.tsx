@@ -1,4 +1,5 @@
 import { useBackend, useSharedState } from 'tgui/backend';
+import { useT } from 'tgui/i18n';
 import {
   Button,
   Dropdown,
@@ -40,6 +41,7 @@ export const AnomalousWeatherTower = () => {
     summonable_weather_types,
     active_weather_on_z,
   } = data;
+  const t = useT();
 
   const [selectedWeather, setSelectedWeather] = useSharedState(
     'selectedWeather',
@@ -62,7 +64,9 @@ export const AnomalousWeatherTower = () => {
           <Stack.Item>
             <Section fontFamily="Consolas, monospace">
               <Stack vertical align="center">
-                <Stack.Item fontSize="18px">Core charge</Stack.Item>
+                <Stack.Item fontSize="18px">
+                  {t('weathertower-core-charge', {}, 'Core charge')}
+                </Stack.Item>
                 <Stack.Item
                   fontSize="24px"
                   color={chargeColor}
@@ -79,7 +83,10 @@ export const AnomalousWeatherTower = () => {
             </Section>
           </Stack.Item>
           <Stack.Item>
-            <Section title="Active Weather" fontFamily="Consolas, monospace">
+            <Section
+              title={t('weathertower-active', {}, 'Active Weather')}
+              fontFamily="Consolas, monospace"
+            >
               {active_weather_on_z.length > 0 ? (
                 active_weather_on_z.map((weather) => (
                   <Stack.Item key={weather.id}>
@@ -96,7 +103,11 @@ export const AnomalousWeatherTower = () => {
                           tooltip={
                             can_clear_weather
                               ? undefined
-                              : 'Weather inhibitors are recharging.'
+                              : t(
+                                  'weathertower-inhibitors-recharging',
+                                  {},
+                                  'Weather inhibitors are recharging.',
+                                )
                           }
                         />
                       </Stack.Item>
@@ -105,14 +116,14 @@ export const AnomalousWeatherTower = () => {
                 ))
               ) : (
                 <Stack.Item>
-                  <NoticeBox>None</NoticeBox>
+                  <NoticeBox>{t('weathertower-none', {}, 'None')}</NoticeBox>
                 </Stack.Item>
               )}
             </Section>
           </Stack.Item>
           <Stack.Item grow>
             <Section
-              title="Summon Weather"
+              title={t('weathertower-summon', {}, 'Summon Weather')}
               fill
               fontFamily="Consolas, monospace"
             >
@@ -148,10 +159,18 @@ export const AnomalousWeatherTower = () => {
                     }
                     tooltip={
                       core_charges < weather_charge_cost
-                        ? 'Not enough charges to summon weather.'
+                        ? t(
+                            'weathertower-not-enough-charges',
+                            {},
+                            'Not enough charges to summon weather.',
+                          )
                         : can_summon_weather
                           ? undefined
-                          : 'Weather coils are recharging.'
+                          : t(
+                              'weathertower-coils-recharging',
+                              {},
+                              'Weather coils are recharging.',
+                            )
                     }
                   />
                 </Stack.Item>

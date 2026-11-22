@@ -1,6 +1,7 @@
 import { Icon, Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { type Objective, ObjectivePrintout } from './common/Objectives';
 
@@ -31,17 +32,18 @@ export const AntagInfoSeparatist = (props) => {
 
 const IntroductionObjectives = (props) => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { nation, objectives } = data;
   return (
     <Section fill>
       <Stack vertical>
         <Stack.Item textColor="red" fontSize="20px">
-          You are the Separatist for a free {nation}!
+          {t('antaginfo-separatist-title', { nation })}
         </Stack.Item>
         <Stack.Item grow>
           <ObjectivePrintout
             objectives={objectives}
-            titleMessage={`${nation}'s objectives:`}
+            titleMessage={t('antaginfo-separatist-objectives', { nation })}
           />
         </Stack.Item>
       </Stack>
@@ -51,38 +53,30 @@ const IntroductionObjectives = (props) => {
 
 const FrequentlyAskedQuestions = (props) => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { nation } = data;
   return (
     <Section fill>
       <Stack vertical>
         <Stack.Item fontSize="18px" bold>
-          <Icon name="info" color="label" /> Frequently Asked Questions:
+          <Icon name="info" color="label" /> {t('antaginfo-separatist-faq')}
         </Stack.Item>
         <Stack.Item fontSize="16px">
-          &quot;What even IS a Separatist?&quot;
+          {t('antaginfo-separatist-q1')}
         </Stack.Item>
         <Stack.Item>
-          Separatists are semi-antagonists that every department is filled with
-          when the round starts. They do not have the permission to freely go
-          about and kill, but rather defend the soverignity of their department.
-          You may actually recognize them by their historical mode they existed
-          from: Nations!
+          {t('antaginfo-separatist-a1')}
         </Stack.Item>
         <Stack.Item fontSize="16px">
-          &quot;What am I supposed to do?&quot;
+          {t('antaginfo-separatist-q2')}
         </Stack.Item>
         <Stack.Item>
-          Each department (nation) has an objective. It&apos;s a freeform
-          objective, so try your best to follow it as you would a freeform
-          abductor objective. From experience, eventually nations conflict and
-          devolve into war. As long as both departments know what and why
-          conflict is starting, that&apos;s a green light to attack opposing
-          nations.
+          {t('antaginfo-separatist-a2')}
         </Stack.Item>
         <Stack.Item fontSize="16px">
-          &quot;Is {nation} the best nation?&quot;
+          {t('antaginfo-separatist-q3', { nation })}
         </Stack.Item>
-        <Stack.Item>Yes.</Stack.Item>
+        <Stack.Item>{t('antaginfo-separatist-a3')}</Stack.Item>
       </Stack>
     </Section>
   );

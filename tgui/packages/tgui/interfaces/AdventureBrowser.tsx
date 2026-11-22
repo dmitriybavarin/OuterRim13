@@ -2,6 +2,7 @@ import { Box, Button, NoticeBox, Section, Table } from 'tgui-core/components';
 import { formatTime } from 'tgui-core/format';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { type AdventureDataProvider, AdventureScreen } from './ExodroneConsole';
 
@@ -26,14 +27,15 @@ type AdventureBrowserData = AdventureDataProvider & {
 
 const AdventureList = (props) => {
   const { data, act } = useBackend<AdventureBrowserData>();
+  const t = useT();
 
   return (
     <Table>
       <Table.Row>
-        <Table.Cell color="label">Filename</Table.Cell>
-        <Table.Cell color="label">Title</Table.Cell>
-        <Table.Cell color="label">Author</Table.Cell>
-        <Table.Cell color="label">Playtest</Table.Cell>
+        <Table.Cell color="label">{t('adventurebrowser-filename', {}, 'Filename')}</Table.Cell>
+        <Table.Cell color="label">{t('adventurebrowser-name', {}, 'Title')}</Table.Cell>
+        <Table.Cell color="label">{t('adventurebrowser-author', {}, 'Author')}</Table.Cell>
+        <Table.Cell color="label">{t('adventurebrowser-playtest', {}, 'Playtest')}</Table.Cell>
       </Table.Row>
       {data.adventures.map((adventure) => (
         <Table.Row key={adventure.ref} className="candystripe">
@@ -44,7 +46,7 @@ const AdventureList = (props) => {
             <Button
               color="good"
               onClick={() => act('play', { ref: adventure.ref })}
-              content="Play"
+              content={t('adventurebrowser-play', {}, 'Play')}
             />
           </Table.Cell>
         </Table.Row>
@@ -55,14 +57,20 @@ const AdventureList = (props) => {
 
 const DebugPlayer = (props) => {
   const { data, act } = useBackend<AdventureBrowserData>();
+  const t = useT();
   return (
     <Section
-      title="Playtest"
-      buttons={<Button onClick={() => act('end_play')}>End Playtest</Button>}
+      title={t('adventurebrowser-playtest', {}, 'Playtest')}
+      buttons={
+        <Button onClick={() => act('end_play')}>
+          {t('adventurebrowser-end-playtest', {}, 'End Playtest')}
+        </Button>
+      }
     >
       {data.delay_time > 0 ? (
         <Box>
-          DELAY {formatTime(data.delay_time)} / {data.delay_message}
+          {t('adventurebrowser-delay', {}, 'DELAY')} {formatTime(data.delay_time)}{' '}
+          / {data.delay_message}
         </Box>
       ) : (
         <AdventureScreen
@@ -78,9 +86,10 @@ const DebugPlayer = (props) => {
 
 export const AdventureBrowser = (props) => {
   const { data } = useBackend<AdventureBrowserData>();
+  const t = useT();
 
   return (
-    <Window width={600} height={400} title="Adventure Overview">
+    <Window width={600} height={400} title={t('adventurebrowser-title', {}, 'Adventure Overview')}>
       <Window.Content>
         {!!data.feedback_message && (
           <NoticeBox>{data.feedback_message}</NoticeBox>

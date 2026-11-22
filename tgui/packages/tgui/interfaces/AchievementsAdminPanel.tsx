@@ -1,5 +1,6 @@
 import { Button, LabeledList, NoticeBox, Section } from 'tgui-core/components';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -10,16 +11,15 @@ type Data = {
 export const AchievementsAdminPanel = (props) => {
   const { act, data } = useBackend<Data>();
   const { orphaned_keys, archived_keys } = data;
+  const t = useT();
   return (
-    <Window title="Achievements Admin Panel" width={540} height={680}>
+    <Window title={t('achievements-admin-title', {}, 'Achievements Admin Panel')} width={540} height={680}>
       <Window.Content scrollable>
-        <Section title="Orphaned achievements">
+        <Section
+          title={t('achievements-admin-orphaned', {}, 'Orphaned achievements')}
+        >
           <NoticeBox>
-            These achievements are present in the database but are missing
-            definitions in code. Most likely these were removed and can be
-            cleaned up safely. If you're sharing the same database on multiple
-            servers it's possible these come from a server with later version of
-            the code than this one.
+            {t('achievements-admin-orphaned-note')}
           </NoticeBox>
           <LabeledList>
             {orphaned_keys.map((key) => (
@@ -31,12 +31,12 @@ export const AchievementsAdminPanel = (props) => {
                     <Button.Confirm
                       onClick={() => act('archive', { key: key })}
                     >
-                      Archive
+                      {t('achievements-admin-archive', {}, 'Archive')}
                     </Button.Confirm>
                     <Button.Confirm
                       onClick={() => act('cleanup_orphan', { key: key })}
                     >
-                      Cleanup
+                      {t('achievements-admin-cleanup', {}, 'Cleanup')}
                     </Button.Confirm>
                   </>
                 }
@@ -46,8 +46,10 @@ export const AchievementsAdminPanel = (props) => {
             ))}
           </LabeledList>
         </Section>
-        <Section title="Archived achievements">
-          <NoticeBox>Archived achievements in the database.</NoticeBox>
+        <Section
+          title={t('achievements-admin-archived', {}, 'Archived achievements')}
+        >
+          <NoticeBox>{t('achievements-admin-archived-note')}</NoticeBox>
           <LabeledList>
             {archived_keys.map((key) => (
               <LabeledList.Item
@@ -57,7 +59,7 @@ export const AchievementsAdminPanel = (props) => {
                   <Button.Confirm
                     onClick={() => act('cleanup_orphan', { key: key })}
                   >
-                    Cleanup
+                    {t('achievements-admin-cleanup', {}, 'Cleanup')}
                   </Button.Confirm>
                 }
               >

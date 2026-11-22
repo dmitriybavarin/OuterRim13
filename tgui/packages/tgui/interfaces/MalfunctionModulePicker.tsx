@@ -2,6 +2,7 @@ import { Box, Icon, Section, Stack } from 'tgui-core/components';
 
 import { Window } from '../layouts';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { GenericUplink, type Item } from './Uplink/GenericUplink';
 
 type MalfModuleData = {
@@ -24,6 +25,7 @@ type Data = {
 export function MalfunctionModulePicker(props) {
   const { act, data } = useBackend<Data>();
   const { processingTime, hackedAPCs, categories } = data;
+  const t = useT();
 
   const items: Item[] = data.modules.map((module) => ({
     category: module.category,
@@ -31,7 +33,11 @@ export function MalfunctionModulePicker(props) {
     desc:
       module.desc +
       (module.minimumApcs > 0
-        ? ` Requires at least ${module.minimumApcs} APCs hacked.`
+        ? ` ${t(
+            'malfmodule-requires-apcs',
+            { count: module.minimumApcs },
+            `Requires at least ${module.minimumApcs} APCs hacked.`,
+          )}`
         : ''),
     disabled: processingTime < module.cost || hackedAPCs < module.minimumApcs,
     id: module.name,
@@ -50,7 +56,7 @@ export function MalfunctionModulePicker(props) {
             <Section>
               <Icon name="terminal" mr={1} />
               <Box inline bold>
-                Hacked APCs:
+                {t('malfmodule-hacked-apcs', {}, 'Hacked APCs:')}
               </Box>
               <Box inline ml={1}>
                 {hackedAPCs}

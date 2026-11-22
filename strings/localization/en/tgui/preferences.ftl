@@ -387,3 +387,7 @@ pref-widescreenpref-name = Enable widescreen
 pref-windowflashing-name = Enable window flashing
 
 pref-windowflashing-desc = When toggled, some important events will make your game icon flash on your task tray.
+
+pref-category-admin = ADMIN
+
+pref-category-tts = TTS

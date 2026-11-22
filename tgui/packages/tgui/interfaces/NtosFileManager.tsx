@@ -13,6 +13,7 @@ import {
 import { clamp } from 'tgui-core/math';
 import type { BooleanLike } from 'tgui-core/react';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { NtosWindow } from '../layouts';
 
 type FileEntry = {
@@ -66,6 +67,7 @@ const PrintDialog = (props: PrintDialogProps) => {
     )[0],
   );
   const { width, height } = printType;
+  const t = useT();
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
   const [minOffsetX, maxOffsetX] = [width - image_width, 0].toSorted();
@@ -82,7 +84,7 @@ const PrintDialog = (props: PrintDialogProps) => {
   return (
     <Dimmer>
       <Section
-        title="Print"
+        title={t('ntosfilemanager-print', {}, 'Print')}
         backgroundColor="primary"
         maxHeight="50%"
         maxWidth="90%"
@@ -90,7 +92,7 @@ const PrintDialog = (props: PrintDialogProps) => {
       >
         <Stack fill justify="space-between">
           <Stack.Item maxWidth="70%">
-            <Section title="Formats">
+            <Section title={t('ntosfilemanager-formats', {}, 'Formats')}>
               <Stack vertical overflowY="scroll">
                 {printTypes.map((type, i) => {
                   const { displayText } = type;
@@ -155,7 +157,7 @@ const PrintDialog = (props: PrintDialogProps) => {
               </Stack.Item>
               <Stack.Item>
                 <LabeledList>
-                  <LabeledList.Item label="X Offset">
+                  <LabeledList.Item label={t('ntosfilemanager-x-offset', {}, 'X Offset')}>
                     <Slider
                       tickWhileDragging
                       minValue={image_width > width ? -maxOffsetX : minOffsetX}
@@ -166,7 +168,7 @@ const PrintDialog = (props: PrintDialogProps) => {
                       }
                     />
                   </LabeledList.Item>
-                  <LabeledList.Item label="Y Offset">
+                  <LabeledList.Item label={t('ntosfilemanager-y-offset', {}, 'Y Offset')}>
                     <Slider
                       tickWhileDragging
                       minValue={
@@ -191,11 +193,13 @@ const PrintDialog = (props: PrintDialogProps) => {
                         onConfirm(name, printType, offsetX, offsetY)
                       }
                     >
-                      Print
+                      {t('ntosfilemanager-print', {}, 'Print')}
                     </Button>
                   </Stack.Item>
                   <Stack.Item>
-                    <Button onClick={onCancel}>Cancel</Button>
+                    <Button onClick={onCancel}>
+                      {t('ntosfilemanager-cancel', {}, 'Cancel')}
+                    </Button>
                   </Stack.Item>
                 </Stack>
               </Stack.Item>
@@ -210,6 +214,7 @@ const PrintDialog = (props: PrintDialogProps) => {
 export const NtosFileManager = (props) => {
   const { act, data } = useBackend<NtosFileManagerData>();
   const { usbconnected, files = [], usbfiles = [], printTypes } = data;
+  const t = useT();
   const [toPrint, setToPrint] = useState<FileEntry>();
   const [printingFromUsb, setPrintingFromUsb] = useState(false);
   return (
@@ -255,7 +260,7 @@ export const NtosFileManager = (props) => {
           />
         </Section>
         {usbconnected && (
-          <Section title="Data Disk">
+          <Section title={t('ntosfilemanager-data-disk', {}, 'Data Disk')}>
             <FileTable
               usbmode
               files={usbfiles}
@@ -304,12 +309,17 @@ const FileTable = (props: FileTableProps) => {
     onToggleSilence,
     onPrint,
   } = props;
+  const t = useT();
   return (
     <Table>
       <Table.Row header>
-        <Table.Cell>File</Table.Cell>
-        <Table.Cell collapsing>Type</Table.Cell>
-        <Table.Cell collapsing>Size</Table.Cell>
+        <Table.Cell>{t('ntosfilemanager-file', {}, 'File')}</Table.Cell>
+        <Table.Cell collapsing>
+          {t('ntosfilemanager-type', {}, 'Type')}
+        </Table.Cell>
+        <Table.Cell collapsing>
+          {t('ntosfilemanager-size', {}, 'Size')}
+        </Table.Cell>
       </Table.Row>
       {files.map((file) => (
         <Table.Row key={file.name} className="candystripe">
@@ -331,7 +341,11 @@ const FileTable = (props: FileTableProps) => {
               <Button
                 icon={file.alert_silenced ? 'bell-slash' : 'bell'}
                 color={file.alert_silenced ? 'red' : 'default'}
-                tooltip={file.alert_silenced ? 'Unmute Alerts' : 'Mute Alerts'}
+                tooltip={
+                  file.alert_silenced
+                    ? t('ntosfilemanager-unmute', {}, 'Unmute Alerts')
+                    : t('ntosfilemanager-mute', {}, 'Mute Alerts')
+                }
                 onClick={() => onToggleSilence!(file.name)}
               />
             )}
@@ -341,20 +355,20 @@ const FileTable = (props: FileTableProps) => {
                   icon="trash"
                   confirmIcon="times"
                   confirmContent=""
-                  tooltip="Delete"
+                  tooltip={t('ntosfilemanager-delete', {}, 'Delete')}
                   onClick={() => onDelete(file.name)}
                 />
                 {!!usbconnected &&
                   (usbmode ? (
                     <Button
                       icon="download"
-                      tooltip="Download"
+                      tooltip={t('ntosfilemanager-download', {}, 'Download')}
                       onClick={() => onUpload(file.name)}
                     />
                   ) : (
                     <Button
                       icon="upload"
-                      tooltip="Upload"
+                      tooltip={t('ntosfilemanager-upload', {}, 'Upload')}
                       onClick={() => onUpload(file.name)}
                     />
                   ))}
@@ -363,7 +377,7 @@ const FileTable = (props: FileTableProps) => {
             {!!file.printable && (
               <Button
                 icon="print"
-                tooltip="Print"
+                tooltip={t('ntosfilemanager-print', {}, 'Print')}
                 onClick={() => onPrint(file)}
               />
             )}

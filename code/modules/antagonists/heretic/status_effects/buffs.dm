@@ -11,7 +11,7 @@
 	var/turf/location
 
 /datum/status_effect/crucible_soul/on_apply()
-	to_chat(owner,span_notice("You phase through reality, nothing is out of bounds!"))
+	to_chat(owner,span_notice(LOC_KEY("heretic-status-crucible-soul-apply")))
 	owner.alpha = 180
 	owner.pass_flags |= PASSCLOSEDTURF | PASSGLASS | PASSGRILLE | PASSMACHINE | PASSSTRUCTURE | PASSTABLE | PASSMOB | PASSDOORS | PASSVEHICLE
 	location = get_turf(owner)
@@ -20,7 +20,7 @@
 	return TRUE
 
 /datum/status_effect/crucible_soul/on_remove()
-	to_chat(owner,span_notice("You regain your physicality, returning you to your original location..."))
+	to_chat(owner,span_notice(LOC_KEY("heretic-status-crucible-soul-remove")))
 	owner.alpha = initial(owner.alpha)
 	owner.pass_flags &= ~(PASSCLOSEDTURF | PASSGLASS | PASSGRILLE | PASSMACHINE | PASSSTRUCTURE | PASSTABLE | PASSMOB | PASSDOORS | PASSVEHICLE)
 	owner.forceMove(location)
@@ -28,7 +28,7 @@
 	location = null
 
 /datum/status_effect/crucible_soul/get_examine_text(mob/examiner)
-	return span_notice("[owner.p_They()] [owner.p_do()]n't seem to be all here.")
+	return span_notice(loc_key("heretic-status-crucible-soul-examine", list(they = owner.p_They(), do = owner.p_do())))
 
 /datum/action/cancel_crucible_soul
 	name = "Recall"
@@ -90,7 +90,7 @@
 			found_wound.remove_wound()
 	if(length(drinker.get_missing_limbs()))
 		drinker.regenerate_limbs()
-		to_chat(drinker, span_hypnophrase("The mansus has given you new limbs."))
+		to_chat(drinker, span_hypnophrase(LOC_KEY("heretic-status-marshal-limbs")))
 	playsound(drinker, 'sound/effects/chemistry/ahaha.ogg', 50, TRUE, -1, extrarange = SILENCED_SOUND_EXTRARANGE, frequency = 0.5)
 
 /datum/status_effect/marshal/tick(seconds_between_ticks)
@@ -235,9 +235,9 @@
 
 	playsound(get_turf(source), 'sound/items/weapons/parry.ogg', 100, TRUE)
 	source.visible_message(
-		span_warning("[to_remove] orbiting [source] snaps in front of [attack_text], blocking it before vanishing!"),
-		span_warning("[to_remove] orbiting you snaps in front of [attack_text], blocking it before vanishing!"),
-		span_hear("You hear a clink."),
+		span_warning(loc_key("heretic-status-blade-block-others", list(item = to_remove, user = source, attack = attack_text))),
+		span_warning(loc_key("heretic-status-blade-block-self", list(item = to_remove, attack = attack_text))),
+		span_hear(LOC_KEY("heretic-status-blade-block-hear")),
 	)
 
 	qdel(to_remove)
@@ -313,28 +313,28 @@
 	UnregisterSignal(owner, COMSIG_CARBON_CUFF_ATTEMPTED)
 	UnregisterSignal(owner, COMSIG_BEING_STRIPPED)
 	owner.visible_message(
-		span_warning("The haze around [owner] disappears, leaving them materialized!"),
-		span_notice("You exit the refuge."),
+		span_warning(loc_key("heretic-status-caretaker-exit-others", list(user = owner))),
+		span_notice(LOC_KEY("heretic-status-caretaker-exit-self")),
 	)
 
 /datum/status_effect/caretaker_refuge/get_examine_text(mob/examiner)
-	return span_warning("[owner.p_Theyre()] enveloped in an unholy haze!")
+	return span_warning(loc_key("heretic-status-caretaker-examine", list(theyre = owner.p_Theyre())))
 
 /datum/status_effect/caretaker_refuge/proc/nullrod_handler(datum/source, obj/item/weapon)
 	SIGNAL_HANDLER
 	playsound(get_turf(owner), 'sound/effects/curse/curse1.ogg', 80, TRUE)
-	owner.visible_message(span_warning("[weapon] repels the haze around [owner]!"))
+	owner.visible_message(span_warning(loc_key("heretic-status-caretaker-repel", list(item = weapon, user = owner))))
 	owner.remove_status_effect(type)
 
 /datum/status_effect/caretaker_refuge/proc/no_strip(atom/source, mob/user, obj/item/equipping)
 	SIGNAL_HANDLER
-	to_chat(user, span_warning("You fail to put anything on [source] as they are incorporeal!"))
+	to_chat(user, span_warning(loc_key("heretic-status-caretaker-no-strip", list(target = source))))
 	return COMPONENT_CANT_STRIP
 
 /datum/status_effect/caretaker_refuge/proc/prevent_spell_usage(datum/source, datum/spell)
 	SIGNAL_HANDLER
 	if(!istype(spell, /datum/action/cooldown/spell/caretaker))
-		owner.balloon_alert(owner, "may not cast spells in refuge!")
+		owner.balloon_alert(owner, LOC_KEY("heretic-status-caretaker_no-spells-balloon"))
 		return SPELL_CANCEL_CAST
 
 /datum/status_effect/caretaker_refuge/proc/prevent_cuff(datum/source, mob/attemptee)
@@ -376,7 +376,7 @@
 
 /datum/status_effect/heretic_lastresort/on_apply()
 	ADD_TRAIT(owner, TRAIT_IGNORESLOWDOWN, TRAIT_STATUS_EFFECT(id))
-	to_chat(owner, span_userdanger("You won't give up that easily!"))
+	to_chat(owner, span_userdanger(LOC_KEY("heretic-status-last-resort-apply")))
 	return TRUE
 
 /datum/status_effect/heretic_lastresort/on_remove()

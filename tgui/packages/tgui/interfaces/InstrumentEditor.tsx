@@ -13,6 +13,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -57,15 +58,23 @@ type LineData = {
 
 export const InstrumentEditor = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
 
   return (
     <Window width={750} height={500}>
       <Window.Content scrollable>
         <InstrumentSettings />
-        <Collapsible open title="Music Editor" icon="pencil">
+        <Collapsible
+          open
+          title={t('instrument-music-editor', {}, 'Music Editor')}
+          icon="pencil"
+        >
           <EditingSettings />
         </Collapsible>
-        <Collapsible title="Help Section" icon="question">
+        <Collapsible
+          title={t('instrument-help-section', {}, 'Help Section')}
+          icon="question"
+        >
           <HelpSection />
         </Collapsible>
       </Window.Content>
@@ -101,6 +110,7 @@ const InstrumentSettings = (props) => {
     volume_dropoff_threshold,
     lines,
   } = data;
+  const t = useT();
 
   const instrument_id_by_name = (name) => {
     return possible_instruments.find((instrument) => instrument.name === name)
@@ -108,11 +118,13 @@ const InstrumentSettings = (props) => {
   };
 
   return (
-    <Section title="Settings">
+    <Section title={t('instrument-settings', {}, 'Settings')}>
       {lines.length > 0 && (
         <Box fontSize="16px" mb={1}>
           <Button onClick={() => act('play_music')}>
-            {playing ? 'Stop Music' : 'Start Playing'}
+            {playing
+              ? t('instrument-stop-music', {}, 'Stop Music')
+              : t('instrument-start-playing', {}, 'Start Playing')}
           </Button>
         </Box>
       )}
@@ -125,10 +137,13 @@ const InstrumentSettings = (props) => {
           mr={1}
         >
           <Tooltip
-            content="All nearby instruments with the same ID will
-               start playing the same song when any one starts playing."
+            content={t(
+              'instrument-id-tooltip',
+              {},
+              'All nearby instruments with the same ID will start playing the same song when any one starts playing.',
+            )}
           >
-            ID:
+            {t('instrument-id', {}, 'ID:')}
           </Tooltip>
         </Box>
         <Input
@@ -138,7 +153,7 @@ const InstrumentSettings = (props) => {
         />
       </Box>
       <Box>
-        Repeats Left:
+        {t('instrument-repeats-left', {}, 'Repeats Left:')}
         <NumberInput
           ml={1}
           step={1}
@@ -156,7 +171,9 @@ const InstrumentSettings = (props) => {
       <Box>
         {!!can_switch_instrument && (
           <Stack fill>
-            <Stack.Item mt={0.5}>Instrument Using</Stack.Item>
+            <Stack.Item mt={0.5}>
+              {t('instrument-using', {}, 'Instrument Using')}
+            </Stack.Item>
             <Stack.Item grow>
               <Dropdown
                 width="40%"
@@ -177,7 +194,7 @@ const InstrumentSettings = (props) => {
       </Box>
       <Stack mt={1}>
         <Stack.Item>
-          Playback Settings:
+          {t('instrument-playback-settings', {}, 'Playback Settings:')}
           <Box>
             <NumberInput
               minValue={note_shift_min}
@@ -190,10 +207,14 @@ const InstrumentSettings = (props) => {
                 })
               }
             />
-            keys / {octaves} octaves
+            {t(
+              'instrument-keys-octaves',
+              { octaves },
+              `keys / ${octaves} octaves`,
+            )}
           </Box>
           <Stack>
-            <Stack.Item mt={0.5}>Mode:</Stack.Item>
+            <Stack.Item mt={0.5}>{t('instrument-mode', {}, 'Mode:')}</Stack.Item>
             <Stack.Item grow>
               <Dropdown
                 width="100%"
@@ -226,18 +247,25 @@ const InstrumentSettings = (props) => {
         <Divider vertical />
         <Stack.Item>
           <Box>
-            Status:
+            {t('instrument-status', {}, 'Status:')}
             {instrument_ready ? (
-              <span style={{ color: '#5EFB6E' }}> Ready</span>
+              <span style={{ color: '#5EFB6E' }}>
+                {' '}
+                {t('instrument-ready', {}, 'Ready')}
+              </span>
             ) : (
               <span style={{ color: '#FF0000' }}>
                 {' '}
-                Instrument Definition Error!
+                {t(
+                  'instrument-definition-error',
+                  {},
+                  'Instrument Definition Error!',
+                )}
               </span>
             )}
           </Box>
           <Box>
-            Volume:
+            {t('instrument-volume', {}, 'Volume:')}
             <NumberInput
               step={1}
               minValue={min_volume}
@@ -251,7 +279,11 @@ const InstrumentSettings = (props) => {
             />
           </Box>
           <Box>
-            Volume Dropoff Threshold:
+            {t(
+              'instrument-volume-dropoff',
+              {},
+              'Volume Dropoff Threshold:',
+            )}
             <NumberInput
               step={1}
               minValue={1}
@@ -267,8 +299,16 @@ const InstrumentSettings = (props) => {
           <Box>
             <Button onClick={() => act('toggle_sustain_hold_indefinitely')}>
               {sustain_indefinitely
-                ? 'Sustaining last held note indefinitely'
-                : 'Not sustaining last held note indefinitely'}
+                ? t(
+                    'instrument-sustain-on',
+                    {},
+                    'Sustaining last held note indefinitely',
+                  )
+                : t(
+                    'instrument-sustain-off',
+                    {},
+                    'Not sustaining last held note indefinitely',
+                  )}
             </Button>
           </Box>
         </Stack.Item>
@@ -280,21 +320,26 @@ const InstrumentSettings = (props) => {
 const EditingSettings = (props) => {
   const { act, data } = useBackend<Data>();
   const { bpm, lines } = data;
+  const t = useT();
 
   return (
     <Section>
       <Box>
-        <Button onClick={() => act('start_new_song')}>Start a New Song</Button>
-        <Button onClick={() => act('import_song')}>Import a Song</Button>
+        <Button onClick={() => act('start_new_song')}>
+          {t('instrument-new-song', {}, 'Start a New Song')}
+        </Button>
+        <Button onClick={() => act('import_song')}>
+          {t('instrument-import-song', {}, 'Import a Song')}
+        </Button>
       </Box>
       <Box>
-        Tempo:{' '}
+        {t('instrument-tempo', {}, 'Tempo:')}{' '}
         <Button
           onClick={() => act('tempo', { tempo_change: 'increase_speed' })}
         >
           -
         </Button>{' '}
-        {bpm} BPM{' '}
+        {t('instrument-bpm', { bpm }, `${bpm} BPM`)}{' '}
         <Button
           onClick={() => act('tempo', { tempo_change: 'decrease_speed' })}
         >
@@ -304,13 +349,13 @@ const EditingSettings = (props) => {
       <Box>
         {lines.map((line, index) => (
           <Box key={index} fontSize="11px">
-            Line {index}:
+            {t('instrument-line', { index }, `Line ${index}:`)}
             <Button
               onClick={() =>
                 act('modify_line', { line_editing: line.line_count })
               }
             >
-              Edit
+              {t('instrument-edit', {}, 'Edit')}
             </Button>
             <Button
               onClick={() =>
@@ -324,7 +369,9 @@ const EditingSettings = (props) => {
         ))}
       </Box>
       <Box>
-        <Button onClick={() => act('add_new_line')}>Add Line</Button>
+        <Button onClick={() => act('add_new_line')}>
+          {t('instrument-add-line', {}, 'Add Line')}
+        </Button>
       </Box>
     </Section>
   );
@@ -333,39 +380,83 @@ const EditingSettings = (props) => {
 const HelpSection = (props) => {
   const { data } = useBackend<Data>();
   const { max_line_chars, max_lines } = data;
+  const t = useT();
 
   return (
     <Section>
       <Box>
-        Lines are a series of chords, separated by commas (,), each with notes
-        separated by hyphens (-).
+        {t(
+          'instrument-help-1',
+          {},
+          'Lines are a series of chords, separated by commas (,), each with notes separated by hyphens (-).',
+        )}
         <br />
-        Every note in a chord will play together, with chord timed by the tempo.
+        {t(
+          'instrument-help-2',
+          {},
+          'Every note in a chord will play together, with chord timed by the tempo.',
+        )}
         <br />
-        Notes are played by the names of the note, and optionally, the
-        accidental, and/or the octave number.
+        {t(
+          'instrument-help-3',
+          {},
+          'Notes are played by the names of the note, and optionally, the accidental, and/or the octave number.',
+        )}
         <br />
-        By default, every note is natural and in octave 3. Defining otherwise is
-        remembered for each note.
+        {t(
+          'instrument-help-4',
+          {},
+          'By default, every note is natural and in octave 3. Defining otherwise is remembered for each note.',
+        )}
         <br />
-        Example: <i>C,D,E,F,G,A,B</i> will play a C major scale.
+        {t('instrument-help-5-pre', {}, 'Example:')} <i>C,D,E,F,G,A,B</i>{' '}
+        {t('instrument-help-5-post', {}, 'will play a C major scale.')}
         <br />
-        After a note has an accidental placed, it will be remembered:{' '}
-        <i>C,C4,C,C3</i> is <i>C3,C4,C4,C3</i>
+        {t(
+          'instrument-help-6-pre',
+          {},
+          'After a note has an accidental placed, it will be remembered:',
+        )}{' '}
+        <i>C,C4,C,C3</i> {t('instrument-help-6-mid', {}, 'is')}{' '}
+        <i>C3,C4,C4,C3</i>
         <br />
-        Chords can be played simply by seperating each note with a hyphon:{' '}
+        {t(
+          'instrument-help-7',
+          {},
+          'Chords can be played simply by seperating each note with a hyphon:',
+        )}{' '}
         <i>A-C#,Cn-E,E-G#,Gn-B</i>
-        <br />A pause may be denoted by an empty chord: <i>C,E,,C,G</i>
         <br />
-        To make a chord be a different time, end it with /x, where the chord
-        length will be length
+        {t(
+          'instrument-help-8',
+          {},
+          'A pause may be denoted by an empty chord:',
+        )}{' '}
+        <i>C,E,,C,G</i>
         <br />
-        defined by tempo / x: <i>C,G/2,E/4</i>
+        {t(
+          'instrument-help-9a',
+          {},
+          'To make a chord be a different time, end it with /x, where the chord length will be length',
+        )}
         <br />
-        Combined, an example is: <i>E-E4/4,F#/2,G#/8,B/8,E3-E4/4</i>
+        {t('instrument-help-9b', {}, 'defined by tempo / x:')}{' '}
+        <i>C,G/2,E/4</i>
         <br />
-        Lines may be up to {max_line_chars} characters.
-        <br />A song may only contain up to {max_lines} lines.
+        {t('instrument-help-10', {}, 'Combined, an example is:')}{' '}
+        <i>E-E4/4,F#/2,G#/8,B/8,E3-E4/4</i>
+        <br />
+        {t(
+          'instrument-help-11',
+          { count: max_line_chars },
+          `Lines may be up to ${max_line_chars} characters.`,
+        )}
+        <br />
+        {t(
+          'instrument-help-12',
+          { count: max_lines },
+          `A song may only contain up to ${max_lines} lines.`,
+        )}
         <br />
       </Box>
     </Section>

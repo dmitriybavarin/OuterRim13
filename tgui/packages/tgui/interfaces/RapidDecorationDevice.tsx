@@ -2,6 +2,7 @@ import { ImageButton, LabeledList, Section, Stack } from 'tgui-core/components';
 import { capitalizeAll } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Design = {
@@ -44,6 +45,7 @@ const DecorationCard = (props: {
 
 export const RapidDecorationDevice = () => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     categories = [],
     selected_category,
@@ -59,11 +61,17 @@ export const RapidDecorationDevice = () => {
           <Stack.Item>
             <Section>
               <LabeledList>
-                <LabeledList.Item label="Units Left">
-                  {matter}/{max_matter} Units
+                <LabeledList.Item label={t('rdd-units-left', {}, 'Units Left')}>
+                  {t(
+                    'rdd-units',
+                    { matter, max: max_matter },
+                    '{ $matter }/{ $max } Units',
+                  )}
                 </LabeledList.Item>
-                <LabeledList.Item label="Selected">
-                  {selected_design ? capitalizeAll(selected_design) : 'None'}
+                <LabeledList.Item label={t('rdd-selected', {}, 'Selected')}>
+                  {selected_design
+                    ? capitalizeAll(selected_design)
+                    : t('rdd-none', {}, 'None')}
                 </LabeledList.Item>
               </LabeledList>
             </Section>

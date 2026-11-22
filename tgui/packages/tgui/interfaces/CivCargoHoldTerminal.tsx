@@ -15,6 +15,7 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { useState } from 'react';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 
@@ -54,9 +55,14 @@ type singleBounty = {
 export const CivCargoHoldTerminal = (props) => {
   const { act, data } = useBackend<Data>();
   const { id_inserted } = data;
+  const t = useT();
 
-  const in_text = 'Welcome valued employee.';
-  const out_text = 'To begin, insert your ID into the console.';
+  const in_text = t('civcargo-welcome', {}, 'Welcome valued employee.');
+  const out_text = t(
+    'civcargo-insert-id',
+    {},
+    'To begin, insert your ID into the console.',
+  );
   const [tab, setTab] = useState('personal');
   const listBounties = data.listBounty || [];
 
@@ -74,7 +80,7 @@ export const CivCargoHoldTerminal = (props) => {
                   selected={tab === 'personal'}
                   backgroundColor={tab === 'personal' ? "green" : "default"}
                 >
-                  Personal Bounties
+                  {t('civcargo-tab-personal', {}, 'Personal Bounties')}
                 </Tabs.Tab>
                 <Tabs.Tab
                   icon="space-shuttle"
@@ -82,7 +88,7 @@ export const CivCargoHoldTerminal = (props) => {
                   selected={tab === 'station'}
                   backgroundColor={tab === 'station' ? "brown" : "default"}
                 >
-                  Station Bounties
+                  {t('civcargo-tab-station', {}, 'Station Bounties')}
                 </Tabs.Tab>
               </Tabs>
             </Section>
@@ -107,41 +113,55 @@ export const CivCargoHoldTerminal = (props) => {
 const PersonalBountyBlock = (props) => {
   const { act, data } = useBackend<Data>();
   const { pad, sending, status_report, id_inserted, id_bounty_info, picking } = data;
+  const t = useT();
   return (
     <>
       <Section
-        title="Cargo Pad"
+        title={t('civcargo-cargo-pad', {}, 'Cargo Pad')}
         buttons={
           <>
             <Button
               icon={'sync'}
-              tooltip={'Check Contents'}
+              tooltip={t('civcargo-check-contents', {}, 'Check Contents')}
               disabled={!pad || !id_inserted}
               onClick={() => act('recalc')} />
             <Button
               icon={sending ? 'times' : 'arrow-up'}
-              tooltip={sending ? 'Stop Sending' : 'Send Goods'}
+              tooltip={
+                sending
+                  ? t('civcargo-stop-sending', {}, 'Stop Sending')
+                  : t('civcargo-send-goods', {}, 'Send Goods')
+              }
               selected={sending}
               disabled={!pad || !id_inserted}
               onClick={() => act(sending ? 'stop' : 'send')} />
             <Button
               icon={id_bounty_info ? 'recycle' : 'pen'}
               color={id_bounty_info ? 'green' : 'default'}
-              tooltip={id_bounty_info ? 'Replace Bounty' : 'New Bounty'}
+              tooltip={
+                id_bounty_info
+                  ? t('civcargo-replace-bounty', {}, 'Replace Bounty')
+                  : t('civcargo-new-bounty', {}, 'New Bounty')
+              }
               disabled={!id_inserted}
               onClick={() => act('bounty')} />
             <Button
               icon={'download'}
-              content={'Eject ID'}
+              content={t('civcargo-eject-id', {}, 'Eject ID')}
               disabled={!id_inserted}
               onClick={() => act('eject')} />
           </>}
         >
         <LabeledList>
-          <LabeledList.Item label="Status" color={pad ? 'good' : 'bad'}>
-            {pad ? 'Online' : 'Not Found'}
+          <LabeledList.Item
+            label={t('civcargo-status', {}, 'Status')}
+            color={pad ? 'good' : 'bad'}
+          >
+            {pad
+              ? t('civcargo-online', {}, 'Online')
+              : t('civcargo-not-found', {}, 'Not Found')}
           </LabeledList.Item>
-          <LabeledList.Item label="Cargo Report">
+          <LabeledList.Item label={t('civcargo-cargo-report', {}, 'Cargo Report')}>
             {status_report}
           </LabeledList.Item>
         </LabeledList>
@@ -155,18 +175,24 @@ const PersonalBountyBlock = (props) => {
 const BountyTextBox = (props) => {
   const { data } = useBackend<Data>();
   const { id_bounty_info, id_bounty_value, id_bounty_num } = data;
-  const na_text = 'N/A, please add a new bounty.';
+  const t = useT();
+  const na_text = t(
+    'civcargo-na-add-bounty',
+    {},
+    'N/A, please add a new bounty.',
+  );
+  const na = t('civcargo-na', {}, 'N/A');
   return (
-    <Section title="Bounty Info">
+    <Section title={t('civcargo-bounty-info', {}, 'Bounty Info')}>
       <LabeledList>
-        <LabeledList.Item label="Description">
+        <LabeledList.Item label={t('civcargo-description', {}, 'Description')}>
           {id_bounty_info ? id_bounty_info : na_text}
         </LabeledList.Item>
-        <LabeledList.Item label="Quantity">
-          {id_bounty_info ? id_bounty_num : 'N/A'}
+        <LabeledList.Item label={t('civcargo-quantity', {}, 'Quantity')}>
+          {id_bounty_info ? id_bounty_num : na}
         </LabeledList.Item>
-        <LabeledList.Item label="Value">
-          {id_bounty_info ? id_bounty_value : 'N/A'}
+        <LabeledList.Item label={t('civcargo-value', {}, 'Value')}>
+          {id_bounty_info ? id_bounty_value : na}
         </LabeledList.Item>
       </LabeledList>
     </Section>
@@ -177,8 +203,12 @@ const BountyTextBox = (props) => {
 const BountyPickBox = (props) => {
   const { act, data } = useBackend<Data>();
   const { id_bounty_names, id_bounty_infos, id_bounty_values } = data;
+  const t = useT();
   return (
-    <Section title="Please Select a Bounty:" textAlign="center">
+    <Section
+      title={t('civcargo-pick-bounty', {}, 'Please Select a Bounty:')}
+      textAlign="center"
+    >
       <Flex width="100%" wrap>
         <Flex.Item shrink={0} grow={0.5}>
           <BountyPickButton
@@ -213,6 +243,7 @@ const BountyPickBox = (props) => {
 };
 
 const BountyPickButton = (props) => {
+  const t = useT();
   return (
     <Button
       fluid
@@ -236,7 +267,13 @@ const BountyPickButton = (props) => {
       >
         <Box dangerouslySetInnerHTML={{ __html: props.bounty_info }} />
       </Box>
-      <Box>Payout: {props.bounty_value} cr</Box>
+      <Box>
+        {t(
+          'civcargo-payout',
+          { value: props.bounty_value },
+          `Payout: ${props.bounty_value} cr`,
+        )}
+      </Box>
     </Button>
   );
 };
@@ -249,6 +286,7 @@ const GlobalBountyBlock = (props) => {
     pad,
     id_inserted,
   } = data;
+  const t = useT();
 
   const [localBounty, setBountyData] = useState<singleBounty>({
     name: 'n/a',
@@ -282,16 +320,32 @@ const GlobalBountyBlock = (props) => {
             bold
             icon="refresh"
           >
-            Update List
+            {t('civcargo-update-list', {}, 'Update List')}
           </Tabs.Tab>
           ) : (
             <Tabs.Tab
               textColor="#ffffffe5"
               align="center"
               >
-              <Tooltip content="The total number of global bounties will go up by 1 for every 3 completed!">
+              <Tooltip
+                content={t(
+                  'civcargo-served-tooltip',
+                  {},
+                  'The total number of global bounties will go up by 1 for every 3 completed!',
+                )}
+              >
                 <Box className="Marquee">
-                  {data.claimed_bounties} bount{data.claimed_bounties === 1 ? "y" : "ies"} served{data.claimed_bounties > 0 ? "!" : "."}
+                  {data.claimed_bounties > 0
+                    ? t(
+                        'civcargo-bounties-served',
+                        { count: data.claimed_bounties },
+                        `${data.claimed_bounties} bount${data.claimed_bounties === 1 ? 'y' : 'ies'} served!`,
+                      )
+                    : t(
+                        'civcargo-bounties-served-none',
+                        {},
+                        '0 bounties served.',
+                      )}
                 </Box>
               </Tooltip>
             </Tabs.Tab>
@@ -306,7 +360,7 @@ const GlobalBountyBlock = (props) => {
             bold
             icon="print"
           >
-            Printout List
+            {t('civcargo-printout-list', {}, 'Printout List')}
           </Tabs.Tab>
           {safeListBounty.map((bounty) => (
             <Tabs.Tab
@@ -344,7 +398,11 @@ const GlobalBountyBlock = (props) => {
             maxValue={localBounty.maximum}
             p={1}
             >
-          {localBounty.shipped} / {localBounty.maximum} shipped.
+          {t(
+            'civcargo-shipped',
+            { shipped: localBounty.shipped, maximum: localBounty.maximum },
+            `${localBounty.shipped} / ${localBounty.maximum} shipped.`,
+          )}
           </ProgressBar>
               <Box
                 dangerouslySetInnerHTML={{__html:localBounty.description }}
@@ -364,25 +422,44 @@ const GlobalBountyBlock = (props) => {
                 backgroundColor="green"
                 color="white"
               >
-                <Tooltip content={`You'll receive a cut of ${Math.round(localBounty.reward * 0.3)} Credits.`}>
-                  <b>Reward:</b> {localBounty.reward} Credits
+                <Tooltip
+                  content={t(
+                    'civcargo-cut-tooltip',
+                    { amount: Math.round(localBounty.reward * 0.3) },
+                    `You'll receive a cut of ${Math.round(localBounty.reward * 0.3)} Credits.`,
+                  )}
+                >
+                  <b>{t('civcargo-reward-label', {}, 'Reward:')}</b>{' '}
+                  {t(
+                    'civcargo-reward-credits',
+                    { reward: localBounty.reward },
+                    `${localBounty.reward} Credits`,
+                  )}
                 </Tooltip>
             </Box>
           <Button
             width="100%"
             icon={sending ? 'times' : 'arrow-up'}
-            tooltip={sending ? 'Stop Sending' : 'Send Goods'}
+            tooltip={
+                sending
+                  ? t('civcargo-stop-sending', {}, 'Stop Sending')
+                  : t('civcargo-send-goods', {}, 'Send Goods')
+              }
             selected={sending}
             disabled={!pad || !id_inserted}
             onClick={() => { act(sending ? 'stop' : 'send', { global: true}); setBountyTab(0); }}
           >
-            Send & Claim
+            {t('civcargo-send-claim', {}, 'Send & Claim')}
           </Button>
         </Section>
         ) : (
           <NoticeBox
             width="100%">
-            Please select a bounty from the list.
+            {t(
+              'civcargo-select-bounty',
+              {},
+              'Please select a bounty from the list.',
+            )}
           </NoticeBox>
         )}
       </Stack.Item>

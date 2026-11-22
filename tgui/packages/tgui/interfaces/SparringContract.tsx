@@ -9,6 +9,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 const weaponlist = [
@@ -48,6 +49,7 @@ type Info = {
 
 export const SparringContract = (props) => {
   const { data, act } = useBackend<Info>();
+  const t = useT();
   const {
     set_weapon,
     set_area,
@@ -73,22 +75,14 @@ export const SparringContract = (props) => {
                 <Stack.Item>
                   <Stack fill>
                     <Stack.Item grow fontSize="16px">
-                      Weapons:
+                      {t('sparring-weapons', {}, 'Weapons:')}
                     </Stack.Item>
                     <Stack.Item>
                       <Button
-                        tooltip={`
-                        The Chaplain's Deity wishes for honorable fighting.
-                        As such, it uses contracts. Signing your name will
-                        set the terms for the battle. Then, the person you
-                        intend to spar with must sign the other side. If terms
-                        are changed on an already signed contract, the
-                        signatures will erase and the new terms must be
-                        re-agreed upon.
-                        `}
+                        tooltip={t('sparring-contract-tip', {}, 'The Chaplain\'s Deity wishes for honorable fighting. As such, it uses contracts. Signing your name will set the terms for the battle. Then, the person you intend to spar with must sign the other side. If terms are changed on an already signed contract, the signatures will erase and the new terms must be re-agreed upon.')}
                         icon="info"
                       >
-                        Contract?
+                        {t('sparring-contract', {}, 'Contract?')}
                       </Button>
                     </Stack.Item>
                   </Stack>
@@ -97,20 +91,36 @@ export const SparringContract = (props) => {
                   <Dropdown
                     width="100%"
                     selected={weaponlist[weapon - 1]}
-                    options={weaponlist}
+                    displayText={t(
+                      `sparring-weapon-${weapon}`,
+                      {},
+                      weaponlist[weapon - 1],
+                    )}
+                    options={weaponlist.map((name, index) => ({
+                      value: name,
+                      displayText: t(`sparring-weapon-${index + 1}`, {}, name),
+                    }))}
                     onSelected={(value) =>
                       setWeapon(weaponlist.indexOf(value) + 1)
                     }
                   />
                 </Stack.Item>
                 <Stack.Item>
-                  <BlockQuote>{weaponblurb[weapon - 1]}</BlockQuote>
+                  <BlockQuote>
+                    {t(
+                      `sparring-weapon-${weapon}-desc`,
+                      {},
+                      weaponblurb[weapon - 1],
+                    )}
+                  </BlockQuote>
                 </Stack.Item>
               </Stack>
             </Stack.Item>
             <Stack.Item>
               <Stack vertical>
-                <Stack.Item fontSize="16px">Arena:</Stack.Item>
+                <Stack.Item fontSize="16px">
+                  {t('sparring-arena', {}, 'Arena:')}
+                </Stack.Item>
                 <Stack.Item>
                   <Dropdown
                     width="100%"
@@ -121,27 +131,46 @@ export const SparringContract = (props) => {
                 </Stack.Item>
                 <Stack.Item>
                   <BlockQuote>
-                    This fight will take place in the {area}. Leaving the arena
-                    mid-fight is a violation.
+                    {t(
+                      'sparring-arena-desc',
+                      { area },
+                      `This fight will take place in the ${area}. Leaving the arena mid-fight is a violation.`,
+                    )}
                   </BlockQuote>
                 </Stack.Item>
               </Stack>
             </Stack.Item>
             <Stack.Item>
               <Stack vertical>
-                <Stack.Item fontSize="16px">Stakes:</Stack.Item>
+                <Stack.Item fontSize="16px">
+                  {t('sparring-stakes', {}, 'Stakes:')}
+                </Stack.Item>
                 <Stack.Item>
                   <Dropdown
                     width="100%"
                     selected={stakelist[stakes - 1]}
-                    options={stakelist}
+                    displayText={t(
+                      `sparring-stakes-${stakes}`,
+                      {},
+                      stakelist[stakes - 1],
+                    )}
+                    options={stakelist.map((name, index) => ({
+                      value: name,
+                      displayText: t(`sparring-stakes-${index + 1}`, {}, name),
+                    }))}
                     onSelected={(value) =>
                       setStakes(stakelist.indexOf(value) + 1)
                     }
                   />
                 </Stack.Item>
                 <Stack.Item>
-                  <BlockQuote>{stakesblurb[stakes - 1]}</BlockQuote>
+                  <BlockQuote>
+                    {t(
+                      `sparring-stakes-${stakes}-desc`,
+                      {},
+                      stakesblurb[stakes - 1],
+                    )}
+                  </BlockQuote>
                 </Stack.Item>
               </Stack>
             </Stack.Item>
@@ -160,12 +189,12 @@ export const SparringContract = (props) => {
                         })
                       }
                     >
-                      Sign Here
+                      {t('sparring-sign', {}, 'Sign Here')}
                     </Button>
                   )) ||
                     left_sign}
                 </Stack.Item>
-                <Stack.Item fontSize="16px">VS</Stack.Item>
+                <Stack.Item fontSize="16px">{t('sparring-vs', {}, 'VS')}</Stack.Item>
                 <Stack.Item fontSize={right_sign !== 'none' && '14px'} grow>
                   {(right_sign === 'none' && (
                     <Button
@@ -178,7 +207,7 @@ export const SparringContract = (props) => {
                         })
                       }
                     >
-                      Sign Here
+                      {t('sparring-sign', {}, 'Sign Here')}
                     </Button>
                   )) ||
                     right_sign}
@@ -196,38 +225,38 @@ export const SparringContract = (props) => {
                     icon="fist-raised"
                     onClick={() => act('fight')}
                   >
-                    FIGHT!
+                    {t('sparring-fight', {}, 'FIGHT!')}
                   </Button>
                   <Button
-                    tooltip={`
-                      If you've already signed but you want to renegotiate
-                      the terms, you can clear out the signatures with
-                      this button.
-                    `}
+                    tooltip={t('sparring-clear-tip', {}, 'If you\'ve already signed but you want to renegotiate the terms, you can clear out the signatures with this button.')}
                     icon="door-open"
                     onClick={() => act('clear')}
                   >
-                    Clear
+                    {t('sparring-clear', {}, 'Clear')}
                   </Button>
                 </Stack.Item>
                 <Stack.Item>
                   <Button
                     tooltip={
                       (in_area &&
-                        `Both participants are present in the ${area}.`) ||
-                      'Both participants need to be in the arena!'
+                        t(
+                          'sparring-in-arena',
+                          { area },
+                          `Both participants are present in the ${area}.`,
+                        )) ||
+                      t('sparring-need-arena', {}, 'Both participants need to be in the arena!')
                     }
                     color={(in_area && 'green') || 'red'}
                     icon="ring"
                   >
-                    Arena
+                    {t('sparring-arena-button', {}, 'Arena')}
                   </Button>
                   <Button
                     tooltip={
                       (left_sign !== 'none' &&
                         right_sign !== 'none' &&
-                        'Both signatures present, terms agreed upon.') ||
-                      'You need signatures from both fighters on the terms!'
+                        t('sparring-signed', {}, 'Both signatures present, terms agreed upon.')) ||
+                      t('sparring-need-signed', {}, 'You need signatures from both fighters on the terms!')
                     }
                     color={
                       (left_sign !== 'none' &&
@@ -237,18 +266,18 @@ export const SparringContract = (props) => {
                     }
                     icon="file-signature"
                   >
-                    Signatures
+                    {t('sparring-signatures', {}, 'Signatures')}
                   </Button>
                   <Button
                     tooltip={
                       (!no_chaplains &&
-                        'At least one chaplain is present. Holy matches allowed.') ||
-                      'No chaplain present for this fight. No Holy Matches!'
+                        t('sparring-chaplain-present', {}, 'At least one chaplain is present. Holy matches allowed.')) ||
+                      t('sparring-chaplain-absent', {}, 'No chaplain present for this fight. No Holy Matches!')
                     }
                     color={(!no_chaplains && 'green') || 'yellow'}
                     icon="cross"
                   >
-                    Chaplain
+                    {t('sparring-chaplain', {}, 'Chaplain')}
                   </Button>
                 </Stack.Item>
               </Stack>

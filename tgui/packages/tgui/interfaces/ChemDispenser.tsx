@@ -17,9 +17,12 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 import { createSearch, toTitleCase } from 'tgui-core/string';
 import { useBackend, useSharedState } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { type Beaker, BeakerDisplay } from './common/BeakerDisplay';
 import { bitflagInfo } from './Reagents/types';
+
+type Translate = ReturnType<typeof useT>;
 
 enum DropdownState {
   NO_DROPDOWN = 0,
@@ -95,6 +98,7 @@ function reagentListToArray(
 
 export const ChemDispenser = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const recording = !!data.recordingRecipe;
   const {
     recipes = [],
@@ -172,18 +176,18 @@ export const ChemDispenser = (props) => {
             <Stack vertical fill>
               <Stack.Item>
                 <Section
-                  title="Status"
+                  title={t('chemdispenser-status', {}, 'Status')}
                   buttons={
                     <>
                       {recording && (
                         <Box inline mx={1} color="red">
                           <Icon name="circle" mr={1} />
-                          Recording
+                          {t('chemdispenser-recording', {}, 'Recording')}
                         </Box>
                       )}
                       <Button
                         icon="cog"
-                        tooltip="Color code the reagents by pH"
+                        tooltip={t('chemdispenser-ph-tooltip', {}, 'Color code the reagents by pH')}
                         tooltipPosition="bottom-start"
                         selected={showPhCol}
                         onClick={() => setShowPhCol(!showPhCol)}
@@ -193,31 +197,43 @@ export const ChemDispenser = (props) => {
                         disabled={!beaker}
                         tooltip={
                           beaker
-                            ? 'Look up recipes and reagents!'
-                            : 'Please insert a beaker!'
+                            ? t(
+                                'chemdispenser-lookup-tooltip',
+                                {},
+                                'Look up recipes and reagents!',
+                              )
+                            : t(
+                                'chemdispenser-insert-beaker-hint',
+                                {},
+                                'Please insert a beaker!',
+                              )
                         }
                         tooltipPosition="bottom-start"
                         onClick={() => act('reaction_lookup')}
                       >
-                        Reactions
+                        {t('chemdispenser-reactions', {}, 'Reactions')}
                       </Button>
                       <Button
                         icon={showReactionList ? 'arrow-left' : 'arrow-right'}
                         tooltipPosition="bottom-start"
                         onClick={() => setShowReactionList(!showReactionList)}
                       >
-                        Recipes
+                        {t('chemdispenser-recipes', {}, 'Recipes')}
                       </Button>
                     </>
                   }
                 >
                   <LabeledList>
-                    <LabeledList.Item label="Energy">
+                    <LabeledList.Item label={t('chemdispenser-energy', {}, 'Energy')}>
                       <ProgressBar value={data.energy / data.maxEnergy}>
-                        {data.displayedUnits +
-                          ' / ' +
-                          data.displayedMaxUnits +
-                          ' units'}
+                        {t(
+                          'chemdispenser-units',
+                          {
+                            current: data.displayedUnits,
+                            max: data.displayedMaxUnits,
+                          },
+                          `${data.displayedUnits} / ${data.displayedMaxUnits} units`,
+                        )}
                       </ProgressBar>
                     </LabeledList.Item>
                   </LabeledList>
@@ -225,7 +241,7 @@ export const ChemDispenser = (props) => {
               </Stack.Item>
               <Stack.Item>
                 <Section
-                  title="Custom Recipes"
+                  title={t('chemdispenser-custom-recipes', {}, 'Custom Recipes')}
                   buttons={
                     <>
                       {!recording && (
@@ -234,7 +250,7 @@ export const ChemDispenser = (props) => {
                             color="transparent"
                             onClick={() => act('clear_recipes')}
                           >
-                            Clear recipes
+                            {t('chemdispenser-clear-recipes', {}, 'Clear recipes')}
                           </Button>
                         </Box>
                       )}
@@ -244,7 +260,7 @@ export const ChemDispenser = (props) => {
                           disabled={!beaker}
                           onClick={() => act('record_recipe')}
                         >
-                          Record
+                          {t('chemdispenser-record', {}, 'Record')}
                         </Button>
                       )}
                       {recording && (
@@ -253,7 +269,7 @@ export const ChemDispenser = (props) => {
                           color="transparent"
                           onClick={() => act('cancel_recording')}
                         >
-                          Discard
+                          {t('chemdispenser-discard', {}, 'Discard')}
                         </Button>
                       )}
                       {recording && (
@@ -262,7 +278,7 @@ export const ChemDispenser = (props) => {
                           color="green"
                           onClick={() => act('save_recording')}
                         >
-                          Save
+                          {t('chemdispenser-save', {}, 'Save')}
                         </Button>
                       )}
                     </>
@@ -285,14 +301,16 @@ export const ChemDispenser = (props) => {
                       </Button>
                     ))}
                     {recipes.length === 0 && (
-                      <Box color="light-gray">No recipes.</Box>
+                      <Box color="light-gray">
+                        {t('chemdispenser-no-recipes', {}, 'No recipes.')}
+                      </Box>
                     )}
                   </Box>
                 </Section>
               </Stack.Item>
               <Stack.Item>
                 <Section
-                  title="Dispense"
+                  title={t('chemdispenser-dispense', {}, 'Dispense')}
                   buttons={beakerTransferAmounts.map((amount) => (
                     <Button
                       key={amount}
@@ -324,7 +342,7 @@ export const ChemDispenser = (props) => {
               <Stack.Item grow>
                 <Section
                   fill
-                  title="Beaker"
+                  title={t('chemdispenser-beaker', {}, 'Beaker')}
                   buttons={beakerTransferAmounts.map((amount) => (
                     <Button
                       key={amount}
@@ -339,7 +357,10 @@ export const ChemDispenser = (props) => {
                   {beaker || recording ? (
                     <BeakerDisplay
                       beaker={beaker}
-                      title_label={recording && 'Virtual beaker'}
+                      title_label={
+                        recording &&
+                        t('chemdispenser-virtual-beaker', {}, 'Virtual beaker')
+                      }
                       replace_contents={recordedContents}
                       showpH={data.showpH}
                     />
@@ -351,18 +372,24 @@ export const ChemDispenser = (props) => {
                         alignItems: 'center',
                       }}
                     >
-                      <Box color="label">No beaker loaded.</Box>
+                      <Box color="label">
+                        {t('chemdispenser-no-beaker', {}, 'No beaker loaded.')}
+                      </Box>
                       <Button
                         icon="eject"
                         onClick={() => act('insert')}
                         disabled={!hasBeakerInHand}
                         tooltip={
                           !hasBeakerInHand &&
-                          'You need to hold a container in your hand!'
+                          t(
+                            'chemdispenser-hold-container',
+                            {},
+                            'You need to hold a container in your hand!',
+                          )
                         }
                         tooltipPosition="left-start"
                       >
-                        Insert
+                        {t('chemdispenser-insert', {}, 'Insert')}
                       </Button>
                     </Box>
                   )}
@@ -372,13 +399,13 @@ export const ChemDispenser = (props) => {
           </Stack.Item>
           {showReactionList && (
             <Stack.Item width={reactionWidth}>
-              <Section title="Recipes" fill>
+              <Section title={t('chemdispenser-recipes', {}, 'Recipes')} fill>
                 <Stack vertical fill>
                   <Stack.Item>
                     <Stack>
                       <Stack.Item grow>
                         <Input
-                          placeholder="Search reactions..."
+                          placeholder={t('chemdispenser-search-reactions', {}, 'Search reactions...')}
                           value={searchTerm}
                           fluid
                           onChange={(value) => setSearchTerm(value)}
@@ -446,7 +473,13 @@ export const ChemDispenser = (props) => {
                             </Stack.Item>
                           ))
                         ) : (
-                          <NoticeBox>No reactions found.</NoticeBox>
+                          <NoticeBox>
+                            {t(
+                              'chemdispenser-no-reactions',
+                              {},
+                              'No reactions found.',
+                            )}
+                          </NoticeBox>
                         )}
                       </Stack>
                     </Section>
@@ -533,12 +566,13 @@ const ReactionDisplay = (props: ReactionDisplayProps) => {
     setPinnedReactions,
     setParentForceFloating,
   } = props;
+  const t = useT();
 
   const recipeList = (
     <BlockQuote>
       <Stack vertical>
         <Stack.Item>
-          <HorizontalBarWithText text="Formula" />
+          <HorizontalBarWithText text={t('chemdispenser-formula', {}, 'Formula')} />
         </Stack.Item>
         {reaction.reaction.required_reagents.map((reagent) => (
           <Stack.Item key={`${reaction.name}-${reagent.name}-req`}>
@@ -554,7 +588,11 @@ const ReactionDisplay = (props: ReactionDisplayProps) => {
           <>
             <Stack.Item>
               <HorizontalBarWithText
-                text={`Catalyst${reaction.reaction.required_reagents.length === 1 ? '' : 's'}`}
+                text={
+                  reaction.reaction.required_reagents.length === 1
+                    ? t('chemdispenser-catalyst', {}, 'Catalyst')
+                    : t('chemdispenser-catalysts', {}, 'Catalysts')
+                }
               />
             </Stack.Item>
             {reaction.reaction.required_catalysts.map((catalyst) => (
@@ -570,19 +608,28 @@ const ReactionDisplay = (props: ReactionDisplayProps) => {
           </>
         )}
         <Stack.Item>
-          <HorizontalBarWithText text="Optimal temperature" />
+          <HorizontalBarWithText
+            text={t('chemdispenser-optimal-temperature', {}, 'Optimal temperature')}
+          />
         </Stack.Item>
         <Stack.Item fontSize="0.9em">
           {getTemperatureMessage(
+            t,
             reaction.reaction.lower_temperature,
             reaction.reaction.upper_temperature,
           )}
         </Stack.Item>
         <Stack.Item>
-          <HorizontalBarWithText text="Optimal pH range" />
+          <HorizontalBarWithText
+            text={t('chemdispenser-optimal-ph', {}, 'Optimal pH range')}
+          />
         </Stack.Item>
         <Stack.Item fontSize="0.9em">
-          {getPHMessage(reaction.reaction.lower_ph, reaction.reaction.upper_ph)}
+          {getPHMessage(
+            t,
+            reaction.reaction.lower_ph,
+            reaction.reaction.upper_ph,
+          )}
         </Stack.Item>
       </Stack>
     </BlockQuote>
@@ -655,7 +702,7 @@ const ReactionDisplay = (props: ReactionDisplayProps) => {
           recipeList
         ) : (
           <Collapsible
-            title="Recipe"
+            title={t('chemdispenser-recipe', {}, 'Recipe')}
             open={dropdownState === DropdownState.DROPDOWN_OPEN}
           >
             {recipeList}
@@ -670,25 +717,47 @@ const ReactionDisplay = (props: ReactionDisplayProps) => {
 // if lower and upper are >300, return "heat to between X and Y degrees"
 // if lower and upper are <300, return "cool to between X and Y degrees"
 // if lower is <300 and upper is >300, return "keep between X and Y degrees"
-function getTemperatureMessage(lower: number, upper: number): string {
+function getTemperatureMessage(
+  t: Translate,
+  lower: number,
+  upper: number,
+): string {
   if (lower === upper) {
-    return `Forms at ${lower}°K`;
+    return t('chemdispenser-temp-forms', { lower }, `Forms at ${lower}°K`);
   } else if (lower > 300 && upper > 300) {
-    return `Heat between ${lower}°K-${upper}°K`;
+    return t(
+      'chemdispenser-temp-heat',
+      { lower, upper },
+      `Heat between ${lower}°K-${upper}°K`,
+    );
   } else if (lower < 300 && upper < 300) {
-    return `Cool between ${Math.min(upper, lower)}°K-${Math.max(upper, lower)}°K`;
+    const low = Math.min(upper, lower);
+    const high = Math.max(upper, lower);
+    return t(
+      'chemdispenser-temp-cool',
+      { lower: low, upper: high },
+      `Cool between ${low}°K-${high}°K`,
+    );
   } else {
-    return `Keep between ${lower}°K-${upper}°K`;
+    return t(
+      'chemdispenser-temp-keep',
+      { lower, upper },
+      `Keep between ${lower}°K-${upper}°K`,
+    );
   }
 }
 
 // if lower and upper are the same, return "keep at pH X"
 // else return "keep between pH X and Y"
-function getPHMessage(lower: number, upper: number): string {
+function getPHMessage(t: Translate, lower: number, upper: number): string {
   if (lower === upper) {
-    return `Keep at pH ${lower}`;
+    return t('chemdispenser-ph-keep-at', { lower }, `Keep at pH ${lower}`);
   } else {
-    return `Keep between pH ${lower}-${upper}`;
+    return t(
+      'chemdispenser-ph-keep-between',
+      { lower, upper },
+      `Keep between pH ${lower}-${upper}`,
+    );
   }
 }
 
@@ -715,6 +784,7 @@ const ReactionComponentDisplay = (props: ReactionComponentDisplayProps) => {
     setParentForceFloating,
   } = props;
   const { data } = useBackend<Data>();
+  const t = useT();
   const { chemicals, reaction_list } = data;
 
   // check if it's a base reagent
@@ -726,7 +796,7 @@ const ReactionComponentDisplay = (props: ReactionComponentDisplayProps) => {
     return (
       <ReagentDispenseButton
         chemical={baseReagent}
-        prefix={formatReagentName(reagentComponent.amount)}
+        prefix={formatReagentName(t, reagentComponent.amount)}
       />
     );
   }
@@ -743,7 +813,7 @@ const ReactionComponentDisplay = (props: ReactionComponentDisplayProps) => {
   if (!foundRecipe)
     return (
       <Button fluid ellipsis disabled icon="question">
-        {formatReagentName(reagentComponent.amount, reagentComponent.name)}
+        {formatReagentName(t, reagentComponent.amount, reagentComponent.name)}
       </Button>
     );
 
@@ -807,16 +877,22 @@ const ReactionComponentDisplay = (props: ReactionComponentDisplayProps) => {
       }
     >
       <Button icon="book" fluid ellipsis backgroundColor="default">
-        {formatReagentName(reagentComponent.amount, reagentComponent.name)}
+        {formatReagentName(t, reagentComponent.amount, reagentComponent.name)}
       </Button>
     </Floating>
   );
 };
 
-function formatReagentName(amount: number, name?: string) {
-  if (!name) return `${amount} part `;
+function formatReagentName(t: Translate, amount: number, name?: string) {
+  if (!name) {
+    return `${t('chemdispenser-parts', { amount }, `${amount} part`)} `;
+  }
 
-  return `${amount} part${amount === 1 ? '' : 's'} ${name}`;
+  return t(
+    'chemdispenser-parts-named',
+    { amount, name },
+    `${amount} part${amount === 1 ? '' : 's'} ${name}`,
+  );
 }
 
 const HorizontalBarWithText = (props: { text: string }) => {

@@ -14,6 +14,7 @@ import {
 import { type BooleanLike, classes } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -97,6 +98,7 @@ export function Biogenerator(props) {
 
 function Controls() {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     beaker,
     beakerCurrentVolume,
@@ -112,7 +114,7 @@ function Controls() {
     <Section fill>
       <LabeledList>
         <LabeledList.Item
-          label="Biomass"
+          label={t('biogenerator-biomass', {}, 'Biomass')}
           buttons={
             <Button
               width={7}
@@ -122,7 +124,7 @@ function Controls() {
               disabled={!can_process || processing}
               onClick={() => act('activate')}
             >
-              Generate
+              {t('biogenerator-generate', {}, 'Generate')}
             </Button>
           }
         >
@@ -138,13 +140,17 @@ function Controls() {
                 textShadow: '1px 1px 0 black',
               }}
             >
-              {`${parseFloat(biomass.toFixed(2))} units`}
+              {t(
+                'biogenerator-units',
+                { count: parseFloat(biomass.toFixed(2)) },
+                `${parseFloat(biomass.toFixed(2))} units`,
+              )}
             </Box>
           </ProgressBar>
         </LabeledList.Item>
         {!!beaker && (
           <LabeledList.Item
-            label="Container"
+            label={t('biogenerator-container', {}, 'Container')}
             buttons={
               <Button
                 width={7}
@@ -153,7 +159,7 @@ function Controls() {
                 icon="eject"
                 onClick={() => act('eject')}
               >
-                Eject
+                {t('biogenerator-eject', {}, 'Eject')}
               </Button>
             }
           >
@@ -170,15 +176,19 @@ function Controls() {
                   textShadow: '1px 1px 0 black',
                 }}
               >
-                {`${beakerCurrentVolume} of ${beakerMaxVolume} units`}
+                {t(
+                  'biogenerator-container-volume',
+                  { current: beakerCurrentVolume, max: beakerMaxVolume },
+                  `${beakerCurrentVolume} of ${beakerMaxVolume} units`,
+                )}
               </Box>
             </ProgressBar>
           </LabeledList.Item>
         )}
         {!beaker && (
-          <LabeledList.Item label="Container">
+          <LabeledList.Item label={t('biogenerator-container', {}, 'Container')}>
             <NoticeBox m={0} height={2}>
-              No liquid container
+              {t('biogenerator-no-container', {}, 'No liquid container')}
             </NoticeBox>
           </LabeledList.Item>
         )}

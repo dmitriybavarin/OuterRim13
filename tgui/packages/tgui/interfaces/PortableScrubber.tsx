@@ -3,6 +3,7 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
 import { getGasLabel } from '../constants';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { PortableBasicInfo } from './common/PortableAtmos';
 
@@ -19,13 +20,14 @@ type Filter = {
 
 export const PortableScrubber = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { filterTypes = [] } = data;
 
   return (
     <Window width={320} height={420}>
       <Window.Content>
         <PortableBasicInfo />
-        <Section title="Filters">
+        <Section title={t('portablescrubber-filters', {}, 'Filters')}>
           {filterTypes.map((filter) => (
             <Button
               key={filter.id}

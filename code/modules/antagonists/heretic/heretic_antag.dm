@@ -167,11 +167,20 @@
 		knowledge_data["info"] = initial(knowledge.transmute_text)
 		knowledge_data["notice"] = initial(knowledge.notice)
 
+	loc_add_datum_text(knowledge_data, knowledge, list("desc" = "desc", "info" = "info", "notice" = "notice", "gainFlavor" = "gain"))
+	if(knowledge_data["desc"] != initial(knowledge.desc))
+		for(var/language in GLOB.localization_language_codes)
+			knowledge_data -= "desc_[GLOB.localization_language_codes[language]]"
+
 	if(ispath(knowledge, /datum/heretic_knowledge/ultimate))
 		var/ascension_check = can_ascend()
 		if(ascension_check != HERETIC_CAN_ASCEND)
 			knowledge_data["disabled"] = TRUE
 			knowledge_data["notice"] += "<br>[ascension_check]"
+			for(var/language in GLOB.localization_language_codes)
+				var/notice_key = "notice_[GLOB.localization_language_codes[language]]"
+				if(knowledge_data[notice_key])
+					knowledge_data[notice_key] += "<br>[ascension_check]"
 
 	return knowledge_data
 
@@ -335,7 +344,7 @@
 
 /datum/antagonist/heretic/farewell()
 	if(!silent && owner.current)
-		to_chat(owner.current, span_userdanger("Your mind begins to flare as the otherwordly knowledge escapes your grasp!"))
+		to_chat(owner.current, span_userdanger(LOC_KEY("heretic-core-farewell")))
 	return ..()
 
 /datum/antagonist/heretic/on_gain()
@@ -377,7 +386,7 @@
 
 /datum/antagonist/heretic/apply_innate_effects(mob/living/mob_override)
 	var/mob/living/our_mob = mob_override || owner.current
-	handle_clown_mutation(our_mob, "Ancient knowledge described to you has allowed you to overcome your clownish nature, allowing you to wield weapons without harming yourself.")
+	handle_clown_mutation(our_mob, LOC_KEY("heretic-core-clown-freed"))
 	our_mob.add_faction(FACTION_HERETIC)
 	our_mob.apply_status_effect(/datum/status_effect/grouped/heretic_dreams, type)
 
@@ -421,8 +430,8 @@
 		return
 	var/mob/heretic_mob = owner.current
 	unlimited_blades = TRUE
-	to_chat(heretic_mob, span_boldwarning("You have gained a lot of power, the mansus will no longer allow you to break your blades, but you can now make as many as you wish."))
-	heretic_mob.balloon_alert(heretic_mob, "blade breaking disabled!")
+	to_chat(heretic_mob, span_boldwarning(LOC_KEY("heretic-core-blades-unlimited")))
+	heretic_mob.balloon_alert(heretic_mob, LOC_KEY("heretic-core-blades-unlimited-balloon"))
 	update_heretic_aura()
 
 /datum/antagonist/heretic/proc/add_aura_overlay(mob/living/source, list/overlays)
@@ -464,9 +473,10 @@
 	var/mob/heretic_mob = owner.current
 	if(!should_show_aura(heretic_mob))
 		return
-	var/potential_string = "[heretic_mob.p_They()] [heretic_mob.p_are()] crackling with a swirling green vortex of energy."
+	var/list/aura_args = list(gender = heretic_mob.get_visible_gender())
+	var/potential_string = loc_key("heretic-core-aura-crackling", aura_args)
 	if(can_ascend() == HERETIC_CAN_ASCEND)
-		potential_string += " [heretic_mob.p_They()] [heretic_mob.p_are()] shedding [heretic_mob.p_their()] mortal shell!"
+		potential_string += " [loc_key("heretic-core-aura-shedding", aura_args)]"
 	examine_list += span_green(potential_string)
 
 /datum/antagonist/heretic/on_body_transfer(mob/living/old_body, mob/living/new_body)
@@ -512,15 +522,15 @@
 /datum/antagonist/heretic/proc/try_draw_rune(mob/living/user, turf/target_turf, drawing_time = 20 SECONDS, additional_checks)
 	for(var/turf/nearby_turf as anything in RANGE_TURFS(1, target_turf))
 		if(!isopenturf(nearby_turf) || is_type_in_typecache(nearby_turf, blacklisted_rune_turfs))
-			target_turf.balloon_alert(user, "invalid placement for rune!")
+			target_turf.balloon_alert(user, LOC_KEY("heretic-rune-invalid-placement"))
 			return
 
 	if(locate(/obj/effect/heretic_rune) in range(3, target_turf))
-		target_turf.balloon_alert(user, "too close to another rune!")
+		target_turf.balloon_alert(user, LOC_KEY("heretic-rune-too-close"))
 		return
 
 	if(drawing_rune)
-		target_turf.balloon_alert(user, "already drawing a rune!")
+		target_turf.balloon_alert(user, LOC_KEY("heretic-rune-already-drawing"))
 		return
 
 	INVOKE_ASYNC(src, PROC_REF(draw_rune), user, target_turf, drawing_time, additional_checks)
@@ -538,7 +548,7 @@
 	drawing_rune = TRUE
 
 	var/rune_colour = GLOB.heretic_path_to_color[heretic_path?.route || PATH_START]
-	target_turf.balloon_alert(user, "drawing rune...")
+	target_turf.balloon_alert(user, LOC_KEY("heretic-rune-drawing"))
 	var/obj/effect/temp_visual/drawing_heretic_rune/drawing_effect
 	if (drawing_time < (10 SECONDS))
 		drawing_effect = new /obj/effect/temp_visual/drawing_heretic_rune/fast(target_turf, rune_colour)
@@ -546,14 +556,14 @@
 		drawing_effect = new(target_turf, rune_colour)
 
 	if(!do_after(user, drawing_time, target_turf, extra_checks = additional_checks, timed_action_flags = HIDE_INTERACTION))
-		target_turf.balloon_alert(user, "interrupted!")
+		target_turf.balloon_alert(user, LOC_KEY("heretic-rune-interrupted"))
 		new /obj/effect/temp_visual/drawing_heretic_rune/fail(target_turf, rune_colour)
 		qdel(drawing_effect)
 		drawing_rune = FALSE
 		return
 
 	qdel(drawing_effect)
-	target_turf.balloon_alert(user, "rune created")
+	target_turf.balloon_alert(user, LOC_KEY("heretic-rune-created"))
 	new /obj/effect/heretic_rune/big(target_turf, rune_colour)
 	drawing_rune = FALSE
 
@@ -605,7 +615,7 @@
 	haunted_blade.gender_reveal(outline_color = null, ray_color = COLOR_HERETIC_GREEN)
 
 	for(var/mob/living/culto as anything in invokers)
-		to_chat(culto, span_cult_large("\"A follower of the forgotten gods! You must be rewarded for such a valuable sacrifice.\""))
+		to_chat(culto, span_cult_large(LOC_KEY("heretic-core-cult-reward")))
 
 	// Locate a cultist team (Is there a better way??)
 	var/mob/living/random_cultist = pick(invokers)
@@ -626,7 +636,7 @@
 		for(var/datum/mind/mind as anything in cult_team.members)
 			if(mind.current)
 				SEND_SOUND(mind.current, 'sound/effects/magic/clockwork/narsie_attack.ogg')
-				to_chat(mind.current, span_cult_large(span_warning("Arcane and forbidden knowledge floods your forges and archives. The cult has learned how to create the ")) + span_cult_large(span_hypnophrase("[result]!")))
+				to_chat(mind.current, span_cult_large(span_warning(loc_key("heretic-core-cult-unlock", list(result = span_hypnophrase("[result]!"))))))
 
 	return SILENCE_SACRIFICE_MESSAGE|DUST_SACRIFICE
 
@@ -759,7 +769,7 @@
 /datum/antagonist/heretic/proc/passive_influence_gain()
 	adjust_knowledge_points(1)
 	if(!IS_UNCONSCIOUS(owner?.current))
-		to_chat(owner.current, "[span_hear("You hear a whisper...")] [span_mansus(pick_list(HERETIC_INFLUENCE_FILE, "drain_message"))]")
+		to_chat(owner.current, "[span_hear(LOC_KEY("heretic-core-whisper"))] [span_mansus(pick_list(HERETIC_INFLUENCE_FILE, "drain_message"))]")
 	addtimer(CALLBACK(src, PROC_REF(passive_influence_gain)), passive_gain_timer)
 
 /datum/antagonist/heretic/proc/adjust_knowledge_points(amount, update = TRUE)
@@ -851,8 +861,8 @@
 		return
 
 	if(tgui_alert(admin, "Let them know their targets have been updated?", "Whispers of the Mansus", list("Yes", "No")) == "Yes")
-		to_chat(owner.current, span_danger("The Mansus has modified your targets. Go find them!"))
-		to_chat(owner.current, span_danger("[new_target.real_name], the [new_target.mind?.assigned_role?.title || "human"]."))
+		to_chat(owner.current, span_danger(LOC_KEY("heretic-core-targets-modified-find")))
+		to_chat(owner.current, span_danger(loc_key("heretic-sacrifice-target-line", list(name = new_target.real_name, job = new_target.mind?.assigned_role?.title || "human"))))
 
 	add_sacrifice_target(new_target)
 
@@ -880,7 +890,7 @@
 		return
 
 	if(tgui_alert(admin, "Let them know their targets have been updated?", "Whispers of the Mansus", list("Yes", "No")) == "Yes")
-		to_chat(owner.current, span_danger("The Mansus has modified your targets."))
+		to_chat(owner.current, span_danger(LOC_KEY("heretic-core-targets-modified")))
 
 /**
  * Admin proc for easily adding / removing knowledge points.
@@ -906,7 +916,7 @@
 
 	var/mob/living/pawn = owner.current
 	pawn.equip_to_slot_if_possible(new /obj/item/clothing/neck/heretic_focus(get_turf(pawn)), ITEM_SLOT_NECK, TRUE, TRUE)
-	to_chat(pawn, span_mansus("The Mansus has manifested you a focus."))
+	to_chat(pawn, span_mansus(LOC_KEY("heretic-core-focus-manifested")))
 
 /datum/antagonist/heretic/antag_panel_data()
 	var/list/string_of_knowledge = list()

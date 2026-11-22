@@ -15,7 +15,10 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { slugify, useT } from '../i18n';
 import { Window } from '../layouts';
+
+const HOST_ACTIONS = ['Kick', 'Transfer host', 'Toggle observe'];
 
 type Player = {
   host: number;
@@ -61,6 +64,7 @@ type Data = {
 
 export function DeathmatchLobby(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     admin,
     host,
@@ -78,7 +82,7 @@ export function DeathmatchLobby(props) {
   const isObserver = observers.find((observer) => observer.key === self);
 
   return (
-    <Window title="Deathmatch Lobby" width={560} height={480}>
+    <Window title={t('deathmatchlobby-title', {}, 'Deathmatch Lobby')} width={560} height={480}>
       {showMenu && <ModSelector />}
       <Window.Content>
         <Stack fill vertical>
@@ -102,23 +106,25 @@ export function DeathmatchLobby(props) {
                       color="caution"
                       onClick={() => act('admin', { func: 'Force start' })}
                     >
-                      Force Start
+                      {t('deathmatchlobby-force-start', {}, 'Force Start')}
                     </Button>
                   )}
                 </Stack.Item>
                 <Stack.Item>
                   <Button color="caution" onClick={() => act('observe')}>
-                    {isObserver ? 'Join' : 'Observe'}
+                    {isObserver
+                      ? t('deathmatchlobby-join', {}, 'Join')
+                      : t('deathmatchlobby-observe', {}, 'Observe')}
                   </Button>
                   <Button color="bad" onClick={() => act('leave_game')}>
-                    Leave Game
+                    {t('deathmatchlobby-leave', {}, 'Leave Game')}
                   </Button>
                   <Button
                     color="good"
                     disabled={!allReady}
                     onClick={() => act('start_game')}
                   >
-                    Start Game
+                    {t('deathmatchlobby-start', {}, 'Start Game')}
                   </Button>
                 </Stack.Item>
               </Stack>
@@ -132,6 +138,7 @@ export function DeathmatchLobby(props) {
 
 function PlayerColumn(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     admin,
     host,
@@ -150,11 +157,15 @@ function PlayerColumn(props) {
       <Table>
         <Table.Row header>
           <Table.Cell collapsing />
-          <Table.Cell>Name</Table.Cell>
-          <Table.Cell>Loadout</Table.Cell>
+          <Table.Cell>{t('deathmatchlobby-name', {}, 'Name')}</Table.Cell>
+          <Table.Cell>{t('deathmatchlobby-loadout', {}, 'Loadout')}</Table.Cell>
           <Table.Cell collapsing align="center">
             <Tooltip
-              content={!allReady ? 'Players are preparing' : 'Press start!'}
+              content={
+                !allReady
+                  ? t('deathmatchlobby-preparing', {}, 'Players are preparing')
+                  : t('deathmatchlobby-press-start', {}, 'Press start!')
+              }
             >
               <Icon
                 name={!allReady ? 'check' : 'check-circle'}
@@ -172,12 +183,12 @@ function PlayerColumn(props) {
             <Table.Row className="candystripe" key={player.key}>
               <Table.Cell align="center" collapsing verticalAlign="top">
                 {isHost && (
-                  <Tooltip content="Host">
+                  <Tooltip content={t('deathmatchlobby-host', {}, 'Host')}>
                     <Icon color="gold" name="star" pt={isSelf && 0.5} />
                   </Tooltip>
                 )}
                 {!host && isSelf && (
-                  <Tooltip content="You">
+                  <Tooltip content={t('deathmatchlobby-you', {}, 'You')}>
                     <Icon color="green" name="arrow-right" pt={0.9} />
                   </Tooltip>
                 )}
@@ -190,7 +201,11 @@ function PlayerColumn(props) {
                   <Dropdown
                     width={9}
                     selected={player.key}
-                    options={['Kick', 'Transfer host', 'Toggle observe']}
+                    displayText={player.key}
+                    options={HOST_ACTIONS.map((value) => ({
+                      value,
+                      displayText: t(`deathmatchlobby-action-${slugify(value)}`, {}, value),
+                    }))}
                     onSelected={(value) =>
                       act('host', {
                         id: player.key,
@@ -247,7 +262,7 @@ function PlayerColumn(props) {
                 pt={fullAccess && '2px'}
               >
                 {isHost ? (
-                  <Tooltip content="host">
+                  <Tooltip content={t('deathmatchlobby-host-lower', {}, 'host')}>
                     <Icon name="star" />
                   </Tooltip>
                 ) : (
@@ -261,7 +276,11 @@ function PlayerColumn(props) {
                   <Dropdown
                     width={9}
                     selected={observer.key}
-                    options={['Kick', 'Transfer host', 'Toggle observe']}
+                    displayText={observer.key}
+                    options={HOST_ACTIONS.map((value) => ({
+                      value,
+                      displayText: t(`deathmatchlobby-action-${slugify(value)}`, {}, value),
+                    }))}
                     onSelected={(value) =>
                       act('host', {
                         id: observer.key,
@@ -271,7 +290,7 @@ function PlayerColumn(props) {
                   />
                 )}
               </Table.Cell>
-              <Table.Cell color="label">Observing</Table.Cell>
+              <Table.Cell color="label">{t('deathmatchlobby-observing', {}, 'Observing')}</Table.Cell>
             </Table.Row>
           );
         })}
@@ -282,6 +301,7 @@ function PlayerColumn(props) {
 
 function HostControls(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { active_mods = [], admin, host, loadoutdesc, playing } = data;
 
   const fullAccess = !!host || !!admin;
@@ -297,13 +317,13 @@ function HostControls(props) {
         <>
           <Divider />
           <Button textAlign="center" fluid onClick={() => act('open_mod_menu')}>
-            Toggle Modifiers
+            {t('deathmatchlobby-toggle-mods', {}, 'Toggle Modifiers')}
           </Button>
         </>
       )}
       <Divider />
       <NoticeBox info align="center">
-        Loadout Description
+        {t('deathmatchlobby-loadout-desc', {}, 'Loadout Description')}
       </NoticeBox>
 
       <Box textAlign="center">{loadoutdesc}</Box>
@@ -311,7 +331,7 @@ function HostControls(props) {
         <>
           <Divider />
           <Box textAlign="center">
-            The game is currently in progress, or loading.
+            {t('deathmatchlobby-in-progress', {}, 'The game is currently in progress, or loading.')}
           </Box>
         </>
       )}
@@ -321,12 +341,13 @@ function HostControls(props) {
 
 const ModSelector = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { modifiers = [] } = data;
 
   return (
     <Modal>
       <Button fluid color="bad" onClick={() => act('exit_mod_menu')}>
-        Go Back
+        {t('deathmatchlobby-go-back', {}, 'Go Back')}
       </Button>
       {modifiers.map((mod, index) => (
         <Button.Checkbox
@@ -351,10 +372,11 @@ const ModSelector = (props) => {
 
 function MapInfo(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { host, maps = [], map, players } = data;
 
   if (!host && !map?.name) {
-    return <NoticeBox align="center">No map selected</NoticeBox>;
+    return <NoticeBox align="center">{t('deathmatchlobby-no-map', {}, 'No map selected')}</NoticeBox>;
   }
 
   return (
@@ -381,16 +403,20 @@ function MapInfo(props) {
       {map.desc}
       <Divider />
       <LabeledList>
-        <LabeledList.Item label="Max Play Time">
-          {`${map.time / 600}min`}
+        <LabeledList.Item label={t('deathmatchlobby-max-time', {}, 'Max Play Time')}>
+          {t(
+            'deathmatchlobby-minutes',
+            { minutes: map.time / 600 },
+            `${map.time / 600}min`,
+          )}
         </LabeledList.Item>
-        <LabeledList.Item label="Min Players">
+        <LabeledList.Item label={t('deathmatchlobby-min-players', {}, 'Min Players')}>
           {map.min_players}
         </LabeledList.Item>
-        <LabeledList.Item label="Max Players">
+        <LabeledList.Item label={t('deathmatchlobby-max-players', {}, 'Max Players')}>
           {map.max_players}
         </LabeledList.Item>
-        <LabeledList.Item label="Current Players">
+        <LabeledList.Item label={t('deathmatchlobby-current-players', {}, 'Current Players')}>
           {players.length}
         </LabeledList.Item>
       </LabeledList>

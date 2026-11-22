@@ -14,6 +14,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { toTitleCase } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Material = {
@@ -42,6 +43,7 @@ type Data = {
 
 export const MatMarket = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
 
   const {
     orderingPrive,
@@ -63,18 +65,18 @@ export const MatMarket = (props) => {
       <Window.Content scrollable>
         {!!catastrophe && <MarketCrashModal />}
         <Section
-          title="Materials for sale"
+          title={t('matmarket-title', {}, 'Materials for sale')}
           buttons={
             !!canOrderCargo && (
               <Button.Checkbox
                 icon={orderingPrive ? "fa-regular fa-square" : "square-check"}
-                tooltip="Place order from cargo budget."
+                tooltip={t('matmarket-budget-tip', {}, 'Place order from cargo budget.')}
                 color={orderingPrive ? 'transparent' : 'green'}
                 checked={orderingPrive}
                 content={
                   orderingPrive
-                    ? 'Order via Cargo Budget?'
-                    : 'Ordering via Cargo Budget'
+                    ? t('matmarket-budget-ask', {}, 'Order via Cargo Budget?')
+                    : t('matmarket-budget-on', {}, 'Ordering via Cargo Budget')
                 }
                 onClick={() => act('toggle_budget')}
               />
@@ -84,17 +86,25 @@ export const MatMarket = (props) => {
           <Section>
             <Stack>
               <Stack.Item width="15%">
-                Balance: <b>{formatMoney(creditBalance)}</b> cr.
+                {t('matmarket-balance', {}, 'Balance:')} <b>{formatMoney(creditBalance)}</b>{' '}
+                {t('matmarket-cr', {}, 'cr.')}
               </Stack.Item>
               <Stack.Item width="15%">
-                Order: <b>{formatMoney(orderBalance)}</b> cr.
+                {t('matmarket-order', {}, 'Order:')} <b>{formatMoney(orderBalance)}</b>{' '}
+                {t('matmarket-cr', {}, 'cr.')}
               </Stack.Item>
               <Stack.Item
                 width="20%"
                 color={data.updateTime > 150 ? 'green' : '#ad7526'}
               >
-                <b>{Math.round(data.updateTime / 10)} seconds</b> until next
-                update
+                <b>
+                  {t(
+                    'matmarket-seconds',
+                    { seconds: Math.round(data.updateTime / 10) },
+                    'seconds',
+                  )}
+                </b>{' '}
+                {t('matmarket-until-update', {}, 'until next update')}
               </Stack.Item>
               <Stack.Item>
                 <Button
@@ -103,7 +113,7 @@ export const MatMarket = (props) => {
                   ml={66}
                   onClick={() => act('clear')}
                 >
-                  Clear
+                  {t('matmarket-clear', {}, 'Clear')}
                 </Button>
               </Stack.Item>
             </Stack>
@@ -134,7 +144,7 @@ export const MatMarket = (props) => {
                             : 'green'
                       }
                     >
-                      Elasticity: <b>{Math.round(material.elastic)}</b>%
+                      {t('matmarket-elasticity', {}, 'Elasticity:')} <b>{Math.round(material.elastic)}</b>%
                     </Stack.Item>
 
                     <Stack.Item
@@ -142,28 +152,41 @@ export const MatMarket = (props) => {
                       pr="2%"
                       >
                       <Tooltip
-                        content={rangeText({ minPrice: material.min_threshold, maxPrice: material.max_threshold })}
+                        content={rangeText(
+                          {
+                            minPrice: material.min_threshold,
+                            maxPrice: material.max_threshold,
+                          },
+                          t,
+                        )}
                       >
-                        <u>Trading at <br /><b>{formatMoney(material.price)}</b> cr.</u>
+                        <u>
+                          {t('matmarket-trading-at', {}, 'Trading at')} <br />
+                          <b>{formatMoney(material.price)}</b>{' '}
+                          {t('matmarket-cr', {}, 'cr.')}
+                        </u>
                       </Tooltip>
 
                     </Stack.Item>
                     {material.price < material.min_threshold ? (
                       <Stack.Item width="33%" ml={2} textColor="grey">
-                        Material price critical!
-                        <br /> <b>Trading temporarily suspended.</b>
+                        {t('matmarket-critical', {}, 'Material price critical!')}
+                        <br /> <b>{t('matmarket-suspended', {}, 'Trading temporarily suspended.')}</b>
                       </Stack.Item>
                     ) : (
                       <Stack.Item width="33%" ml={2}>
                         <Box textColor={material.quantity === 0 ? 'grey' : 'white'}>
-                          <b>{material.quantity || 'Zero'}</b> sheets of{' '}
-                          <b>{material.name}</b> trading.{' '}
+                          <b>{material.quantity || t('matmarket-zero', {}, 'Zero')}</b>{' '}
+                          {t('matmarket-sheets-of', {}, 'sheets of')}{' '}
+                          <b>{material.name}</b>{' '}
+                          {t('matmarket-trading', {}, 'trading.')}{' '}
                         </Box>
                         <Box
                           bold={!!material.requested}
                           textColor={material.requested > 0 ? 'lightblue' : 'white'}
                         >
-                          {material.requested || 'Zero'} sheets ordered.
+                          {material.requested || t('matmarket-zero', {}, 'Zero')}{' '}
+                          {t('matmarket-sheets-ordered', {}, 'sheets ordered.')}
                         </Box>
                       </Stack.Item>
                     )}
@@ -178,8 +201,16 @@ export const MatMarket = (props) => {
                             : 'white'
                       }
                     >
-                      <b>{toTitleCase(material.name)}</b> is trending{' '}
-                      <b>{material.trend}</b>.
+                      <b>{toTitleCase(material.name)}</b>{' '}
+                      {t('matmarket-is-trending', {}, 'is trending')}{' '}
+                      <b>
+                        {t(
+                          `matmarket-trend-${material.trend}`,
+                          {},
+                          material.trend,
+                        )}
+                      </b>
+                      .
                     </Stack.Item>
                   </Stack>
                 </Stack.Item>
@@ -202,7 +233,7 @@ export const MatMarket = (props) => {
                       })
                     }
                   >
-                    Buy 1
+                    {t('matmarket-buy-one', {}, 'Buy 1')}
                   </Button>
                   <Button
                     height="35px"
@@ -290,21 +321,17 @@ export const MatMarket = (props) => {
           ),
         )}
         <NoticeBox info>
-            <Collapsible title="Instructions" color="blue">
-              Buy orders for material sheets placed here will be ordered on the
-              next cargo shipment.
+            <Collapsible
+              title={t('matmarket-instructions', {}, 'Instructions')}
+              color="blue"
+            >
+              {t('matmarket-instructions-1', {}, 'Buy orders for material sheets placed here will be ordered on the next cargo shipment.')}
               <br /> <br />
-              To sell materials, please insert sheets or similar stacks of
-              materials. All minerals sold on the market directly are subject to
-              a scaling value decrease per material, but this will recover over
-              time. To prevent market manipulation, all registered traders can
-              buy a total of 10 full stacks of materials at a time.
+              {t('matmarket-instructions-2', {}, 'To sell materials, please insert sheets or similar stacks of materials. All minerals sold on the market directly are subject to a scaling value decrease per material, but this will recover over time. To prevent market manipulation, all registered traders can buy a total of 10 full stacks of materials at a time.')}
               <br /> <br />
-              When selling materials, prices will be decreased based on the
-              elastic modifier of the material, which will recover over time.
+              {t('matmarket-instructions-3', {}, 'When selling materials, prices will be decreased based on the elastic modifier of the material, which will recover over time.')}
               <br /> <br />
-              All new purchases will include the cost of the shipped crate,
-              which may be recycled afterwards.
+              {t('matmarket-instructions-4', {}, 'All new purchases will include the cost of the shipped crate, which may be recycled afterwards.')}
             </Collapsible>
           </NoticeBox>
       </Window.Content>
@@ -313,15 +340,17 @@ export const MatMarket = (props) => {
 };
 
 const MarketCrashModal = (props) => {
+  const t = useT();
+
   return (
     <Modal textAlign="center" mr={1.5}>
-      ATTENTION! THE MARKET HAS CRASHED
+      {t('matmarket-crash-1', {}, 'ATTENTION! THE MARKET HAS CRASHED')}
       <br /> <br />
-      ALL MATERIALS ARE NOW WORTHLESS
+      {t('matmarket-crash-2', {}, 'ALL MATERIALS ARE NOW WORTHLESS')}
       <br /> <br />
-      TRADING CIRCUIT BREAKER HAS BEEN ENGAGED FOR ALL TRADERS
+      {t('matmarket-crash-3', {}, 'TRADING CIRCUIT BREAKER HAS BEEN ENGAGED FOR ALL TRADERS')}
       <br /> <br />
-      <b>DO NOT PANIC, WE ARE FIXING THIS</b>
+      <b>{t('matmarket-crash-4', {}, 'DO NOT PANIC, WE ARE FIXING THIS')}</b>
     </Modal>
   );
 };
@@ -331,10 +360,18 @@ type rangeTextProps = {
   maxPrice: number;
 }
 
-function rangeText(props: rangeTextProps) {
-  const {minPrice, maxPrice} = props;
-  return (
-    "This material can be bought and sold between " + formatMoney(minPrice) +
-    " - " + formatMoney(maxPrice) + " cr."
-  )
+function rangeText(
+  props: rangeTextProps,
+  t: ReturnType<typeof useT>,
+) {
+  const { minPrice, maxPrice } = props;
+  return t(
+    'matmarket-range',
+    { min: formatMoney(minPrice), max: formatMoney(maxPrice) },
+    'This material can be bought and sold between ' +
+      formatMoney(minPrice) +
+      ' - ' +
+      formatMoney(maxPrice) +
+      ' cr.',
+  );
 }

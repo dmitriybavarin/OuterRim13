@@ -33,8 +33,8 @@
 	if(!IS_HERETIC(user))
 		return
 
-	. += span_notice("Can be used to tap influences for additional knowledge points.")
-	. += span_notice("Can also be used to draw or remove transmutation runes with ease.")
+	. += span_notice(LOC_KEY("heretic-item-codex-tap"))
+	. += span_notice(LOC_KEY("heretic-item-codex-runes"))
 
 /obj/item/codex_cicatrix/attack_self(mob/user, modifiers)
 	. = ..()
@@ -93,13 +93,13 @@
 /obj/item/codex_cicatrix/morbus/examine(mob/user)
 	. = ..()
 	if(IS_HERETIC(user))
-		. += span_info("Can be used to cast a curse with blood in your offhand by right clicking a rune.")
+		. += span_info(LOC_KEY("heretic-item-codex-morbus-curse"))
 		return
-	. += span_danger("The eyes stop blinking. They stare at you. Their gaze burns...")
+	. += span_danger(LOC_KEY("heretic-item-codex-morbus-eyes"))
 	if(!ishuman(user))
 		return
 	var/mob/living/carbon/human/human_user = user
-	to_chat(human_user, span_userdanger("Your mind burns as you stare at the pages!"))
+	to_chat(human_user, span_userdanger(LOC_KEY("heretic-item-codex-morbus-burn")))
 	human_user.adjust_organ_loss(ORGAN_SLOT_BRAIN, 10, 190)
 	human_user.add_mood_event("gates_of_mansus", /datum/mood_event/gates_of_mansus)
 
@@ -122,7 +122,7 @@
 
 	var/atom/held_offhand = user.get_inactive_held_item()
 	if(!held_offhand)
-		user.balloon_alert(user, "no catalyst!")
+		user.balloon_alert(user, LOC_KEY("heretic-item-morbus-no-catalyst"))
 		return
 	var/blood_samples = list()
 	for(var/blood in GET_ATOM_BLOOD_DNA(held_offhand))
@@ -132,7 +132,7 @@
 			continue
 		blood_samples += usable_reagent.data[BLOOD_DATA_DNA]
 	if(isnull(blood_samples))
-		user.balloon_alert(user, "no blood!")
+		user.balloon_alert(user, LOC_KEY("heretic-item-morbus-no-blood"))
 		return ITEM_INTERACT_BLOCKING
 
 	var/curse_type = curse_list[selected_curse]

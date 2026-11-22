@@ -53,6 +53,49 @@ SUBSYSTEM_DEF(tts)
 	var/tram_voice = null
 	/// Used as the Computer voice, to keep narration the same across computers.
 	var/computer_voice = null
+	/// TTS server address, token and timeout, loaded from config/tts.toml (legacy config.txt entries are the fallback).
+	var/http_url
+	var/http_token
+	var/http_timeout = 30
+	var/list/voice_blacklist = list()
+	var/list/language_effects = list()
+	var/tts_wanted = FALSE
+	var/down_reported = FALSE
+	var/next_error_report = 0
+	var/tram_voice_override
+	var/computer_voice_override
+
+/datum/controller/subsystem/tts/proc/load_tts_config()
+	var/list/toml = read_admin_toml("[global.config.directory]/tts.toml")
+	if(islist(toml))
+		if(!toml["enabled"])
+			return FALSE
+		tts_wanted = TRUE
+		language_effects = list()
+		var/list/effect_table = toml["language_effects"]
+		if(islist(effect_table))
+			for(var/language_key in effect_table)
+				language_effects[lowertext(language_key)] = "[effect_table[language_key]]"
+		var/list/connection = toml["connection"]
+		var/list/voice_settings = toml["voices"]
+		http_url = islist(connection) ? connection["url"] : null
+		http_token = islist(connection) ? connection["token"] : null
+		http_timeout = islist(connection) && connection["timeout_seconds"] ? connection["timeout_seconds"] : 30
+		max_concurrent_requests = islist(connection) && connection["max_concurrent_requests"] ? connection["max_concurrent_requests"] : 4
+		if(islist(voice_settings))
+			voice_blacklist = islist(voice_settings["blacklist"]) ? voice_settings["blacklist"] : list()
+			tram_voice_override = voice_settings["tram_announcer"] || null
+			computer_voice_override = voice_settings["computer"] || null
+	else
+		http_url = CONFIG_GET(string/tts_http_url)
+		tts_wanted = !!http_url
+		http_token = CONFIG_GET(string/tts_http_token)
+		http_timeout = CONFIG_GET(number/tts_http_timeout_seconds)
+		max_concurrent_requests = CONFIG_GET(number/tts_max_concurrent_requests)
+		voice_blacklist = CONFIG_GET(str_list/tts_voice_blacklist) || list()
+		tram_voice_override = CONFIG_GET(string/tts_tram_announcer_override)
+		computer_voice_override = CONFIG_GET(string/tts_computer_voice_override)
+	return !!http_url
 
 /datum/controller/subsystem/tts/vv_edit_var(var_name, var_value)
 	// tts being enabled depends on whether it actually exists
@@ -67,40 +110,55 @@ SUBSYSTEM_DEF(tts)
 /proc/cmp_word_length_asc(datum/tts_request/a, datum/tts_request/b)
 	return length(b.message) - length(a.message)
 
+/datum/controller/subsystem/tts/proc/retry_connection()
+	if(tts_enabled || !tts_wanted)
+		return
+	establish_connection_to_tts()
+
+/datum/controller/subsystem/tts/proc/report_failure(reason)
+	if(world.time < next_error_report)
+		return
+	next_error_report = world.time + 5 MINUTES
+	log_tts("TTS failure: [reason]")
+	message_admins(span_boldannounce("Text-To-Speech ERROR: [reason]"))
+
 /// Establishes (or re-establishes) a connection to the TTS server and updates the list of available speakers.
 /// This is blocking, so be careful when calling.
 /datum/controller/subsystem/tts/proc/establish_connection_to_tts()
+	if(!load_tts_config())
+		return FALSE
 	var/datum/http_request/request = new()
 	var/list/headers = list()
-	headers["Authorization"] = CONFIG_GET(string/tts_http_token)
-	request.prepare(RUSTG_HTTP_METHOD_GET, "[CONFIG_GET(string/tts_http_url)]/tts-voices", "", headers, timeout_seconds = CONFIG_GET(number/tts_http_timeout_seconds))
+	headers["Authorization"] = http_token
+	request.prepare(RUSTG_HTTP_METHOD_GET, "[http_url]/tts-voices", "", headers, timeout_seconds = http_timeout)
 	request.begin_async()
 	UNTIL(request.is_complete())
 	var/datum/http_response/response = request.into_response()
 	if(response.errored || response.status_code != 200)
-		stack_trace(response.error)
+		log_world("Text-To-Speech is DOWN: cannot reach [http_url] ([response.error || response.status_code])")
+		if(!down_reported)
+			down_reported = TRUE
+			message_admins(span_boldannounce("Text-To-Speech ERROR: the TTS server at [http_url] is not reachable ([response.error || response.status_code]). Retrying every 30 seconds."))
+		addtimer(CALLBACK(src, PROC_REF(retry_connection)), 30 SECONDS)
 		return FALSE
 	available_speakers = json_decode(response.body)
 	tts_enabled = TRUE
-	if(CONFIG_GET(str_list/tts_voice_blacklist))
-		var/list/blacklisted_voices = CONFIG_GET(str_list/tts_voice_blacklist)
+	ss_flags &= ~SS_NO_FIRE
+	if(!queued_http_messages)
+		queued_http_messages = new /datum/heap(GLOBAL_PROC_REF(cmp_word_length_asc))
+	down_reported = FALSE
+	if(length(voice_blacklist))
 		log_config("Processing the TTS voice blacklist.")
-		for(var/voice in blacklisted_voices)
+		for(var/voice in voice_blacklist)
 			if(available_speakers.Find(voice))
 				log_config("Removed speaker [voice] from the TTS voice pool per config.")
 				available_speakers.Remove(voice)
-	if(CONFIG_GET(string/tts_tram_announcer_override))
-		tram_voice = CONFIG_GET(string/tts_tram_announcer_override)
-	else
-		tram_voice = pick(available_speakers)
-	if(CONFIG_GET(string/tts_computer_voice_override))
-		computer_voice = CONFIG_GET(string/tts_computer_voice_override)
-	else
-		computer_voice = pick(available_speakers)
+	tram_voice = tram_voice_override || pick(available_speakers)
+	computer_voice = computer_voice_override || pick(available_speakers)
 	var/datum/http_request/request_pitch = new()
 	var/list/headers_pitch = list()
-	headers_pitch["Authorization"] = CONFIG_GET(string/tts_http_token)
-	request_pitch.prepare(RUSTG_HTTP_METHOD_GET, "[CONFIG_GET(string/tts_http_url)]/pitch-available", "", headers_pitch, timeout_seconds = CONFIG_GET(number/tts_http_timeout_seconds))
+	headers_pitch["Authorization"] = http_token
+	request_pitch.prepare(RUSTG_HTTP_METHOD_GET, "[http_url]/pitch-available", "", headers_pitch, timeout_seconds = http_timeout)
 	request_pitch.begin_async()
 	UNTIL(request_pitch.is_complete())
 	pitch_enabled = TRUE
@@ -110,15 +168,16 @@ SUBSYSTEM_DEF(tts)
 			stack_trace(response.error)
 		pitch_enabled = FALSE
 	rustg_file_write(json_encode(available_speakers), "data/cached_tts_voices.json")
+	log_world("Text-To-Speech is UP! ([length(available_speakers)] voices, [http_url])")
+	message_admins("Text-To-Speech is UP! ([length(available_speakers)] voices)")
 	rustg_file_write("rustg HTTP requests can't write to folders that don't exist, so we need to make it exist.", "tmp/tts/init.txt")
 	return TRUE
 
 /datum/controller/subsystem/tts/Initialize()
-	if(!CONFIG_GET(string/tts_http_url))
+	if(!load_tts_config())
 		return SS_INIT_NO_NEED
 
 	queued_http_messages = new /datum/heap(GLOBAL_PROC_REF(cmp_word_length_asc))
-	max_concurrent_requests = CONFIG_GET(number/tts_max_concurrent_requests)
 	if(!establish_connection_to_tts())
 		return SS_INIT_FAILURE
 	return SS_INIT_SUCCESS
@@ -277,7 +336,8 @@ SUBSYSTEM_DEF(tts)
 		var/datum/http_response/radio_response = current_request.request_radio.into_response()
 		var/datum/http_response/radio_blips_response = current_request.request_blips_radio.into_response()
 		var/datum/http_response/radio_gibberish_response = current_request.request_radio_gibberish.into_response()
-		if(current_request.requests_errored())
+		if(current_request.requests_errored() || normal_response.status_code >= 400 || radio_response.status_code >= 400 || blips_response.status_code >= 400)
+			report_failure("a TTS request failed ([normal_response.error || blips_response.error || radio_response.error || "HTTP [normal_response.status_code || blips_response.status_code || radio_response.status_code]"]), check the TTS server window")
 			queued_radio_messages -= identifier
 			queued_radio_messages_compression -= identifier
 			current_request.timed_out = TRUE
@@ -451,20 +511,22 @@ SUBSYSTEM_DEF(tts)
 		rustg_file_write("rustg HTTP requests can't write to folders that don't exist, so we need to make it exist.", "tmp/tts/init.txt")
 
 	var/static/regex/contains_alphanumeric = regex("\[a-zA-Z0-9]")
-	// If there is no alphanumeric char, the output will usually be static, so
-	// don't bother sending
-	if(contains_alphanumeric.Find(message) == 0)
+	var/static/regex/contains_non_ascii = regex(@{"[^\x00-\x7F]"})
+	if(contains_alphanumeric.Find(message) == 0 && contains_non_ascii.Find(message) == 0)
 		return
 
 	var/shell_scrubbed_input = tts_speech_filter(message)
 	if(!(speaker in available_speakers))
+		report_failure("a message was not voiced because its speaker voice '[speaker]' does not exist on the TTS server (check the character voice setting or config/tts.toml)")
 		return
+	var/language_effect = language ? language_effects[lowertext(language.name)] : null
+	var/effect_query = language_effect ? "&effect=[url_encode(language_effect)]" : ""
 	var/list/listener_weakrefs = list()
 	for(var/listener in listeners)
 		listener_weakrefs += WEAKREF(listener)
 	var/list/headers = list()
 	headers["Content-Type"] = "application/json"
-	headers["Authorization"] = CONFIG_GET(string/tts_http_token)
+	headers["Authorization"] = http_token
 	var/datum/http_request/request = new()
 	var/datum/http_request/request_blips = new()
 	var/datum/http_request/request_radio = new()
@@ -475,11 +537,11 @@ SUBSYSTEM_DEF(tts)
 	var/file_name_radio = "tmp/tts/[identifier]_radio.ogg"
 	var/file_name_blips_radio = "tmp/tts/[identifier]_blips_radio.ogg"
 	var/file_name_radio_gibberish = "tmp/tts/[identifier]_radio_gibberish.ogg"
-	request.prepare(RUSTG_HTTP_METHOD_GET, "[CONFIG_GET(string/tts_http_url)]/tts?voice=[speaker]&identifier=[identifier]&filter=[tts_filter_encode(filter, speaker, pitch)]&pitch=[pitch]&special_filters=[url_encode(special_filters)]", json_encode(list("text" = shell_scrubbed_input)), headers, file_name, timeout_seconds = CONFIG_GET(number/tts_http_timeout_seconds))
-	request_blips.prepare(RUSTG_HTTP_METHOD_GET, "[CONFIG_GET(string/tts_http_url)]/tts-blips?voice=[speaker]&identifier=[identifier]&filter=[tts_filter_encode(filter, speaker, pitch, blips = TRUE)]&pitch=[pitch]&special_filters=[url_encode(special_filters)]&blip_base=[blip_base]&blip_number=[blip_number]", json_encode(list("text" = shell_scrubbed_input)), headers, file_name_blips, timeout_seconds = CONFIG_GET(number/tts_http_timeout_seconds))
-	request_radio.prepare(RUSTG_HTTP_METHOD_GET, "[CONFIG_GET(string/tts_http_url)]/tts-radio?voice=[speaker]&identifier=[identifier]&filter=[tts_filter_encode(filter, speaker, pitch)]&pitch=[pitch]&special_filters=[url_encode(special_filters)]", json_encode(list("text" = shell_scrubbed_input)), headers, file_name_radio, timeout_seconds = CONFIG_GET(number/tts_http_timeout_seconds))
-	request_blips_radio.prepare(RUSTG_HTTP_METHOD_GET, "[CONFIG_GET(string/tts_http_url)]/tts-blips-radio?voice=[speaker]&identifier=[identifier]&filter=[tts_filter_encode(filter, speaker, pitch, blips = TRUE)]&pitch=[pitch]&special_filters=[url_encode(special_filters)]&blip_base=[blip_base]&blip_number=[blip_number]", json_encode(list("text" = shell_scrubbed_input)), headers, file_name_blips_radio, timeout_seconds = CONFIG_GET(number/tts_http_timeout_seconds))
-	request_radio_gibberish.prepare(RUSTG_HTTP_METHOD_GET, "[CONFIG_GET(string/tts_http_url)]/tts-radio?voice=[speaker]&identifier=[identifier]&filter=[tts_filter_encode(filter, speaker, pitch)]&pitch=[pitch]&special_filters=[url_encode(special_filters)]", json_encode(list("raw_text" = shell_scrubbed_input, "gibberish_text" = shell_scrubbed_input)), headers, file_name_radio_gibberish, timeout_seconds = CONFIG_GET(number/tts_http_timeout_seconds))
+	request.prepare(RUSTG_HTTP_METHOD_GET, "[http_url]/tts?voice=[url_encode(speaker)]&identifier=[identifier]&filter=[tts_filter_encode(filter, speaker, pitch)]&pitch=[pitch]&special_filters=[url_encode(special_filters)][effect_query]", json_encode(list("text" = shell_scrubbed_input)), headers, file_name, timeout_seconds = http_timeout)
+	request_blips.prepare(RUSTG_HTTP_METHOD_GET, "[http_url]/tts-blips?voice=[url_encode(speaker)]&identifier=[identifier]&filter=[tts_filter_encode(filter, speaker, pitch, blips = TRUE)]&pitch=[pitch]&special_filters=[url_encode(special_filters)]&blip_base=[blip_base]&blip_number=[blip_number]", json_encode(list("text" = shell_scrubbed_input)), headers, file_name_blips, timeout_seconds = http_timeout)
+	request_radio.prepare(RUSTG_HTTP_METHOD_GET, "[http_url]/tts-radio?voice=[url_encode(speaker)]&identifier=[identifier]&filter=[tts_filter_encode(filter, speaker, pitch)]&pitch=[pitch]&special_filters=[url_encode(special_filters)][effect_query]", json_encode(list("text" = shell_scrubbed_input)), headers, file_name_radio, timeout_seconds = http_timeout)
+	request_blips_radio.prepare(RUSTG_HTTP_METHOD_GET, "[http_url]/tts-blips-radio?voice=[url_encode(speaker)]&identifier=[identifier]&filter=[tts_filter_encode(filter, speaker, pitch, blips = TRUE)]&pitch=[pitch]&special_filters=[url_encode(special_filters)]&blip_base=[blip_base]&blip_number=[blip_number]", json_encode(list("text" = shell_scrubbed_input)), headers, file_name_blips_radio, timeout_seconds = http_timeout)
+	request_radio_gibberish.prepare(RUSTG_HTTP_METHOD_GET, "[http_url]/tts-radio?voice=[url_encode(speaker)]&identifier=[identifier]&filter=[tts_filter_encode(filter, speaker, pitch)]&pitch=[pitch]&special_filters=[url_encode(special_filters)]", json_encode(list("raw_text" = shell_scrubbed_input, "gibberish_text" = shell_scrubbed_input)), headers, file_name_radio_gibberish, timeout_seconds = http_timeout)
 	var/datum/tts_request/current_request = new /datum/tts_request(identifier, request, request_blips, request_radio, request_blips_radio, request_radio_gibberish, shell_scrubbed_input, target, local, language, message_range, volume_offset, listener_weakrefs, pitch, force_blips)
 	var/list/player_queued_tts_messages = queued_tts_messages[WEAKREF(target)]
 	if(!player_queued_tts_messages)
@@ -503,18 +565,32 @@ SUBSYSTEM_DEF(tts)
 	if(!tts_enabled)
 		return null
 
-	var/sanity = 0
-	while(sanity < 10)
-		var/voice = pick(available_speakers)
-		if(gender != MALE && gender != FEMALE)
-			return voice
-		if(gender == MALE && findtext(voice, "Man"))
-			return voice
-		if(gender == FEMALE && findtext(voice, "Woman"))
-			return voice
-		sanity += 1
+	var/list/pool = list()
+	var/list/plain_voices = list()
+	for(var/voice in available_speakers)
+		if(findtext(voice, "~"))
+			continue
+		plain_voices += voice
+		if(findtext(voice, "RU-") == 1)
+			pool += voice
+	if(!length(pool))
+		pool = plain_voices
+	if(!length(pool))
+		pool = available_speakers.Copy()
 
-	return pick(available_speakers) // failsafe
+	if(gender == MALE || gender == FEMALE)
+		var/list/matching = list()
+		for(var/voice in pool)
+			var/is_female = findtext(voice, "Woman") || findtext(voice, "Irina") || findtext(voice, "Lada") || findtext(voice, "Tetiana") || findtext(voice, "Amy") || findtext(voice, "Kristin") || findtext(voice, "Alba") || findtext(voice, "Jenny") || findtext(voice, "Cori") || findtext(voice, "Female")
+			var/is_male = findtext(voice, "Man") || findtext(voice, "Denis") || findtext(voice, "Dmitri") || findtext(voice, "Ruslan") || findtext(voice, "Mykyta") || findtext(voice, "Male")
+			if(gender == FEMALE && is_female)
+				matching += voice
+			else if(gender == MALE && is_male && !is_female)
+				matching += voice
+		if(length(matching))
+			return pick(matching)
+
+	return pick(pool)
 
 /// A struct containing information on an individual player or mob who has made a TTS request
 /datum/tts_request

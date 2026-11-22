@@ -110,7 +110,7 @@ GLOBAL_LIST_INIT(freqtospan, list(
 	SHOULD_BE_PURE(TRUE)
 	return !HAS_TRAIT(src, TRAIT_MUTE)
 
-/atom/movable/proc/do_tts_message(message, language, message_mods, list/tts_filter, list/hearers)
+/atom/movable/proc/do_tts_message(message, language, message_mods, list/tts_filter, list/hearers, tts_range = 7)
 	set waitfor = FALSE
 
 	if(!SStts.tts_enabled || !voice || HAS_TRAIT(src, TRAIT_SIGN_LANG) || HAS_TRAIT(src, TRAIT_UNKNOWN_VOICE) || message_mods[MODE_CUSTOM_SAY_ERASE_INPUT])
@@ -123,7 +123,7 @@ GLOBAL_LIST_INIT(freqtospan, list(
 	if(length(tts_filter) > 0)
 		filter += tts_filter.Join(",")
 	var/list/special_filter = list()
-	INVOKE_ASYNC(SStts, TYPE_PROC_REF(/datum/controller/subsystem/tts, queue_tts_message), src, html_decode(message), language, get_tts_voice(filter, special_filter), filter.Join(","), hearers, message_range = 7, pitch = pitch, special_filters = special_filter.Join("|"), blip_base = blip_base, blip_number = blip_number, identifier = message_mods[MODE_TTS_IDENTIFIER])
+	INVOKE_ASYNC(SStts, TYPE_PROC_REF(/datum/controller/subsystem/tts, queue_tts_message), src, html_decode(message), language, get_tts_voice(filter, special_filter), filter.Join(","), hearers, message_range = tts_range, pitch = pitch, special_filters = special_filter.Join("|"), blip_base = blip_base, blip_number = blip_number, identifier = message_mods[MODE_TTS_IDENTIFIER])
 
 /atom/movable/proc/get_tts_voice(list/filter, list/special_filter)
 	. = voice
@@ -153,7 +153,7 @@ GLOBAL_LIST_INIT(freqtospan, list(
 		if(hearing_movable.Hear(src, message_language, message, null, null, null, spans, message_mods, range) & HEAR_HEARD)
 			listened += hearing_movable
 
-	do_tts_message(tts_message_to_use, message_language, message_mods, tts_filter, listened)
+	do_tts_message(tts_message_to_use, message_language, message_mods, tts_filter, listened, range)
 
 /atom/movable/proc/compose_message(atom/movable/speaker, datum/language/message_language, raw_message, radio_freq, radio_freq_name, radio_freq_color, list/spans, list/message_mods = list(), visible_name = FALSE)
 	//This proc uses [] because it is faster than continually appending strings. Thanks BYOND.

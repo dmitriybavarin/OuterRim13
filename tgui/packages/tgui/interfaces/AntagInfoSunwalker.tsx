@@ -1,5 +1,6 @@
 import { BlockQuote, LabeledList, Section, Stack } from 'tgui-core/components';
 
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 const tipstyle = {
@@ -10,7 +11,15 @@ const noticestyle = {
   color: 'lightblue',
 };
 
+const POWERS = [
+  'space_dive',
+  'burning_slash',
+  'burning_physiology',
+  'stellar_charge',
+];
+
 export const AntagInfoSunwalker = (props) => {
+  const t = useT();
   return (
     <Window width={660} height={300}>
       <Window.Content backgroundColor="#0d0d0d">
@@ -18,40 +27,28 @@ export const AntagInfoSunwalker = (props) => {
           <Stack.Item width="40%">
             <Section fill>
               <Stack vertical fill>
-                <Stack.Item fontSize="25px">You are the Sunwalker</Stack.Item>
+                <Stack.Item fontSize="25px">
+                  {t('antaginfo-sunwalker-title')}
+                </Stack.Item>
                 <Stack.Item>
-                  <BlockQuote>
-                    You are an ancient voidwalker, having been caught in a
-                    supernova. You are altered, and hateful.
-                  </BlockQuote>
-                  <BlockQuote>
-                    There will be no lessons or enlightenment, they wont survive
-                    to learn from it.
-                  </BlockQuote>
+                  <BlockQuote>{t('antaginfo-sunwalker-intro-1')}</BlockQuote>
+                  <BlockQuote>{t('antaginfo-sunwalker-intro-2')}</BlockQuote>
                 </Stack.Item>
                 <Stack.Divider />
               </Stack>
             </Section>
           </Stack.Item>
           <Stack.Item width="60%">
-            <Section fill title="Powers">
+            <Section fill title={t('antaginfo-common-powers')}>
               <LabeledList>
-                <LabeledList.Item label="Space Dive">
-                  You can move under the station from space, use this to hunt
-                  and get to isolated sections of space.
-                </LabeledList.Item>
-                <LabeledList.Item label="Burning Slash">
-                  Your attacks deal great burn damage and ignite those hit.
-                </LabeledList.Item>
-                <LabeledList.Item label="Burning Physiology">
-                  Your very skin heats the air around you, while the vacuum of
-                  space mends any wounds your body might have sustained. You can
-                  move through glass freely, but are slowed in gravity.
-                </LabeledList.Item>
-                <LabeledList.Item label="Stellar Charge">
-                  With an exploding burning speed, charge forwards, dealing
-                  damage and burning the surroundings.
-                </LabeledList.Item>
+                {POWERS.map((power) => (
+                  <LabeledList.Item
+                    key={power}
+                    label={t(`antaginfo-sunwalker-power-${power}-name`)}
+                  >
+                    {t(`antaginfo-sunwalker-power-${power}-desc`)}
+                  </LabeledList.Item>
+                ))}
               </LabeledList>
             </Section>
           </Stack.Item>

@@ -13,6 +13,7 @@ import { createSearch } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
 import { RADIO_CHANNELS } from '../constants';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type ButtonData = {
@@ -45,6 +46,8 @@ enum TAB {
 export const BotAnnouncement = (props) => {
   const { act, data } = useBackend<BotAnnouncementData>();
   const { channels, lines, button_data, cooldown_left } = data;
+  const t = useT();
+  const noChannel = t('botannouncement-no-channel', {}, 'No radio channel');
 
   const [tab, setTab] = useState(TAB.Announcements);
   const [selectedChannel, setSelectedChannel] = useState<null | string>(null);
@@ -89,7 +92,7 @@ export const BotAnnouncement = (props) => {
                 setTab(TAB.Announcements);
               }}
             >
-              Announcements
+              {t('botannouncement-announcements', {}, 'Announcements')}
             </Tabs.Tab>
             <Tabs.Tab
               selected={tab === TAB.Shortcuts}
@@ -98,7 +101,7 @@ export const BotAnnouncement = (props) => {
                 setTab(TAB.Shortcuts);
               }}
             >
-              Shortcuts
+              {t('botannouncement-shortcuts', {}, 'Shortcuts')}
             </Tabs.Tab>
           </Tabs>
         </Section>
@@ -154,7 +157,7 @@ export const BotAnnouncement = (props) => {
                                 )?.color
                           }
                         >
-                          {val.button.channel || 'No radio channel'}
+                          {val.button.channel || noChannel}
                         </Box>
                       </Stack.Item>
                     </Stack>
@@ -171,7 +174,7 @@ export const BotAnnouncement = (props) => {
                 onChange={setSearch}
                 fluid
                 autoFocus
-                placeholder="Search..."
+                placeholder={t('botannouncement-search', {}, 'Search...')}
               />
             </Stack.Item>
             <Stack.Item>
@@ -179,16 +182,14 @@ export const BotAnnouncement = (props) => {
                 {tab === TAB.Announcements ? (
                   <Stack.Item grow>
                     <Dropdown
-                      options={['No radio channel', ...channels]}
+                      options={[noChannel, ...channels]}
                       displayText={
-                        selectedChannel === null
-                          ? 'No radio channel'
-                          : selectedChannel
+                        selectedChannel === null ? noChannel : selectedChannel
                       }
                       width="100%"
                       selected={selectedChannel}
                       onSelected={(value) => {
-                        if (value === 'No radio channel') {
+                        if (value === noChannel) {
                           setSelectedChannel(null);
                         } else {
                           setSelectedChannel(value);
@@ -224,8 +225,8 @@ export const BotAnnouncement = (props) => {
                     minWidth="96px"
                   >
                     {tab === TAB.Announcements
-                      ? 'Make Shortcut'
-                      : 'Delete Shortcut'}
+                      ? t('botannouncement-make', {}, 'Make Shortcut')
+                      : t('botannouncement-delete', {}, 'Delete Shortcut')}
                   </Button>
                 </Stack.Item>
                 <Stack.Item>
@@ -254,9 +255,13 @@ export const BotAnnouncement = (props) => {
                     disabled={cooldown_left > 0}
                     minWidth="96px"
                   >
-                    Play{' '}
+                    {t('botannouncement-play', {}, 'Play')}{' '}
                     {cooldown_left > 0
-                      ? `(${Math.round(cooldown_left / 10)}s)`
+                      ? t(
+                          'botannouncement-cooldown',
+                          { seconds: Math.round(cooldown_left / 10) },
+                          '({ $seconds }s)',
+                        )
                       : ''}
                   </Button>
                 </Stack.Item>

@@ -2,6 +2,7 @@ import { Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import {
   type Objective,
@@ -28,6 +29,7 @@ type Data = {
 
 export const AntagInfoSpy = () => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { antag_name, uplink_location, objectives, can_change_objective } =
     data;
   return (
@@ -37,33 +39,32 @@ export const AntagInfoSpy = () => {
           backgroundImage: 'none',
         }}
       >
-        <Section title={`You are the ${antag_name || 'Spy'}.`}>
+        <Section title={t('antaginfo-spy-title', { name: antag_name || t('antaginfo-spy-default-name') })}>
           <Stack vertical fill ml={1} mr={1}>
             <Stack.Item fontSize={1.2}>
-              You have been equipped with a special uplink device disguised as{' '}
-              {uplink_location || 'something'} that will allow you to steal from
-              the station.
+              {t('antaginfo-spy-uplink', {
+                location: uplink_location || t('antaginfo-spy-something'),
+              })}
             </Stack.Item>
             <Stack.Item>
               <span style={greenText}>
-                <b>Use it in hand</b> to access your uplink, and{' '}
-                <b>right click</b> on bounty targets to steal them.
+                <b>{t('antaginfo-spy-use')}</b> {t('antaginfo-spy-access')}{' '}
+                <b>{t('antaginfo-spy-right-click')}</b>{' '}
+                {t('antaginfo-spy-steal')}
               </span>
             </Stack.Item>
             <Stack.Divider />
             <Stack.Item>
-              You may not be alone: There may be other spies on the station.
+              {t('antaginfo-spy-not-alone')}
             </Stack.Item>
             <Stack.Item>
-              Work together or work against them: The choice is yours, but{' '}
-              <span style={redText}>
-                the same bounty cannot be claimed twice.
-              </span>
+              {t('antaginfo-spy-choice')}{' '}
+              <span style={redText}>{t('antaginfo-spy-bounty-once')}</span>
             </Stack.Item>
             <Stack.Divider />
             <Stack.Item>
               <ObjectivePrintout
-                titleMessage={'Your mission, should you choose to accept it'}
+                titleMessage={t('antaginfo-spy-mission')}
                 objectives={objectives}
               />
             </Stack.Item>
@@ -72,7 +73,7 @@ export const AntagInfoSpy = () => {
               {
                 <ReplaceObjectivesButton
                   can_change_objective={can_change_objective}
-                  button_title={'Make Your Own Plan'}
+                  button_title={t('antaginfo-spy-own-plan')}
                   button_colour={'green'}
                 />
               }

@@ -10,6 +10,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -19,10 +20,14 @@ type Data = {
 };
 
 export const TrainingMachine = () => {
+  const t = useT();
   return (
     <Window width={230} height={150} title="AURUMILL">
       <Window.Content>
-        <Section fill title="Training Machine">
+        <Section
+          fill
+          title={t('trainingmachine-title', {}, 'Training Machine')}
+        >
           <TrainingControls />
         </Section>
       </Window.Content>
@@ -34,10 +39,11 @@ export const TrainingMachine = () => {
 const TrainingControls = (props) => {
   const { act, data } = useBackend<Data>();
   const { movespeed, range, moving } = data;
+  const t = useT();
 
   return (
     <LabeledControls m={1}>
-      <LabeledControls.Item label="Speed">
+      <LabeledControls.Item label={t('trainingmachine-speed', {}, 'Speed')}>
         <Knob
           inline
           size={1.2}
@@ -49,7 +55,7 @@ const TrainingControls = (props) => {
           onChange={(_, value) => act('movespeed', { movespeed: value })}
         />
       </LabeledControls.Item>
-      <LabeledControls.Item label="Range">
+      <LabeledControls.Item label={t('trainingmachine-range', {}, 'Range')}>
         <Knob
           inline
           size={1.2}
@@ -67,7 +73,9 @@ const TrainingControls = (props) => {
       <Stack.Item>
         <Button fluid selected={moving} onClick={() => act('toggle')}>
           <Box bold fontSize="1.4em" lineHeight={3}>
-            {moving ? 'END' : 'BEGIN'}
+            {moving
+              ? t('trainingmachine-end', {}, 'END')
+              : t('trainingmachine-begin', {}, 'BEGIN')}
           </Box>
         </Button>
       </Stack.Item>

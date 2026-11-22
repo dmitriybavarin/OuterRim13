@@ -10,6 +10,7 @@ import { isEscape, KEY } from 'tgui-core/keys';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { InputButtons } from './common/InputButtons';
 import { Loader } from './common/Loader';
@@ -27,6 +28,7 @@ type Data = {
 
 export function NumberInputModal(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     init_value,
     large_buttons,
@@ -72,7 +74,15 @@ export function NumberInputModal(props) {
                     disabled={value === min_value}
                     icon="angle-double-left"
                     onClick={() => setValue(min_value ?? 0)}
-                    tooltip={min_value ? `Min (${min_value})` : 'Min'}
+                    tooltip={
+                      min_value
+                        ? t(
+                            'inputmodal-number-min-value',
+                            { value: min_value },
+                            `Min (${min_value})`,
+                          )
+                        : t('inputmodal-number-min', {}, 'Min')
+                    }
                   />
                 </Stack.Item>
 
@@ -111,7 +121,15 @@ export function NumberInputModal(props) {
                     disabled={value === max_value}
                     icon="angle-double-right"
                     onClick={() => setValue(max_value ?? 10000)}
-                    tooltip={max_value ? `Max (${max_value})` : 'Max'}
+                    tooltip={
+                      max_value
+                        ? t(
+                            'inputmodal-number-max-value',
+                            { value: max_value },
+                            `Max (${max_value})`,
+                          )
+                        : t('inputmodal-number-max', {}, 'Max')
+                    }
                   />
                 </Stack.Item>
                 <Stack.Item>
@@ -119,7 +137,15 @@ export function NumberInputModal(props) {
                     disabled={value === init_value}
                     icon="redo"
                     onClick={() => setValue(init_value ?? 0)}
-                    tooltip={init_value ? `Reset (${init_value})` : 'Reset'}
+                    tooltip={
+                      init_value
+                        ? t(
+                            'inputmodal-number-reset-value',
+                            { value: init_value },
+                            `Reset (${init_value})`,
+                          )
+                        : t('inputmodal-number-reset', {}, 'Reset')
+                    }
                   />
                 </Stack.Item>
               </Stack>

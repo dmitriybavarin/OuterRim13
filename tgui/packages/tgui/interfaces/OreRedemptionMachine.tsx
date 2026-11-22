@@ -16,6 +16,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { createSearch, toTitleCase } from 'tgui-core/string';
 
 import { useBackend, useSharedState } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { SearchBar } from './common/SearchBar';
 
@@ -44,9 +45,14 @@ type Data = {
 export function OreRedemptionMachine(props) {
   const [compact, setCompact] = useState(false);
   const [searchItem, setSearchItem] = useState('');
+  const t = useT();
 
   return (
-    <Window title="Ore Redemption Machine" width={435} height={500}>
+    <Window
+      title={t('oreredemption-title', {}, 'Ore Redemption Machine')}
+      width={435}
+      height={500}
+    >
       <Window.Content>
         <Stack fill vertical>
           <Stack.Item>
@@ -56,7 +62,11 @@ export function OreRedemptionMachine(props) {
             <PointsSection />
           </Stack.Item>
           <NoticeBox info mb={0}>
-            This machine only accepts ore. Gibtonite and Slag are not accepted.
+            {t(
+              'oreredemption-only-ore',
+              {},
+              'This machine only accepts ore. Gibtonite and Slag are not accepted.',
+            )}
           </NoticeBox>
           <Stack.Item mb={-1}>
             <MaterialSearchHeader
@@ -81,6 +91,7 @@ type MaterialRowProps = {
 
 function MaterialRow(props: MaterialRowProps) {
   const { compact, material, onRelease } = props;
+  const t = useT();
 
   const sheet_amounts = Math.floor(material.amount);
   const print_amount = 5;
@@ -103,13 +114,21 @@ function MaterialRow(props: MaterialRowProps) {
       <Table.Cell collapsing textAlign="left">
         <Box color="label">
           {formatSiUnit(sheet_amounts, 0)}{' '}
-          {material.amount === 1 ? 'sheet' : 'sheets'}
+          {t(
+            'oreredemption-sheets-unit',
+            { count: material.amount },
+            material.amount === 1 ? 'sheet' : 'sheets',
+          )}
         </Box>
       </Table.Cell>
       <Table.Cell collapsing textAlign="left">
         <Button
           color="transparent"
-          tooltip={material.value ? `${material.value} cr` : 'No cost'}
+          tooltip={
+            material.value
+              ? `${material.value} ${t('oreredemption-unit-credits', {}, 'cr')}`
+              : t('oreredemption-no-cost', {}, 'No cost')
+          }
           onClick={() => onRelease(1)}
         >
           x1
@@ -117,16 +136,22 @@ function MaterialRow(props: MaterialRowProps) {
         <Button
           color="transparent"
           tooltip={
-            material.value ? `${material.value * print_amount} cr` : 'No cost'
+            material.value
+              ? `${material.value * print_amount} ${t('oreredemption-unit-credits', {}, 'cr')}`
+              : t('oreredemption-no-cost', {}, 'No cost')
           }
           onClick={() => onRelease(print_amount)}
         >
           x{print_amount}
         </Button>
         <Button.Input
-          buttonText={`[Max: ${
-            sheet_amounts < max_sheets ? sheet_amounts : max_sheets
-          }]`}
+          buttonText={t(
+            'oreredemption-max',
+            {
+              count: sheet_amounts < max_sheets ? sheet_amounts : max_sheets,
+            },
+            `[Max: ${sheet_amounts < max_sheets ? sheet_amounts : max_sheets}]`,
+          )}
           color="transparent"
           onCommit={onRelease}
         />
@@ -143,6 +168,7 @@ type IDSectionProps = {
 function IDSection(props: IDSectionProps) {
   const { data } = useBackend<Data>();
   const { user } = data;
+  const t = useT();
 
   const { compact, setCompact } = props;
 
@@ -154,11 +180,15 @@ function IDSection(props: IDSectionProps) {
         </Stack.Item>
         <Stack.Item grow>
           <LabeledList>
-            <LabeledList.Item label="Name">
-              {user?.name || 'No Name Detected'}
+            <LabeledList.Item label={t('oreredemption-name', {}, 'Name')}>
+              {user?.name ||
+                t('oreredemption-no-name', {}, 'No Name Detected')}
             </LabeledList.Item>
-            <LabeledList.Item label="Point Balance">
-              {user?.cash || 'No Balance Detected'}
+            <LabeledList.Item
+              label={t('oreredemption-balance', {}, 'Point Balance')}
+            >
+              {user?.cash ||
+                t('oreredemption-no-balance', {}, 'No Balance Detected')}
             </LabeledList.Item>
           </LabeledList>
         </Stack.Item>
@@ -167,7 +197,7 @@ function IDSection(props: IDSectionProps) {
             color={compact ? 'red' : 'green'}
             onClick={() => setCompact(!compact)}
           >
-            Compact
+            {t('oreredemption-compact', {}, 'Compact')}
           </Button>
         </Stack.Item>
       </Stack>
@@ -178,6 +208,7 @@ function IDSection(props: IDSectionProps) {
 function PointsSection(props) {
   const { act, data } = useBackend<Data>();
   const { disconnected, unclaimedPoints } = data;
+  const t = useT();
 
   return (
     <Section>
@@ -185,7 +216,7 @@ function PointsSection(props) {
         <Stack.Item grow>
           <Icon name="coins" color="gold" />
           <Box inline color="label" ml={1}>
-            Unclaimed points:
+            {t('oreredemption-unclaimed', {}, 'Unclaimed points:')}
           </Box>
           {` ${unclaimedPoints}`}
         </Stack.Item>
@@ -196,7 +227,7 @@ function PointsSection(props) {
             tooltip={disconnected}
             onClick={() => act('Claim')}
           >
-            Claim
+            {t('oreredemption-claim', {}, 'Claim')}
           </Button>
         </Stack.Item>
       </Stack>
@@ -261,6 +292,7 @@ type SearchProps = {
 
 function MaterialSearchHeader(props: SearchProps) {
   const { searchItem, setSearchItem } = props;
+  const t = useT();
 
   const [tab, setTab] = useSharedState('tab', 'material');
 
@@ -281,7 +313,7 @@ function MaterialSearchHeader(props: SearchProps) {
                 }
               }}
             >
-              Materials
+              {t('oreredemption-materials', {}, 'Materials')}
             </Tabs.Tab>
             <Tabs.Tab
               icon="list"
@@ -295,7 +327,7 @@ function MaterialSearchHeader(props: SearchProps) {
                 }
               }}
             >
-              Alloys
+              {t('oreredemption-alloys', {}, 'Alloys')}
             </Tabs.Tab>
           </Tabs>
         </Stack.Item>
@@ -304,7 +336,11 @@ function MaterialSearchHeader(props: SearchProps) {
             expensive
             style={{ height: '23px' }}
             query={searchItem}
-            placeholder="Search Material..."
+            placeholder={t(
+              'oreredemption-search',
+              {},
+              'Search Material...',
+            )}
             onSearch={(value) => {
               setSearchItem(value);
               if (value.length > 0) {

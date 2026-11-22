@@ -37,7 +37,7 @@
 	name = "Nanotrasen Representative"
 	jobtype = /datum/job/nanotrasen_representative
 
-	id = /obj/item/card/id/advanced/centcom_black
+	id = /obj/item/card/id/advanced/centcom/black
 	id_trim = /datum/id_trim/job/nanotrasen_representative
 	uniform = /obj/item/clothing/under/rank/centcom/official
 	backpack_contents = list(

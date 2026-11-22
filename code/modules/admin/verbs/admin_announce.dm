@@ -35,6 +35,10 @@ ADMIN_VERB(announce, R_ADMIN, "Announce", "Announce your desires to the world.",
 	var/list/data = list()
 	data["sender_default"] = user.client?.holder?.fakekey ? "Administrator" : user.key
 	data["command_name"] = command_name()
+	var/client/viewer = user.client
+	data["header_command"] = localize_for(viewer, loc_key("announcement-header-update", list(sender = command_name_loc())))
+	data["header_captain"] = localize_for(viewer, LOC_KEY("announcement-header-captain"))
+	data["header_syndicate"] = localize_for(viewer, LOC_KEY("announcement-header-syndicate"))
 	data["history"] = GLOB.admin_announce_history
 	data["players_all"] = length(GLOB.player_list)
 	data["players_station"] = length(station_players())

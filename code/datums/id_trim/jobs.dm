@@ -1313,38 +1313,21 @@
 	honorifics = list("Engineer")
 	honorific_positions = HONORIFIC_POSITION_FIRST | HONORIFIC_POSITION_LAST | HONORIFIC_POSITION_FIRST_FULL | HONORIFIC_POSITION_NONE
 
-/datum/id_trim/job/veteran_advisor
-	assignment = JOB_VETERAN_ADVISOR
-	trim_state = "trim_veteranadvisor"
-	department_color = COLOR_SECURITY_RED
-	subdepartment_color = COLOR_COMMAND_BLUE
-	sechud_icon_state = SECHUD_VETERAN_ADVISOR
+/datum/id_trim/job/trader
+	assignment = JOB_TRADER
+	trim_state = "trim_cargotechnician"
+	department_color = COLOR_CARGO_BROWN
+	subdepartment_color = COLOR_CARGO_BROWN
+	sechud_icon_state = SECHUD_CARGO_TECHNICIAN
 	minimal_access = list(
-		ACCESS_COMMAND,
-		ACCESS_BRIG,
-		ACCESS_BRIG_ENTRANCE,
-		ACCESS_COURT,
-		ACCESS_MECH_SECURITY,
-		ACCESS_MINERAL_STOREROOM,
-		ACCESS_SECURITY,
-		ACCESS_WEAPONS,
+		ACCESS_CARGO,
+		ACCESS_SHIPPING,
 	)
 	extra_access = list()
 	template_access = list()
-	job = /datum/job/veteran_advisor
-	big_pointer = TRUE
-	honorifics = list("General", "Gen.")
+	job = /datum/job/trader
+	honorifics = list("Merchant")
 	honorific_positions = HONORIFIC_POSITION_FIRST | HONORIFIC_POSITION_LAST | HONORIFIC_POSITION_FIRST_FULL | HONORIFIC_POSITION_NONE
-
-/datum/id_trim/job/veteran_advisor/refresh_trim_access()
-	. = ..()
-
-	if(!.)
-		return
-
-	// Config check for if sec has maint access.
-	if(CONFIG_GET(flag/security_has_maint_access))
-		access |= list(ACCESS_MAINT_TUNNELS)
 
 /datum/id_trim/job/warden
 	assignment = JOB_WARDEN

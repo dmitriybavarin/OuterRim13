@@ -1,6 +1,7 @@
 import { Button, NoticeBox, Section, Stack, Table } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { NtosWindow } from '../layouts';
 
 type FaxInfoList = {
@@ -27,18 +28,23 @@ export const NtosFaxBond = (props) => {
 export const NtosFaxBondContent = (props) => {
   const { act, data } = useBackend<Data>();
   const { faxes_info = [] } = data;
+  const t = useT();
   return (
     <>
       <NoticeBox>
-        Scan any fax to be notified when it receives a message.
+        {t(
+          'ntosfaxbond-hint',
+          {},
+          'Scan any fax to be notified when it receives a message.',
+        )}
       </NoticeBox>
       {!!faxes_info.length && (
         <Section>
           <Table>
             <Table.Row header>
               <Table.Cell>ID</Table.Cell>
-              <Table.Cell>Name</Table.Cell>
-              <Table.Cell>Location</Table.Cell>
+              <Table.Cell>{t('ntosfaxbond-name', {}, 'Name')}</Table.Cell>
+              <Table.Cell>{t('ntosfaxbond-location', {}, 'Location')}</Table.Cell>
               <Table.Cell />
             </Table.Row>
             {faxes_info.map((fax) => (
@@ -60,15 +66,15 @@ export const NtosFaxBondContent = (props) => {
                       color={fax.muted ? 'red' : 'default'}
                       tooltip={
                         fax.muted
-                          ? 'Unmute Notifications'
-                          : 'Mute Notifications'
+                          ? t('ntosfaxbond-unmute', {}, 'Unmute Notifications')
+                          : t('ntosfaxbond-mute', {}, 'Mute Notifications')
                       }
                       onClick={() => act('mute', { id: fax.id })}
                     />
                     <Button.Confirm
                       fluid
                       icon="link-slash"
-                      tooltip="Unsubscribe"
+                      tooltip={t('ntosfaxbond-unsubscribe', {}, 'Unsubscribe')}
                       confirmContent=""
                       confirmIcon="link-slash"
                       onClick={() => act('unsubscribe', { id: fax.id })}

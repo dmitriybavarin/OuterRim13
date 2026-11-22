@@ -10,6 +10,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -18,13 +19,14 @@ type Data = {
 };
 export const Reflector = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { reflector_name, rotation_angle } = data;
   return (
     <Window title={reflector_name} height={200} width={219}>
       <Window.Content>
         <Stack>
           <Stack.Item>
-            <Section title="Presets" textAlign="center" fill>
+            <Section title={t('reflector-presets', {}, 'Presets')} textAlign="center" fill>
               <Table mt={3.5}>
                 <Table.Cell>
                   <Table.Row>
@@ -138,13 +140,13 @@ export const Reflector = (props) => {
             </Section>
           </Stack.Item>
           <Stack>
-            <Section title="Angle" textAlign="center" fill>
+            <Section title={t('reflector-angle', {}, 'Angle')} textAlign="center" fill>
               <LabeledControls>
-                <LabeledControls.Item ml={0.5} label="Set rotation">
+                <LabeledControls.Item ml={0.5} label={t('reflector-set-rotation', {}, 'Set rotation')}>
                   <NumberInput
                     tickWhileDragging
                     value={rotation_angle}
-                    unit="degrees"
+                    unit={t('reflector-degrees', {}, 'degrees')}
                     minValue={0}
                     maxValue={359}
                     step={1}

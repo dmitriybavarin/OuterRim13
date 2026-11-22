@@ -1,6 +1,7 @@
 import { Box, Button, NoticeBox, Section } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -31,13 +32,16 @@ with a crowbar`,
 export const ColorBlindTester = (props) => {
   const { data } = useBackend<Data>();
   const { details } = data;
+  const t = useT();
 
   return (
-    <Window title="Color Blindness Testing" width={600} height={515}>
+    <Window title={t('colorblind-title', {}, 'Color Blindness Testing')} width={600} height={515}>
       <Window.Content>
         <NoticeBox>
           {UI_WARNINGS.map((warning, index) => (
-            <Box key={index}>{warning}</Box>
+            <Box key={index}>
+              {t(`colorblind-warning-${index + 1}`, {}, warning)}
+            </Box>
           ))}
         </NoticeBox>
         <Section>
@@ -54,6 +58,7 @@ const ColorBlindCategory = (props: Props) => {
   const { act, data } = useBackend<Data>();
   const { category } = props;
   const { details, selected } = data;
+  const t = useT();
 
   if (category !== selected) {
     return (
@@ -63,7 +68,7 @@ const ColorBlindCategory = (props: Props) => {
         buttons={
           <Button
             icon="eye"
-            content="Select"
+            content={t('colorblind-select', {}, 'Select')}
             onClick={() =>
               act('set_matrix', {
                 name: category,
@@ -83,7 +88,7 @@ const ColorBlindCategory = (props: Props) => {
       buttons={
         <Button
           icon="times"
-          content="Clear"
+          content={t('colorblind-clear', {}, 'Clear')}
           color="bad"
           onClick={() => act('clear_matrix')}
         />

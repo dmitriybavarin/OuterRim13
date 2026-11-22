@@ -138,8 +138,8 @@
 				selected_atoms += container
 				return TRUE
 
-	loc.balloon_alert(user, "ritual failed, no blood!")
-	to_chat(user, span_mansus("You are missing blood in order to complete the ritual \"[name]\"."))
+	loc.balloon_alert(user, LOC_KEY("heretic-ritual-failed-no-blood"))
+	to_chat(user, span_mansus(loc_key("heretic-side-cleaver-no-blood", list(ritual = loc_name()))))
 	return FALSE
 
 /datum/heretic_knowledge/crimson_cleave/cleanup_atoms(list/selected_atoms)

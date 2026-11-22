@@ -11,6 +11,7 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
 import { getGasColor } from '../constants';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -51,20 +52,25 @@ export const Crystallizer = (props) => {
 
 const Controls = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { gas_input, on, selected, selected_recipes = [] } = data;
 
   return (
-    <Section title="Controls">
+    <Section title={t('crystallizer-section-controls', {}, 'Controls')}>
       <LabeledList>
-        <LabeledList.Item label="Power">
+        <LabeledList.Item label={t('crystallizer-power', {}, 'Power')}>
           <Button
             icon={on ? 'power-off' : 'times'}
-            content={on ? 'On' : 'Off'}
+            content={
+              on
+                ? t('atmos-power-on', {}, 'On')
+                : t('atmos-power-off', {}, 'Off')
+            }
             selected={on}
             onClick={() => act('power')}
           />
         </LabeledList.Item>
-        <LabeledList.Item label="Recipe">
+        <LabeledList.Item label={t('crystallizer-recipe', {}, 'Recipe')}>
           {selected_recipes.map(({ id, name }) => (
             <Button
               key={id}
@@ -78,14 +84,14 @@ const Controls = (props) => {
             />
           ))}
         </LabeledList.Item>
-        <LabeledList.Item label="Gas Input">
+        <LabeledList.Item label={t('crystallizer-gas-input', {}, 'Gas Input')}>
           <NumberInput
             animated
             tickWhileDragging
             step={0.1}
             value={gas_input}
             width="63px"
-            unit="moles/s"
+            unit={t('atmos-unit-moles-per-second', {}, 'moles/s')}
             minValue={0}
             maxValue={250}
             onChange={(value) =>
@@ -102,12 +108,19 @@ const Controls = (props) => {
 
 const Requirements = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { requirements, internal_temperature, progress_bar } = data;
 
   return (
-    <Section title="Requirements and progress">
+    <Section
+      title={t(
+        'crystallizer-section-requirements',
+        {},
+        'Requirements and progress',
+      )}
+    >
       <LabeledList>
-        <LabeledList.Item label="Progress">
+        <LabeledList.Item label={t('crystallizer-progress', {}, 'Progress')}>
           <ProgressBar
             value={progress_bar / 100}
             ranges={{
@@ -117,12 +130,12 @@ const Requirements = (props) => {
             }}
           />
         </LabeledList.Item>
-        <LabeledList.Item label="Recipe">
+        <LabeledList.Item label={t('crystallizer-recipe', {}, 'Recipe')}>
           <Box m={1} preserveWhitespace>
             {requirements}
           </Box>
         </LabeledList.Item>
-        <LabeledList.Item label="Temperature">
+        <LabeledList.Item label={t('crystallizer-temperature', {}, 'Temperature')}>
           <ProgressBar
             value={logScale(internal_temperature)}
             minValue={0}
@@ -144,10 +157,11 @@ const Requirements = (props) => {
 
 const Gases = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { internal_gas_data = [] } = data;
 
   return (
-    <Section title="Gases">
+    <Section title={t('crystallizer-section-gases', {}, 'Gases')}>
       <LabeledList>
         {internal_gas_data.map(({ id, name, amount }) => (
           <LabeledList.Item key={name} label={name}>
@@ -157,7 +171,7 @@ const Gases = (props) => {
               minValue={0}
               maxValue={1000}
             >
-              {`${toFixed(amount, 2)} moles`}
+              {`${toFixed(amount, 2)} ${t('atmos-unit-moles', {}, 'moles')}`}
             </ProgressBar>
           </LabeledList.Item>
         ))}

@@ -80,7 +80,7 @@
 	tick_interval = 1 SECONDS
 
 /datum/status_effect/corrosion_curse/on_apply()
-	to_chat(owner, span_userdanger("Your body starts to break apart!"))
+	to_chat(owner, span_userdanger(LOC_KEY("heretic-status-corrosion-curse-apply")))
 	return TRUE
 
 /datum/status_effect/corrosion_curse/tick(seconds_between_ticks)
@@ -211,8 +211,8 @@
 	owner.adjust_brute_loss(-150 + owner.mob_mood.sanity)
 	owner.adjust_fire_loss(-150 + owner.mob_mood.sanity)
 
-	to_chat(owner, span_hypnophrase(("THE MOON SHOWS YOU THE TRUTH AND THE LIARS WISH TO COVER IT, SLAY THEM ALL!!!</span>")))
-	owner.balloon_alert(owner, "they lie..THEY ALL LIE!!!")
+	to_chat(owner, span_hypnophrase((LOC_KEY("heretic-status-moon-converted-apply"))))
+	owner.balloon_alert(owner, LOC_KEY("heretic-status-moon_converted-apply-balloon"))
 	owner.SetUnconscious(60 SECONDS, ignore_canstun = FALSE)
 	ADD_TRAIT(owner, TRAIT_MUTE, TRAIT_STATUS_EFFECT(id))
 	RegisterSignal(owner, COMSIG_ATOM_UPDATE_OVERLAYS, PROC_REF(update_owner_overlay))
@@ -240,7 +240,7 @@
 
 /datum/status_effect/moon_converted/on_remove()
 	// Span warning and unconscious so they realize they aren't evil anymore
-	to_chat(owner, span_warning("Your mind is cleared from the effect of the mansus, your alligiences are as they were before"))
+	to_chat(owner, span_warning(LOC_KEY("heretic-status-moon-converted-remove")))
 	REMOVE_TRAIT(owner, TRAIT_MUTE, TRAIT_STATUS_EFFECT(id))
 	owner.AdjustUnconscious(5 SECONDS, ignore_canstun = FALSE)
 	owner.log_message("[owner] is no longer insane.", LOG_GAME)
@@ -260,9 +260,9 @@
 /datum/status_effect/moon_slept/on_apply()
 	. = owner.SetUnconscious(duration * 0.5, ignore_canstun = FALSE)
 	if(!.)
-		owner.balloon_alert(owner, "sleep resisted!")
-	to_chat(owner, span_hypnophrase(("THE MOON SHOWS YOU THE TRUTH AND THE LIARS WISH TO COVER IT, w-wait no that's not right</span>")))
-	owner.balloon_alert(owner, "they lie..wait-what are they lying about?")
+		owner.balloon_alert(owner, LOC_KEY("heretic-status-moon_converted-sleep-balloon"))
+	to_chat(owner, span_hypnophrase((LOC_KEY("heretic-status-moon-converted-confused"))))
+	owner.balloon_alert(owner, LOC_KEY("heretic-status-moon_converted-confused-balloon"))
 
 /atom/movable/screen/alert/status_effect/moon_converted
 	name = "Moon Converted"
@@ -347,7 +347,7 @@
 	// Causes them to need to eat at 10x the normal rate
 	owner.adjust_nutrition(-hunger_rate * HUNGER_FACTOR)
 	if(SPT_PROB(10, seconds_between_ticks))
-		to_chat(owner, span_notice(pick("You can't stop thinking about raw meat...", "You <b>NEED</b> to eat someone.", "The hunger pangs are back...", "You hunger for flesh.", "You are starving!")))
+		to_chat(owner, span_notice(pick(LOC_KEY("heretic-status-desire-hunger-1"), LOC_KEY("heretic-status-desire-hunger-2"), LOC_KEY("heretic-status-desire-hunger-3"), LOC_KEY("heretic-status-desire-hunger-4"), LOC_KEY("heretic-status-desire-hunger-5"))))
 	owner.overeatduration = max(owner.overeatduration - 200 SECONDS, 0)
 
 /datum/status_effect/eldritch_painting/desire/on_remove()
@@ -385,7 +385,7 @@
 		return
 
 	owner.apply_damage(scratch_damage, BRUTE, bodypart)
-	to_chat(owner, span_notice("You scratch furiously at your clothed [bodypart.plaintext_zone]!"))
+	to_chat(owner, span_notice(loc_key("heretic-status-beauty-scratch", list(zone = loc_zone(bodypart.plaintext_zone)))))
 
 /atom/movable/screen/alert/status_effect/eldritch_painting/beauty
 	name = "Lady Out of Gates"
@@ -403,7 +403,7 @@
 	if(isnull(tile))
 		return
 
-	to_chat(owner, span_notice("You feel the decay..."))
+	to_chat(owner, span_notice(LOC_KEY("heretic-status-rusting-decay")))
 	tile.rust_heretic_act()
 
 /atom/movable/screen/alert/status_effect/eldritch_painting/rusting
@@ -439,7 +439,7 @@
 /datum/status_effect/moon_parade/on_apply()
 	if(!istype(leashed_to))
 		return FALSE
-	owner.balloon_alert(owner, "you feel unable to move away from the [leashed_to]!")
+	owner.balloon_alert(owner, loc_key("heretic-status-leash-apply-balloon", list(item = leashed_to)))
 	leash_component = owner.AddComponent(/datum/component/leash, leashed_to, distance = 1)
 	RegisterSignal(leashed_to, COMSIG_QDELETING, PROC_REF(delete_self))
 	RegisterSignal(owner, COMSIG_MOB_CLIENT_PRE_LIVING_MOVE, PROC_REF(block_move))
@@ -463,7 +463,7 @@
 		return
 	damage_received += damage_amount
 	if(damage_received >= damage_release_threshold)
-		owner.balloon_alert(owner, "you are free!")
+		owner.balloon_alert(owner, LOC_KEY("heretic-status-leash-free-balloon"))
 		qdel(src)
 
 // Blocks movement in order to make it appear like the character is transfixed to the projectile and wandering after it

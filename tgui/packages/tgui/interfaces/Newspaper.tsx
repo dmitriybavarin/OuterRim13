@@ -2,6 +2,7 @@ import { Box, Button, Divider, Image, Section } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { processedText } from '../process';
 
@@ -36,6 +37,7 @@ type ChannelMessages = {
 
 export const Newspaper = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { channels = [], current_page, scribble_message } = data;
 
   return (
@@ -48,7 +50,7 @@ export const Newspaper = (props) => {
             disabled={!current_page}
             onClick={() => act('prev_page')}
           >
-            Previous Page
+            {t('newspaper-prev', {}, 'Previous Page')}
           </Button>
           <Button
             icon="arrow-right"
@@ -56,7 +58,7 @@ export const Newspaper = (props) => {
             disabled={current_page === channels.length + 1}
             onClick={() => act('next_page')}
           >
-            Next Page
+            {t('newspaper-next', {}, 'Next Page')}
           </Button>
         </Section>
         {current_page === channels.length + 1 ? (
@@ -83,24 +85,37 @@ export const Newspaper = (props) => {
 
 const NewspaperIntro = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { channels = [], wanted_criminal = [] } = data;
 
   return (
     <Section>
       <Box bold fontSize="30px">
-        The Griffon
+        {t('newspaper-name', {}, 'The Griffon')}
       </Box>
       <Box bold fontSize="15px">
-        For use on Space Facilities only!
+        {t('newspaper-slogan', {}, 'For use on Space Facilities only!')}
       </Box>
-      <Box fontSize="12px">Table of Contents:</Box>
+      <Box fontSize="12px">
+        {t('newspaper-contents', {}, 'Table of Contents:')}
+      </Box>
       {channels.map((channel) => (
         <Box key={channel.page_number}>
-          Page {channel.page_number || 0}: {channel.name}
+          {t(
+            'newspaper-page-entry',
+            { page: channel.page_number || 0, name: channel.name },
+            `Page ${channel.page_number || 0}: ${channel.name}`,
+          )}
         </Box>
       ))}
       {!!wanted_criminal && (
-        <Box bold>Last Page: Important Security Announcement</Box>
+        <Box bold>
+          {t(
+            'newspaper-last-page',
+            {},
+            'Last Page: Important Security Announcement',
+          )}
+        </Box>
       )}
     </Section>
   );
@@ -108,6 +123,7 @@ const NewspaperIntro = (props) => {
 
 const NewspaperChannel = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { channel_has_messages, channel_data = [] } = data;
 
   return (
@@ -118,7 +134,11 @@ const NewspaperChannel = (props) => {
             {individual_channel.channel_name}
           </Box>
           <Box fontSize="12px">
-            Channel made by: {individual_channel.author_name}
+            {t(
+              'newspaper-channel-author',
+              { author: individual_channel.author_name },
+              `Channel made by: ${individual_channel.author_name}`,
+            )}
           </Box>
           {channel_has_messages
             ? individual_channel.channel_messages.map((message) => (
@@ -128,12 +148,22 @@ const NewspaperChannel = (props) => {
                       dangerouslySetInnerHTML={processedText(message.message)}
                     />
                     {!!message.photo && <Image src={message.photo} />}
-                    <Box>Written by: {message.author}</Box>
+                    <Box>
+                      {t(
+                        'newspaper-written-by',
+                        { author: message.author },
+                        `Written by: ${message.author}`,
+                      )}
+                    </Box>
                   </Box>
                   <Divider />
                 </>
               ))
-            : 'No feed stories stem from this channel...'}
+            : t(
+                'newspaper-no-stories',
+                {},
+                'No feed stories stem from this channel...',
+              )}
         </Box>
       ))}
     </Section>
@@ -142,6 +172,7 @@ const NewspaperChannel = (props) => {
 
 const NewspaperEnding = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { wanted_criminal, wanted_body, wanted_photo } = data;
 
   return (
@@ -149,14 +180,30 @@ const NewspaperEnding = (props) => {
       {wanted_criminal ? (
         <>
           <Box bold fontSize="15px">
-            Wanted Issue
+            {t('newspaper-wanted', {}, 'Wanted Issue')}
           </Box>
-          <Box fontSize="12px">Criminal Name: {wanted_criminal}</Box>
-          <Box>Description: {wanted_body}</Box>
+          <Box fontSize="12px">
+            {t(
+              'newspaper-criminal',
+              { name: wanted_criminal },
+              `Criminal Name: ${wanted_criminal}`,
+            )}
+          </Box>
+          <Box>
+            {t(
+              'newspaper-description',
+              { description: wanted_body },
+              `Description: ${wanted_body}`,
+            )}
+          </Box>
           {!!wanted_photo && <Image src={wanted_photo} />}
         </>
       ) : (
-        'Apart from some uninteresting classified ads, theres nothing in this page...'
+        t(
+          'newspaper-nothing',
+          {},
+          'Apart from some uninteresting classified ads, theres nothing in this page...',
+        )
       )}
     </Section>
   );

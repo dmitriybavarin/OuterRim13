@@ -1,6 +1,7 @@
 import { Box, Icon, Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { type Objective, ObjectivePrintout } from './common/Objectives';
 
@@ -10,6 +11,7 @@ type Data = {
 
 export const AntagInfoBrainwashed = (porps) => {
   const { data } = useBackend<Data>();
+  const t = useT();
 
   return (
     <Window width={400} height={400} theme="abductor">
@@ -25,11 +27,11 @@ export const AntagInfoBrainwashed = (porps) => {
         <Section fill>
           <Stack fill vertical g={0} textAlign="center">
             <Stack.Item fontFamily="Wingdings">
-              Hey, no! Stop translating this!
+              {t('antaginfo-brainwashed-wingdings-top')}
             </Stack.Item>
-            <Stack.Item fontSize="20px">Your mind reels...</Stack.Item>
+            <Stack.Item fontSize="20px">{t('antaginfo-brainwashed-mind-reels')}</Stack.Item>
             <Stack.Item fontSize="20px">
-              It is focusing on a single purpose...
+              {t('antaginfo-brainwashed-single-purpose')}
             </Stack.Item>
             <Stack.Item mt={3.5} grow>
               <ObjectivePrintout
@@ -37,16 +39,16 @@ export const AntagInfoBrainwashed = (porps) => {
                 objectives={data.objectives}
                 objectiveFollowup={
                   <Box bold textColor="red">
-                    This Directive must be followed.
+                    {t('antaginfo-brainwashed-directive-followup')}
                   </Box>
                 }
               />
             </Stack.Item>
             <Stack.Item mb={0.5} fontSize="20px" textColor="#61e4b9">
-              Follow the directives at any cost!
+              {t('antaginfo-brainwashed-follow-directives')}
             </Stack.Item>
             <Stack.Item fontFamily="Wingdings">
-              You ruined my cool font effect.
+              {t('antaginfo-brainwashed-wingdings-bottom')}
             </Stack.Item>
           </Stack>
         </Section>

@@ -2,6 +2,7 @@ import { Box, Button, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -12,6 +13,7 @@ type Data = {
 export const NoticeBoard = (props) => {
   const { act, data } = useBackend<Data>();
   const { allowed, items = [] } = data;
+  const t = useT();
 
   return (
     <Window width={425} height={220}>
@@ -19,7 +21,7 @@ export const NoticeBoard = (props) => {
         {!items.length ? (
           <Section>
             <Box color="white" align="center">
-              The notice board is empty!
+              {t('noticeboard-empty', {}, 'The notice board is empty!')}
             </Box>
           </Section>
         ) : (

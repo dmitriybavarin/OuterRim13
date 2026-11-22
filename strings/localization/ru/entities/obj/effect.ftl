@@ -1524,12 +1524,12 @@ ent-obj-effect-particle_effect-fluid-foam-metal = алюминиевая пен�
     .pre = алюминиевой пене
 
 # name: iron foam
-ent-obj-effect-particle_effect-fluid-foam-metal-iron = железная пена
-    .gen = железной пены
-    .dat = железной пене
-    .acc = железную пену
-    .ins = железной пеной
-    .pre = железной пене
+ent-obj-effect-particle_effect-fluid-foam-metal-iron = стальная пена
+    .gen = стальной пены
+    .dat = стальной пене
+    .acc = стальную пену
+    .ins = стальной пеной
+    .pre = стальной пене
 
 # name: resin foam
 ent-obj-effect-particle_effect-fluid-foam-metal-resin = смоляная пена

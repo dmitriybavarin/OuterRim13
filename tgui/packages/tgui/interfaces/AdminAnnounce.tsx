@@ -32,6 +32,9 @@ type Data = {
   max_length: number;
   sender_default: string;
   command_name: string;
+  header_command: string;
+  header_captain: string;
+  header_syndicate: string;
   history: HistoryEntry[];
   players_all: number;
   players_station: number;
@@ -40,16 +43,62 @@ type Data = {
 const KINDS = ['server', 'command', 'captain', 'syndicate', 'custom'] as const;
 const AUDIENCES = ['all', 'station'] as const;
 
-const COLOR_HEX: Record<string, string> = {
-  default: '#4c6fb0',
-  green: '#2f8f4a',
-  blue: '#2f6fd0',
-  pink: '#d05fa0',
-  yellow: '#c8b21f',
-  orange: '#d9822b',
-  red: '#c0392b',
-  purple: '#8e44ad',
+type AlertStyle = {
+  stripe: string;
+  alt: string;
+  header: string;
+  sub: string;
+  body: string;
 };
+
+const SUB_PINK = 'hsl(336.1, 100%, 66.1%)';
+const SUB_CYAN = 'hsl(192.4, 100%, 60%)';
+
+const ALERT_STYLES: Record<string, AlertStyle> = {
+  default: { stripe: 'hsl(198.6, 100%, 11.4%)', alt: 'hsl(198.3, 100%, 13.5%)', header: 'hsl(192.4, 100%, 60%)', sub: SUB_PINK, body: 'hsl(198.6, 100%, 6.4%)' },
+  blue: { stripe: 'hsl(198.6, 100%, 11.4%)', alt: 'hsl(198.3, 100%, 13.5%)', header: 'hsl(192.4, 100%, 60%)', sub: SUB_PINK, body: 'hsl(198.6, 100%, 6.4%)' },
+  green: { stripe: 'hsl(120, 100%, 12%)', alt: 'hsl(120, 100%, 13.9%)', header: 'hsl(150.1, 100%, 50%)', sub: 'hsl(336.4, 100%, 76.1%)', body: 'hsl(120, 100%, 7%)' },
+  pink: { stripe: 'hsl(326.2, 100%, 9.4%)', alt: 'hsl(325.3, 100%, 12.5%)', header: 'hsl(336.1, 100%, 66.1%)', sub: SUB_CYAN, body: 'hsl(326.2, 100%, 4.4%)' },
+  yellow: { stripe: 'hsl(51, 100%, 17.1%)', alt: 'hsl(50.6, 100%, 15.1%)', header: 'hsl(38.7, 100%, 93.9%)', sub: SUB_CYAN, body: 'hsl(51, 100%, 12.1%)' },
+  orange: { stripe: 'hsl(35.1, 100%, 17.5%)', alt: 'hsl(37, 100%, 21%)', header: 'hsl(20.9, 92%, 95.1%)', sub: SUB_CYAN, body: 'hsl(35.1, 100%, 12.5%)' },
+  red: { stripe: 'hsl(0, 100%, 12.9%)', alt: 'hsl(0, 100%, 16.1%)', header: 'hsl(336.1, 100%, 66.1%)', sub: SUB_CYAN, body: 'hsl(0, 100%, 7.9%)' },
+  purple: { stripe: 'hsl(295, 100%, 9.4%)', alt: 'hsl(295.1, 100%, 12%)', header: 'hsl(266.5, 84.3%, 80%)', sub: SUB_CYAN, body: 'hsl(295, 100%, 4.4%)' },
+  white: { stripe: 'hsl(0, 0%, 22%)', alt: 'hsl(0, 0%, 26%)', header: 'hsl(0, 0%, 100%)', sub: SUB_CYAN, body: 'hsl(0, 0%, 17%)' },
+  grey: { stripe: 'hsl(0, 0%, 14.5%)', alt: 'hsl(0, 0%, 16.1%)', header: 'hsl(336.1, 100%, 66.1%)', sub: SUB_CYAN, body: 'hsl(0, 0%, 9.5%)' },
+};
+
+function AlertPreview(props: {
+  style: AlertStyle;
+  header: string;
+  title: string;
+  text: string;
+}) {
+  const { style, header, title, text } = props;
+  return (
+    <Box
+      style={{
+        fontWeight: 'bold',
+        borderWidth: '4px',
+        borderStyle: 'solid',
+        borderImage: `repeating-linear-gradient(-45deg, ${style.alt}, ${style.alt} 10px, ${style.stripe} 10px, ${style.stripe} 20px) 4 fill / 4px / 0 repeat`,
+      }}
+    >
+      <Box p="0.5rem 0">
+        <Box px={1} style={{ fontSize: '175%', lineHeight: '100%', color: style.header }}>
+          {header}
+        </Box>
+        {!!title && (
+          <Box px={1} pt={0.5} style={{ fontSize: '125%', lineHeight: '100%', color: style.sub }}>
+            {title}
+          </Box>
+        )}
+      </Box>
+      <Box p="0.5rem" preserveWhitespace style={{ background: style.body, color: 'hsl(0, 0%, 91.8%)' }}>
+        {text}
+      </Box>
+    </Box>
+  );
+}
 
 export function AdminAnnounce() {
   const { act, data: raw } = useBackend<Partial<Data>>();
@@ -59,6 +108,9 @@ export function AdminAnnounce() {
     max_length: raw.max_length ?? 2000,
     sender_default: raw.sender_default ?? '',
     command_name: raw.command_name ?? '',
+    header_command: raw.header_command ?? '',
+    header_captain: raw.header_captain ?? '',
+    header_syndicate: raw.header_syndicate ?? '',
     history: raw.history ?? [],
     players_all: raw.players_all ?? 0,
     players_station: raw.players_station ?? 0,
@@ -84,11 +136,14 @@ export function AdminAnnounce() {
       case 'server':
         return t('adminannounce-sender-server', { sender: data.sender_default });
       case 'command':
-        return t('adminannounce-sender-command', { name: data.command_name });
+        return (
+          data.header_command ||
+          t('adminannounce-sender-command', { name: data.command_name })
+        );
       case 'captain':
-        return t('adminannounce-sender-captain');
+        return data.header_captain || t('adminannounce-sender-captain');
       case 'syndicate':
-        return t('adminannounce-sender-syndicate');
+        return data.header_syndicate || t('adminannounce-sender-syndicate');
       default:
         return sender || t('adminannounce-sender-empty');
     }
@@ -233,27 +288,32 @@ export function AdminAnnounce() {
           </Stack.Item>
           <Stack.Item>
             <Section title={t('adminannounce-section-preview')}>
-              <Box
-                p={1}
-                style={{
-                  borderLeft: `4px solid ${
-                    isServer ? '#4c6fb0' : (COLOR_HEX[color] ?? '#4c6fb0')
-                  }`,
-                  background: 'rgba(255, 255, 255, 0.05)',
-                }}
-              >
-                <Box bold fontSize="1.3em" color="bad">
-                  {senderLabel()}
-                </Box>
-                {!!title && (
-                  <Box bold mt={0.5}>
-                    {title}
+              {isServer ? (
+                <Box
+                  p={1}
+                  style={{
+                    background: 'hsl(50.6, 100%, 15.1%)',
+                    border: '1px solid hsl(47.9, 100%, 40%)',
+                    color: 'white',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  <Box style={{ color: 'hsl(47.9, 100%, 40%)' }}>
+                    {senderLabel()}
                   </Box>
-                )}
-                <Box mt={0.5} preserveWhitespace>
-                  {text || t('adminannounce-preview-empty')}
+                  {!!title && <Box mt={0.5}>{title}</Box>}
+                  <Box mt={0.5} preserveWhitespace>
+                    {text || t('adminannounce-preview-empty')}
+                  </Box>
                 </Box>
-              </Box>
+              ) : (
+                <AlertPreview
+                  style={ALERT_STYLES[color] ?? ALERT_STYLES.default}
+                  header={senderLabel()}
+                  title={title}
+                  text={text || t('adminannounce-preview-empty')}
+                />
+              )}
               <Box color="label" mt={1}>
                 {t('adminannounce-audience-summary', {
                   count:

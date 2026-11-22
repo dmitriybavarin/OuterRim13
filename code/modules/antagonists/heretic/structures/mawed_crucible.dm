@@ -21,7 +21,7 @@
 
 /obj/structure/destructible/eldritch_crucible/Initialize(mapload)
 	. = ..()
-	break_message = span_warning("[src] falls apart with a thud!")
+	break_message = span_warning(loc_key("heretic-structure-crucible-break", list(item = src)))
 	START_PROCESSING(SSobj, src)
 
 /obj/structure/destructible/eldritch_crucible/process(seconds_per_tick)
@@ -37,7 +37,7 @@
 /obj/structure/destructible/eldritch_crucible/atom_deconstruct(disassembled = TRUE)
 	// Create a spillage if we were destroyed with leftover mass
 	if(current_mass)
-		break_message = span_warning("[src] falls apart with a thud, spilling shining extract everywhere!")
+		break_message = span_warning(loc_key("heretic-structure-crucible-break-spill", list(item = src)))
 		var/turf/our_turf = get_turf(src)
 
 		new /obj/effect/decal/cleanable/greenglow(our_turf)
@@ -54,23 +54,23 @@
 		return
 
 	if(current_mass > 0)
-		. += span_notice("You can refill an eldritch flask with this")
+		. += span_notice(LOC_KEY("heretic-structure-crucible-refill"))
 
 	if(current_mass < max_mass)
 		var/to_fill = max_mass - current_mass
-		. += span_notice("[src] requires <b>[to_fill]</b> more organ[to_fill == 1 ? "":"s"] or bodypart[to_fill == 1 ? "":"s"].")
+		. += span_notice(loc_key("heretic-structure-crucible-requires", list(item = src, count = to_fill)))
 	else
-		. += span_boldnotice("[src] is bubbling to the brim with viscous liquid, and is ready to use.")
+		. += span_boldnotice(loc_key("heretic-structure-crucible-ready", list(item = src)))
 
-	. += span_notice("You can <b>[anchored ? "unanchor and move":"anchor in place"]</b> [src] with a <b>Codex Cicatrix</b> or <b>Mansus Grasp</b>.")
-	. += span_info("The following potions can be brewed:")
+	. += span_notice(anchored ? loc_key("heretic-structure-crucible-anchor-unanchor", list(item = src)) : loc_key("heretic-structure-crucible-anchor-place", list(item = src)))
+	. += span_info(LOC_KEY("heretic-structure-crucible-list"))
 	for(var/obj/item/eldritch_potion/potion as anything in subtypesof(/obj/item/eldritch_potion))
 		var/potion_string = span_info("\tThe " + initial(potion.name) + " - " + initial(potion.crucible_tip))
 		. += potion_string
 
 /obj/structure/destructible/eldritch_crucible/examine_status(mob/user)
 	if(IS_HERETIC_OR_MONSTER(user) || isobserver(user))
-		return span_notice("It's at <b>[round(atom_integrity * 100 / max_integrity)]%</b> stability.")
+		return span_notice(loc_key("heretic-structure-crucible-stability", list(percent = round(atom_integrity * 100 / max_integrity))))
 	return ..()
 
 // no breaky herety thingy
@@ -81,26 +81,26 @@
 	if(istype(tool, /obj/item/codex_cicatrix) || istype(tool, /obj/item/melee/touch_attack/mansus_fist))
 		playsound(src, 'sound/items/deconstruct.ogg', 30, TRUE, ignore_walls = FALSE)
 		set_anchored(!anchored)
-		balloon_alert(user, "[anchored ? "":"un"]anchored")
+		balloon_alert(user, anchored ? LOC_KEY("heretic-structure-crucible-anchored") : LOC_KEY("heretic-structure-crucible-unanchored"))
 		return ITEM_INTERACT_SUCCESS
 	if(istype(tool, /obj/item/reagent_containers/cup/beaker/eldritch))
 		if(current_mass < max_mass)
-			balloon_alert(user, "not full enough!")
+			balloon_alert(user, LOC_KEY("heretic-structure-crucible-not-full"))
 			return ITEM_INTERACT_SUCCESS
 		var/obj/item/reagent_containers/cup/beaker/eldritch/to_fill = tool
 		if(to_fill.reagents.total_volume >= to_fill.reagents.maximum_volume)
-			balloon_alert(user, "flask is full!")
+			balloon_alert(user, LOC_KEY("heretic-structure-crucible-flask-full"))
 			return ITEM_INTERACT_SUCCESS
 		to_fill.reagents.add_reagent(/datum/reagent/eldritch, 50)
 		do_item_attack_animation(src, used_item = tool, animation_type = ATTACK_ANIMATION_BLUNT)
 		current_mass--
-		balloon_alert(user, "refilled flask")
+		balloon_alert(user, LOC_KEY("heretic-structure-crucible-refilled"))
 		return ITEM_INTERACT_SUCCESS
 
 	if(isbodypart(tool))
 		var/obj/item/bodypart/consumed = tool
 		if(!IS_ORGANIC_LIMB(consumed))
-			balloon_alert(user, "not organic!")
+			balloon_alert(user, LOC_KEY("heretic-structure-crucible-not-organic"))
 			return ITEM_INTERACT_BLOCKING
 		if(!IS_HERETIC_OR_MONSTER(user))
 			if(user.combat_mode)
@@ -113,10 +113,10 @@
 	if(isorgan(tool))
 		var/obj/item/organ/consumed = tool
 		if(!IS_ORGANIC_ORGAN(consumed))
-			balloon_alert(user, "not organic!")
+			balloon_alert(user, LOC_KEY("heretic-structure-crucible-not-organic"))
 			return ITEM_INTERACT_BLOCKING
 		if(consumed.organ_flags & ORGAN_VITAL) // Basically, don't eat organs like brains
-			balloon_alert(user, "invalid organ!")
+			balloon_alert(user, LOC_KEY("heretic-structure-crucible-invalid-organ"))
 			return ITEM_INTERACT_BLOCKING
 		if(!IS_HERETIC_OR_MONSTER(user))
 			if(user.combat_mode)
@@ -142,11 +142,11 @@
 		return TRUE
 
 	if(in_use)
-		balloon_alert(user, "in use!")
+		balloon_alert(user, LOC_KEY("heretic-structure-crucible-in-use"))
 		return TRUE
 
 	if(current_mass < max_mass)
-		balloon_alert(user, "not full enough!")
+		balloon_alert(user, LOC_KEY("heretic-structure-crucible-not-full"))
 		return TRUE
 
 	INVOKE_ASYNC(src, PROC_REF(show_radial), user)
@@ -193,8 +193,8 @@
 	var/obj/item/spawned_pot = new spawned_type(drop_location())
 
 	playsound(src, 'sound/effects/desecration/desecration-02.ogg', 75, TRUE)
-	visible_message(span_notice("[src]'s shining liquid drains into a flask, creating a [spawned_pot.name]!"))
-	balloon_alert(user, "potion created")
+	visible_message(span_notice(loc_key("heretic-structure-crucible-brewed", list(item = src, potion = loc_entity(spawned_pot, spawned_pot.name)))))
+	balloon_alert(user, LOC_KEY("heretic-structure-crucible-potion-created"))
 
 	current_mass = 0
 	update_appearance(UPDATE_ICON_STATE)
@@ -212,7 +212,7 @@
 	if(QDELETED(arm))
 		return
 
-	to_chat(user, span_userdanger("[src] grabs your [arm.plaintext_zone]!"))
+	to_chat(user, span_userdanger(loc_key("heretic-structure-crucible-grabs", list(item = src, zone = loc_zone(arm.plaintext_zone)))))
 	arm.dismember()
 	consume_fuel(consumed = arm)
 
@@ -223,15 +223,15 @@
 /obj/structure/destructible/eldritch_crucible/proc/consume_fuel(mob/living/feeder, obj/item/consumed)
 	if(current_mass >= max_mass)
 		if(feeder)
-			balloon_alert(feeder, "crucible full!")
+			balloon_alert(feeder, LOC_KEY("heretic-structure-crucible-full"))
 		return
 
 	current_mass++
 	playsound(src, 'sound/items/eatfood.ogg', 100, TRUE)
-	visible_message(span_notice("[src] devours [consumed] and fills itself with a little bit of liquid!"))
+	visible_message(span_notice(loc_key("heretic-structure-crucible-devours", list(item = src, consumed = consumed))))
 
 	if(feeder)
-		balloon_alert(feeder, "crubile fed ([current_mass] / [max_mass])")
+		balloon_alert(feeder, loc_key("heretic-structure-crucible-fed", list(mass = current_mass, max = max_mass)))
 
 	qdel(consumed)
 	update_appearance(UPDATE_ICON_STATE)
@@ -276,13 +276,13 @@
 	playsound(src, 'sound/effects/bubbles/bubbles.ogg', 50, TRUE)
 
 	if(!IS_HERETIC_OR_MONSTER(user))
-		to_chat(user, span_danger("You down some of the liquid from [src]. The taste causes you to retch, and the glass vanishes."))
+		to_chat(user, span_danger(loc_key("heretic-structure-potion-down", list(item = src))))
 		user.reagents?.add_reagent(/datum/reagent/eldritch, 10)
 		user.adjust_disgust(50)
 		qdel(src)
 		return TRUE
 
-	to_chat(user, span_notice("You drink the viscous liquid from [src], causing the glass to dematerialize."))
+	to_chat(user, span_notice(loc_key("heretic-structure-potion-drink", list(item = src))))
 	potion_effect(user)
 	qdel(src)
 	return TRUE
@@ -301,12 +301,12 @@
 	desc = "A glass bottle containing a bright orange, translucent liquid."
 	icon_state = "crucible_soul"
 	status_effect = /datum/status_effect/crucible_soul
-	crucible_tip = "Allows you to walk through walls. After expiring, you are teleported to your original location. Lasts 40 seconds."
+	crucible_tip = LOC_KEY("heretic-structure-potion-tip-soul")
 	can_refresh = FALSE
 
 /obj/item/eldritch_potion/crucible_soul/attack_self(mob/user)
 	if(user.has_status_effect(/datum/status_effect/crucible_soul_cooldown))
-		balloon_alert(user, "on cooldown!")
+		balloon_alert(user, LOC_KEY("heretic-structure-potion-cooldown"))
 		return TRUE
 	return ..()
 
@@ -315,13 +315,11 @@
 	desc = "A glass bottle containing a dull yellow liquid. It seems to fade in and out with regularity."
 	icon_state = "clarity"
 	status_effect = /datum/status_effect/duskndawn
-	crucible_tip = "Allows you to see through walls and objects. Lasts 90 seconds."
+	crucible_tip = LOC_KEY("heretic-structure-potion-tip-duskndawn")
 
 /obj/item/eldritch_potion/wounded
 	name = "brew of the wounded soldier"
 	desc = "A glass bottle containing a colorless, dark liquid."
 	icon_state = "marshal"
 	status_effect = /datum/status_effect/marshal
-	crucible_tip = "Causes all wounds you are experiencing to begin to heal you. Fractures, sprains, cuts, and punctures will heal bruises, \
-		and flesh damage will heal burns. The more severe the wounds, the stronger the healing. Additionally, prevents slowdown from damage. \
-		Lasts 60 seconds. "
+	crucible_tip = LOC_KEY("heretic-structure-potion-tip-wounded")

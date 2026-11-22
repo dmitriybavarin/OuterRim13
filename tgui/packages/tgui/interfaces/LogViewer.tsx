@@ -9,6 +9,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type LogViewerData = {
@@ -89,15 +90,16 @@ type CategoryBarProps = {
 
 const CategoryBar = (props: CategoryBarProps) => {
   const sorted = [...props.options].sort();
+  const t = useT();
   const [categorySearch, setCategorySearch] = useState('');
 
   return (
     <Section
-      title="Categories"
+      title={t('logviewer-categories', {}, 'Categories')}
       scrollableHorizontal
       buttons={
         <Input
-          placeholder="Search"
+          placeholder={t('logviewer-search', {}, 'Search')}
           value={categorySearch}
           onChange={setCategorySearch}
         />
@@ -109,14 +111,14 @@ const CategoryBar = (props: CategoryBarProps) => {
           selected={props.active === ''}
           onClick={() => props.setActive('')}
         >
-          None
+          {t('logviewer-none', {}, 'None')}
         </Button>
         <Button
-          tooltip="This can be slow!"
+          tooltip={t('logviewer-slow', {}, 'This can be slow!')}
           selected={props.active === CATEGORY_ALL}
           onClick={() => props.setActive(CATEGORY_ALL)}
         >
-          All
+          {t('logviewer-all', {}, 'All')}
         </Button>
         {sorted
           .filter((cat) =>
@@ -151,6 +153,7 @@ const validateRegExp = (str: string) => {
 };
 
 const CategoryViewer = (props: CategoryViewerProps) => {
+  const t = useT();
   const [search, setSearch] = useState('');
   let [searchRegex, setSearchRegex] = useState(false);
   const [caseSensitive, setCaseSensitive] = useState(false);
@@ -165,29 +168,44 @@ const CategoryViewer = (props: CategoryViewerProps) => {
 
   return (
     <Section
-      title={`Category Viewer${
+      title={
         props.activeCategory
-          ? ` - ${props.activeCategory}[${props.data?.entry_count}]`
-          : ' - Select a category'
-      }`}
+          ? t(
+              'logviewer-viewer-category',
+              {
+                category: props.activeCategory,
+                count: props.data?.entry_count ?? 0,
+              },
+              'Category Viewer - { $category }[{ $count }]',
+            )
+          : t(
+              'logviewer-viewer-select',
+              {},
+              'Category Viewer - Select a category',
+            )
+      }
       buttons={
         <>
-          <Input placeholder="Search" value={search} onChange={setSearch} />
+          <Input
+            placeholder={t('logviewer-search', {}, 'Search')}
+            value={search}
+            onChange={setSearch}
+          />
           <Button
             icon="code"
-            tooltip="RegEx Search"
+            tooltip={t('logviewer-regex', {}, 'RegEx Search')}
             selected={searchRegex}
             onClick={() => setSearchRegex(!searchRegex)}
           />
           <Button
             icon="font"
             selected={caseSensitive}
-            tooltip="Case Sensitive"
+            tooltip={t('logviewer-case', {}, 'Case Sensitive')}
             onClick={() => setCaseSensitive(!caseSensitive)}
           />
           <Button
             icon="trash"
-            tooltip="Clear Search"
+            tooltip={t('logviewer-clear', {}, 'Clear Search')}
             color="bad"
             onClick={() => {
               setSearch('');
@@ -237,7 +255,10 @@ const CategoryViewer = (props: CategoryViewerProps) => {
                     </Stack.Item>
                     {entry.data && (
                       <Stack.Item>
-                        <JsonViewer data={entry.data} title="Data" />
+                        <JsonViewer
+                          data={entry.data}
+                          title={t('logviewer-data', {}, 'Data')}
+                        />
                       </Stack.Item>
                     )}
                   </Stack>
@@ -247,7 +268,11 @@ const CategoryViewer = (props: CategoryViewerProps) => {
           })
         ) : (
           <NoticeBox danger>
-            Invalid RegEx: {(regexValidation as SyntaxError).message}
+            {t(
+              'logviewer-invalid-regex',
+              { error: (regexValidation as SyntaxError).message },
+              'Invalid RegEx: { $error }',
+            )}
           </NoticeBox>
         )}
       </Stack>

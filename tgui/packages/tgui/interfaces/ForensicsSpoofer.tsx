@@ -11,6 +11,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -24,6 +25,7 @@ type Data = {
 };
 export const ForensicsSpoofer = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     silent,
     scanmode,
@@ -36,7 +38,7 @@ export const ForensicsSpoofer = (props) => {
   const [currentTab, setTab] = useState(0);
   return (
     <Window
-      title="Forensics Spoofing Device"
+      title={t('forensicsspoofer-title', {}, 'Forensics Spoofing Device')}
       width={460}
       height={340}
       theme="syndicate"
@@ -50,8 +52,16 @@ export const ForensicsSpoofer = (props) => {
                   <Button
                     width="100%"
                     icon={silent ? 'eye-slash' : 'eye'}
-                    content={silent ? 'Silent Mode: On' : 'Silent Mode: Off'}
-                    tooltip="On Silent Mode this device will make the same sounds and sights as an actual Forensics Scanner."
+                    content={
+                      silent
+                        ? t('forensicsspoofer-silent-on', {}, 'Silent Mode: On')
+                        : t('forensicsspoofer-silent-off', {}, 'Silent Mode: Off')
+                    }
+                    tooltip={t(
+                      'forensicsspoofer-silent-tooltip',
+                      {},
+                      'On Silent Mode this device will make the same sounds and sights as an actual Forensics Scanner.',
+                    )}
                     onClick={() => act('stealth')}
                   />
                 </Stack.Item>
@@ -59,7 +69,11 @@ export const ForensicsSpoofer = (props) => {
                   <Button
                     width="100%"
                     icon={scanmode ? 'magnifying-glass' : 'share-from-square'}
-                    content={scanmode ? 'Mode: Scan' : 'Mode: Apply'}
+                    content={
+                      scanmode
+                        ? t('forensicsspoofer-mode-scan', {}, 'Mode: Scan')
+                        : t('forensicsspoofer-mode-apply', {}, 'Mode: Apply')
+                    }
                     color={scanmode ? 'blue' : 'red'}
                     onClick={() => act('scanmode')}
                   />
@@ -76,7 +90,8 @@ export const ForensicsSpoofer = (props) => {
                   onClick={() => setTab(0)}
                   width="50%"
                 >
-                  Fingerprints {Object.keys(fingerprints).length}/{max_storage}
+                  {t('forensicsspoofer-fingerprints', {}, 'Fingerprints')}{' '}
+                  {Object.keys(fingerprints).length}/{max_storage}
                 </Tabs.Tab>
                 <Tabs.Tab
                   icon="shirt"
@@ -84,7 +99,8 @@ export const ForensicsSpoofer = (props) => {
                   width="50%"
                   onClick={() => setTab(1)}
                 >
-                  Fibers {Object.keys(fibers).length}/{max_storage}
+                  {t('forensicsspoofer-fibers', {}, 'Fibers')}{' '}
+                  {Object.keys(fibers).length}/{max_storage}
                 </Tabs.Tab>
               </Tabs>
               <Divider />

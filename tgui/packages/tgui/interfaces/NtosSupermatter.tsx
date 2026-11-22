@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, ProgressBar, Section, Table } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { NtosWindow } from '../layouts';
 import { SupermatterContent, type SupermatterData } from './Supermatter';
 
@@ -10,6 +11,7 @@ type NtosSupermatterData = SupermatterData & { focus_uid?: number };
 export const NtosSupermatter = (props) => {
   const { act, data } = useBackend<NtosSupermatterData>();
   const { sm_data, gas_metadata, focus_uid } = data;
+  const t = useT();
   const [activeUID, setActiveUID] = useState(0);
   const activeSM = sm_data.find((sm) => sm.uid === activeUID);
 
@@ -22,17 +24,17 @@ export const NtosSupermatter = (props) => {
             gas_metadata={gas_metadata}
             sectionButton={
               <Button icon="arrow-left" onClick={() => setActiveUID(0)}>
-                Back
+                {t('ntossupermatter-back', {}, 'Back')}
               </Button>
             }
           />
         ) : (
           <Section
-            title="Detected Supermatters"
+            title={t('ntossupermatter-detected', {}, 'Detected Supermatters')}
             buttons={
               <Button
                 icon="sync"
-                content="Refresh"
+                content={t('ntossupermatter-refresh', {}, 'Refresh')}
                 onClick={() => act('PRG_refresh')}
               />
             }
@@ -42,7 +44,7 @@ export const NtosSupermatter = (props) => {
                 <Table.Row key={sm.uid}>
                   <Table.Cell>{`${sm.uid}. ${sm.area_name}`}</Table.Cell>
                   <Table.Cell collapsing color="label">
-                    Integrity:
+                    {t('ntossupermatter-integrity', {}, 'Integrity:')}
                   </Table.Cell>
                   <Table.Cell collapsing width="120px">
                     <ProgressBar
@@ -63,7 +65,7 @@ export const NtosSupermatter = (props) => {
                   </Table.Cell>
                   <Table.Cell collapsing>
                     <Button
-                      content="Details"
+                      content={t('ntossupermatter-details', {}, 'Details')}
                       onClick={() => setActiveUID(sm.uid)}
                     />
                   </Table.Cell>

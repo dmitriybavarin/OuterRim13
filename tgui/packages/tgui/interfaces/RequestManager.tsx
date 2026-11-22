@@ -16,6 +16,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { createSearch, decodeHtmlEntities } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -47,6 +48,7 @@ const displayTypeMap = {
 export const RequestManager = (props) => {
   const { act, data } = useBackend<Data>();
   const { requests = [] } = data;
+  const t = useT();
   const [filteredTypes, setFilteredTypes] = useState(
     Object.fromEntries(
       Object.entries(displayTypeMap).map(([type, _]) => [type, true]),
@@ -74,26 +76,33 @@ export const RequestManager = (props) => {
   }
 
   return (
-    <Window title="Request Manager" width={575} height={600} theme="admin">
+    <Window
+      title={t('requestmanager-title', {}, 'Request Manager')}
+      width={575}
+      height={600}
+      theme="admin"
+    >
       <Window.Content scrollable>
         <Section
-          title="Requests"
+          title={t('requestmanager-requests', {}, 'Requests')}
           buttons={
             <Stack>
               <Stack.Item>
                 <Button.Checkbox
                   checked={data.fax_autoprinting}
                   onClick={() => act('toggleprint')}
-                  tooltip={
-                    'Enables automatic printing of fax requests to the admin fax machine. By default, this fax is located in the briefing room at the central command station'
-                  }
+                  tooltip={t(
+                    'requestmanager-autoprint-tooltip',
+                    {},
+                    'Enables automatic printing of fax requests to the admin fax machine. By default, this fax is located in the briefing room at the central command station',
+                  )}
                 >
-                  Auto-print Faxes
+                  {t('requestmanager-autoprint', {}, 'Auto-print Faxes')}
                 </Button.Checkbox>
                 <Input
                   value={searchText}
                   onChange={setSearchText}
-                  placeholder="Search..."
+                  placeholder={t('requestmanager-search', {}, 'Search...')}
                   mr={1}
                 />
               </Stack.Item>
@@ -134,10 +143,16 @@ export const RequestManager = (props) => {
 
 const RequestType = (props) => {
   const { requestType } = props;
+  const t = useT();
 
   return (
     <b className={`RequestManager__${requestType}`}>
-      {displayTypeMap[requestType]}:
+      {t(
+        `requestmanager-type-${requestType}`,
+        {},
+        displayTypeMap[requestType],
+      )}
+      :
     </b>
   );
 };
@@ -180,6 +195,7 @@ const RequestControls = (props) => {
 
 const FilterPanel = (props) => {
   const [filterVisible, setFilterVisible] = useState(false);
+  const t = useT();
   const { typesList, updateFilter } = props;
 
   return (
@@ -212,7 +228,7 @@ const FilterPanel = (props) => {
         }
       >
         <Button icon="cog" selected={filterVisible}>
-          Type Filter
+          {t('requestmanager-type-filter', {}, 'Type Filter')}
         </Button>
       </Floating>
     </div>

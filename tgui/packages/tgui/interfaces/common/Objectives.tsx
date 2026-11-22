@@ -3,6 +3,7 @@ import { Button, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../../backend';
+import { useT } from '../../i18n';
 
 export type Objective = {
   // The title of the objective, not actually displayed so optional
@@ -39,12 +40,13 @@ export const ObjectivePrintout = (props: ObjectivePrintoutProps) => {
     objectives = [],
     titleMessage,
   } = props;
+  const t = useT();
 
   return (
     <Stack fill={fill} vertical>
-      <Stack.Item bold>{titleMessage || `Your current objectives`}:</Stack.Item>
+      <Stack.Item bold>{titleMessage || t('antaginfo-common-objectives-title')}:</Stack.Item>
       <Stack.Item>
-        {(objectives.length === 0 && 'None!') ||
+        {(objectives.length === 0 && t('antaginfo-common-objectives-none')) ||
           objectives.map((objective) => (
             <Stack.Item fontSize={objectiveTextSize} key={objective.count}>
               {objectivePrefix || '#'}
@@ -73,9 +75,10 @@ export const ReplaceObjectivesButton = (props: ReplaceObjectivesProps) => {
     can_change_objective,
     button_title,
     button_colour,
-    button_tooltip = 'Replace your existing objectives with a custom one. This action can only be taken once',
+    button_tooltip,
   } = props;
   const { act } = useBackend();
+  const t = useT();
   if (!can_change_objective) {
     return null;
   }
@@ -83,7 +86,7 @@ export const ReplaceObjectivesButton = (props: ReplaceObjectivesProps) => {
     <Button
       color={button_colour}
       content={button_title}
-      tooltip={button_tooltip}
+      tooltip={button_tooltip ?? t('antaginfo-common-objectives-replace-tooltip')}
       onClick={() => act('change_objectives')}
     />
   );

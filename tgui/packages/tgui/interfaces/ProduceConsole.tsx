@@ -18,6 +18,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { capitalize, createSearch } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type OrderDatum = {
@@ -82,6 +83,7 @@ function findAmount(item_amts: Item[], name: string): number {
 
 function ShoppingTab(props) {
   const { data, act } = useBackend<Data>();
+  const t = useT();
   const { credit_type, order_categories, order_datums, item_amts } = data;
 
   const [shopCategory, setShopCategory] = useState(order_categories[0]);
@@ -122,7 +124,7 @@ function ShoppingTab(props) {
                 autoFocus
                 mt={0.5}
                 width="150px"
-                placeholder="Search item..."
+                placeholder={t('produceconsole-search', {}, 'Search item...')}
                 value={searchItem}
                 onChange={setSearchItem}
               />
@@ -161,7 +163,11 @@ function ShoppingTab(props) {
                 </Table.Cell>
                 <Table.Cell fontSize="10px" collapsing textAlign="right">
                   <Tooltip
-                    content={`Costs ${item.cost} ${credit_type} per order`}
+                    content={t(
+                      'produceconsole-costs',
+                      { cost: item.cost, credit: credit_type },
+                      `Costs ${item.cost} ${credit_type} per order`,
+                    )}
                     position="top"
                   >
                     {item.cost} <CreditIcon credit_type={credit_type} />
@@ -221,6 +227,7 @@ type OrderDatumWithFreeUses = OrderDatum & {
 
 function CheckoutTab(props) {
   const { data, act } = useBackend<Data>();
+  const t = useT();
   const {
     credit_type,
     purchase_tooltip,
@@ -286,17 +293,21 @@ function CheckoutTab(props) {
           <Table>
             <Table.Row>
               <Table.Cell header colSpan={3} textAlign="center" color="label">
-                Checkout list:
+                {t('produceconsole-checkout-list', {}, 'Checkout list:')}
               </Table.Cell>
             </Table.Row>
             {!checkout_list.length && (
               <>
                 <Box align="center" mt="15%" fontSize="40px">
-                  Nothing!
+                  {t('produceconsole-nothing', {}, 'Nothing!')}
                 </Box>
                 <br />
                 <Box align="center" mt={2} fontSize="15px">
-                  (Go order something, will ya?)
+                  {t(
+                    'produceconsole-order-something',
+                    {},
+                    '(Go order something, will ya?)',
+                  )}
                 </Box>
               </>
             )}
@@ -312,11 +323,15 @@ function CheckoutTab(props) {
                 <Table.Cell fontSize="10px" collapsing textAlign="right">
                   {item.is_free ? (
                     <Box color="green" fontSize="10px">
-                      Free
+                      {t('produceconsole-free', {}, 'Free')}
                     </Box>
                   ) : (
                     <Tooltip
-                      content={`Costs ${item.cost} ${credit_type} per order`}
+                      content={t(
+                        'produceconsole-costs',
+                        { cost: item.cost, credit: credit_type },
+                        `Costs ${item.cost} ${credit_type} per order`,
+                      )}
                       position="top"
                     >
                       {item.cost} <CreditIcon credit_type={credit_type} />
@@ -358,13 +373,18 @@ function CheckoutTab(props) {
                   disabled={total_cargo_cost < cargo_value}
                   tooltip={
                     total_cargo_cost < cargo_value
-                      ? `Total must be above or equal to ${cargo_value}`
+                      ? t(
+                          'produceconsole-total-min',
+                          { value: cargo_value },
+                          `Total must be above or equal to ${cargo_value}`,
+                        )
                       : purchase_tooltip
                   }
                   tooltipPosition="top"
                   onClick={() => act('purchase')}
                 >
-                  Purchase: {total_cargo_cost}{' '}
+                  {t('produceconsole-purchase', {}, 'Purchase:')}{' '}
+                  {total_cargo_cost}{' '}
                   <CreditIcon credit_type={credit_type} color="white" />
                 </Button>
               </Stack.Item>
@@ -377,13 +397,18 @@ function CheckoutTab(props) {
                 disabled={total_item_count <= 0}
                 tooltip={
                   total_item_count <= 0
-                    ? 'Order at least 1 item'
+                    ? t(
+                        'produceconsole-order-one',
+                        {},
+                        'Order at least 1 item',
+                      )
                     : express_tooltip
                 }
                 tooltipPosition="top-start"
                 onClick={() => act('express')}
               >
-                Express: {total_cost * express_cost_multiplier}{' '}
+                {t('produceconsole-express', {}, 'Express:')}{' '}
+                {total_cost * express_cost_multiplier}{' '}
                 <CreditIcon credit_type={credit_type} color="black" />
               </Button>
             </Stack.Item>
@@ -395,6 +420,7 @@ function CheckoutTab(props) {
 }
 
 function OrderSent(props) {
+  const t = useT();
   return (
     <Dimmer>
       <Stack vertical>
@@ -402,7 +428,11 @@ function OrderSent(props) {
           <Icon ml="28%" color="green" name="plane-arrival" size={10} />
         </Stack.Item>
         <Stack.Item fontSize="18px" color="green">
-          Order sent! Machine on cooldown...
+          {t(
+            'produceconsole-order-sent',
+            {},
+            'Order sent! Machine on cooldown...',
+          )}
         </Stack.Item>
       </Stack>
     </Dimmer>
@@ -416,6 +446,7 @@ enum Tab {
 
 export function ProduceConsole(props) {
   const { data } = useBackend<Data>();
+  const t = useT();
   const {
     credit_type,
     points = 0,
@@ -451,7 +482,7 @@ export function ProduceConsole(props) {
                         icon="cart-plus"
                         onClick={() => setTabIndex(Tab.Shopping)}
                       >
-                        Shopping
+                        {t('produceconsole-shopping', {}, 'Shopping')}
                       </Button>
                     </Stack.Item>
                     <Stack.Item grow>
@@ -462,7 +493,7 @@ export function ProduceConsole(props) {
                         icon="dollar-sign"
                         onClick={() => setTabIndex(Tab.Checkout)}
                       >
-                        Checkout
+                        {t('produceconsole-checkout', {}, 'Checkout')}
                       </Button>
                     </Stack.Item>
                   </Stack>
@@ -474,7 +505,9 @@ export function ProduceConsole(props) {
                         color={condensed ? 'green' : 'red'}
                         onClick={() => setCondensed(!condensed)}
                       >
-                        {condensed ? 'Expand' : 'Condense'}
+                        {condensed
+                          ? t('produceconsole-expand', {}, 'Expand')
+                          : t('produceconsole-condense', {}, 'Condense')}
                       </Button>
                     </Stack.Item>
                     <Stack.Item>
@@ -484,7 +517,11 @@ export function ProduceConsole(props) {
                         </Stack.Item>
                         {free_uses !== null && (
                           <Stack.Item color="grey">
-                            ~ Free Products: {free_uses_remaining} / {free_uses}
+                            {t(
+                              'produceconsole-free-products',
+                              { remaining: free_uses_remaining, total: free_uses },
+                              `~ Free Products: ${free_uses_remaining} / ${free_uses}`,
+                            )}
                           </Stack.Item>
                         )}
                       </Stack>

@@ -9,6 +9,7 @@ import { formatMoney } from 'tgui-core/format';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -20,19 +21,30 @@ type Data = {
 export const BankMachine = (props) => {
   const { act, data } = useBackend<Data>();
   const { current_balance, siphoning, station_name } = data;
+  const t = useT();
 
   return (
     <Window width={350} height={155}>
       <Window.Content>
-        <NoticeBox danger>Authorized personnel only</NoticeBox>
-        <Section title={`${station_name} Vault`}>
+        <NoticeBox danger>
+          {t('bankmachine-warning', {}, 'Authorized personnel only')}
+        </NoticeBox>
+        <Section title={t(
+          'bankmachine-vault',
+          { station: station_name },
+          '{ $station } Vault',
+        )}>
           <LabeledList>
             <LabeledList.Item
-              label="Current Balance"
+              label={t('bankmachine-balance', {}, 'Current Balance')}
               buttons={
                 <Button
                   icon={siphoning ? 'times' : 'sync'}
-                  content={siphoning ? 'Stop Siphoning' : 'Siphon Credits'}
+                  content={
+                    siphoning
+                      ? t('bankmachine-stop', {}, 'Stop Siphoning')
+                      : t('bankmachine-siphon', {}, 'Siphon Credits')
+                  }
                   selected={siphoning}
                   onClick={() => act(siphoning ? 'halt' : 'siphon')}
                 />
@@ -42,7 +54,7 @@ export const BankMachine = (props) => {
                 value={current_balance}
                 format={(value) => formatMoney(value)}
               />
-              {' cr'}
+              {` ${t('bankmachine-cr', {}, 'cr')}`}
             </LabeledList.Item>
           </LabeledList>
         </Section>

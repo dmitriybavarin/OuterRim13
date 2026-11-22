@@ -2,6 +2,7 @@ import { Button, LabeledList, Section } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { ColorItem } from './RapidPipeDispenser';
 
@@ -32,17 +33,22 @@ export const Crayon = (props) => {
     text_buffer,
   } = data;
   const capOrChanges = has_cap || can_change_colour;
+  const t = useT();
 
   return (
     <Window width={600} height={600}>
       <Window.Content scrollable>
         {!!capOrChanges && (
-          <Section title="Basic">
+          <Section title={t('crayon-basic', {}, 'Basic')}>
             <LabeledList>
-              <LabeledList.Item label="Cap">
+              <LabeledList.Item label={t('crayon-cap', {}, 'Cap')}>
                 <Button
                   icon={is_capped ? 'power-off' : 'times'}
-                  content={is_capped ? 'On' : 'Off'}
+                  content={
+                    is_capped
+                      ? t('crayon-on', {}, 'On')
+                      : t('crayon-off', {}, 'Off')
+                  }
                   selected={is_capped}
                   onClick={() => act('toggle_cap')}
                 />
@@ -50,14 +56,14 @@ export const Crayon = (props) => {
               <ColorItem />
               <LabeledList.Item>
                 <Button
-                  content="Custom color"
+                  content={t('crayon-custom-color', {}, 'Custom color')}
                   onClick={() => act('custom_color')}
                 />
               </LabeledList.Item>
             </LabeledList>
           </Section>
         )}
-        <Section title="Stencil">
+        <Section title={t('crayon-stencil', {}, 'Stencil')}>
           <LabeledList>
             {drawables.map((drawable) => {
               const items = drawable.items || [];
@@ -81,13 +87,16 @@ export const Crayon = (props) => {
           </LabeledList>
         </Section>
         {!!is_literate_user && (
-          <Section title="Text">
+          <Section title={t('crayon-text', {}, 'Text')}>
             <LabeledList>
-              <LabeledList.Item label="Current Buffer">
+              <LabeledList.Item label={t('crayon-buffer', {}, 'Current Buffer')}>
                 {text_buffer}
               </LabeledList.Item>
             </LabeledList>
-            <Button content="New Text" onClick={() => act('enter_text')} />
+            <Button
+              content={t('crayon-new-text', {}, 'New Text')}
+              onClick={() => act('enter_text')}
+            />
           </Section>
         )}
       </Window.Content>

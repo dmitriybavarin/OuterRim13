@@ -8,6 +8,7 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
 import { getGasLabel } from '../constants';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -24,6 +25,7 @@ type Filter = {
 
 export const AtmosFilter = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { filter_types = [], on, rate, max_rate } = data;
 
   return (
@@ -33,16 +35,16 @@ export const AtmosFilter = (props) => {
           buttons={
             <Button
               icon={on ? 'power-off' : 'times'}
-              content={on ? 'On' : 'Off'}
+              content={on ? t('atmos-on', {}, 'On') : t('atmos-off', {}, 'Off')}
               selected={on}
               onClick={() => act('power')}
             />
           }
           fill
-          title="Gas Filter"
+          title={t('atmosfilter-title', {}, 'Gas Filter')}
         >
           <LabeledList>
-            <LabeledList.Item label="Transfer Rate">
+            <LabeledList.Item label={t('atmos-transfer-rate', {}, 'Transfer Rate')}>
               <NumberInput
                 animated
                 tickWhileDragging
@@ -61,7 +63,7 @@ export const AtmosFilter = (props) => {
               <Button
                 ml={1}
                 icon="plus"
-                content="Max"
+                content={t('atmos-max', {}, 'Max')}
                 disabled={rate === max_rate}
                 onClick={() =>
                   act('rate', {
@@ -70,7 +72,7 @@ export const AtmosFilter = (props) => {
                 }
               />
             </LabeledList.Item>
-            <LabeledList.Item label="Filter Types">
+            <LabeledList.Item label={t('atmosfilter-filter-types', {}, 'Filter Types')}>
               {filter_types.map(({ enabled, gas_id }, index) => (
                 <Button
                   key={index}

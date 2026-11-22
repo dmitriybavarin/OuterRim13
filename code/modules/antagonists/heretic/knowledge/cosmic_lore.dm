@@ -68,7 +68,7 @@
 /datum/heretic_knowledge/limited_amount/starting/base_cosmic/on_mansus_grasp(mob/living/source, mob/living/target)
 	. = ..()
 
-	to_chat(target, span_danger("A cosmic ring appeared above your head!"))
+	to_chat(target, span_danger(LOC_KEY("heretic-cosmic-grasp-ring")))
 	target.apply_status_effect(/datum/status_effect/star_mark, source)
 	create_cosmic_field(get_turf(source), source)
 
@@ -326,14 +326,14 @@
 
 	var/mob/living/to_reset = bad_dog.resolve()
 
-	to_chat(owner, span_mansus("You prompt [to_reset] to shift it\'s personality..."))
+	to_chat(owner, span_mansus(loc_key("heretic-cosmic-gazer-reset-prompt", list(target = to_reset))))
 	var/mob/chosen_one = SSpolling.poll_ghost_candidates("Do you want to play as [span_danger("[owner.real_name]'s")] [span_notice(to_reset.name)]?", check_jobban = ROLE_PAI, poll_time = 10 SECONDS, alert_pic = to_reset, jump_target = owner, role_name_text = to_reset.name, amount_to_pick = 1)
 	if(isnull(chosen_one))
-		to_chat(owner, span_mansus("Your request to shift [to_reset]'\s personality appears to have been denied... Looks like you're stuck with it for now."))
+		to_chat(owner, span_mansus(loc_key("heretic-cosmic-gazer-reset-denied", list(target = to_reset))))
 		StartCooldown()
 		return FALSE
-	to_chat(to_reset, span_mansus("Your summoner reset you, and your body was taken over by a ghost. Looks like they weren't happy with your performance."))
-	to_chat(owner, span_mansus("The mind of [to_reset] has twisted itself to suit you better."))
+	to_chat(to_reset, span_mansus(LOC_KEY("heretic-cosmic-gazer-reset-victim")))
+	to_chat(owner, span_mansus(loc_key("heretic-cosmic-gazer-reset-done", list(target = to_reset))))
 	message_admins("[key_name_admin(chosen_one)] has taken control of ([ADMIN_LOOKUPFLW(to_reset)])")
 	to_reset.ghostize(FALSE)
 	to_reset.PossessByPlayer(chosen_one.key)

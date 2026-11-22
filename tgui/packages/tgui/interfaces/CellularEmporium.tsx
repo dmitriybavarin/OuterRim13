@@ -14,6 +14,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 // ==========
@@ -47,6 +48,7 @@ type CellularEmporiumContext = {
 // ==========
 export const CellularEmporium = (props) => {
   const { act, data } = useBackend<CellularEmporiumContext>();
+  const t = useT();
   const {
     abilities,
     can_readapt,
@@ -102,7 +104,12 @@ export const CellularEmporium = (props) => {
           title={
             <Stack fill>
               <Stack.Item fontSize="16px" color="#DD66DD" ml={1}>
-                <Icon name="dna" /> {genetic_points_count} DNA
+                <Icon name="dna" />{' '}
+                {t(
+                  'cellemporium-dna-count',
+                  { count: genetic_points_count },
+                  `${genetic_points_count} DNA`,
+                )}
               </Stack.Item>
               <Stack.Item grow />
               <Stack.Item>
@@ -112,12 +119,24 @@ export const CellularEmporium = (props) => {
                   disabled={!can_readapt}
                   tooltip={
                     can_readapt
-                      ? 'Un-evolve all abilities and refund genetic points.'
-                      : 'Need more DNA to readapt.'
+                      ? t(
+                          'cellemporium-readapt-tooltip',
+                          {},
+                          'Un-evolve all abilities and refund genetic points.',
+                        )
+                      : t(
+                          'cellemporium-readapt-need',
+                          {},
+                          'Need more DNA to readapt.',
+                        )
                   }
                   onClick={() => act('readapt')}
                 >
-                  Readapt ({can_readapt})
+                  {t(
+                    'cellemporium-readapt',
+                    { count: can_readapt },
+                    `Readapt (${can_readapt})`,
+                  )}
                 </Button>
               </Stack.Item>
             </Stack>
@@ -130,7 +149,7 @@ export const CellularEmporium = (props) => {
                   <Input
                     autoFocus
                     value={searchText}
-                    placeholder="Search..."
+                    placeholder={t('cellemporium-search', {}, 'Search...')}
                     onChange={setSearchText}
                     fluid
                   />
@@ -141,7 +160,11 @@ export const CellularEmporium = (props) => {
                     lineHeight={2}
                     textAlign="center"
                     icon={compactMode ? 'maximize' : 'minimize'}
-                    tooltip={compactMode ? 'Detailed view' : 'Compact view'}
+                    tooltip={
+                      compactMode
+                        ? t('cellemporium-detailed', {}, 'Detailed view')
+                        : t('cellemporium-compact', {}, 'Compact view')
+                    }
                     onClick={() => setCompactMode(!compactMode)}
                   />
                 </Stack.Item>
@@ -157,7 +180,11 @@ export const CellularEmporium = (props) => {
                         }}
                         mt={1}
                       >
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                        {t(
+                          `cellemporium-category-${category}`,
+                          {},
+                          category.charAt(0).toUpperCase() + category.slice(1),
+                        )}
                       </Tabs.Tab>
                     ))}
                   </Tabs>
@@ -170,8 +197,12 @@ export const CellularEmporium = (props) => {
                 {filteredItems.length === 0 ? (
                   <NoticeBox>
                     {searchText
-                      ? 'No abilities found.'
-                      : 'No abilities in this category.'}
+                      ? t('cellemporium-none-found', {}, 'No abilities found.')
+                      : t(
+                          'cellemporium-none-category',
+                          {},
+                          'No abilities in this category.',
+                        )}
                   </NoticeBox>
                 ) : (
                   <ItemList
@@ -207,6 +238,7 @@ type ItemListProps = {
 };
 
 const ItemList = (props: ItemListProps) => {
+  const t = useT();
   const {
     compactMode,
     items,
@@ -231,19 +263,45 @@ const ItemList = (props: ItemListProps) => {
             ability.dna_required <= dna_count;
 
           const requirementTooltip = [
-            `${ability.genetic_point_required} DNA`,
+            t(
+              'cellemporium-dna-count',
+              { count: ability.genetic_point_required },
+              `${ability.genetic_point_required} DNA`,
+            ),
             ...(ability.absorbs_required > 0
-              ? [`${ability.absorbs_required} absorptions`]
+              ? [
+                  t(
+                    'cellemporium-absorptions',
+                    { count: ability.absorbs_required },
+                    `${ability.absorbs_required} absorptions`,
+                  ),
+                ]
               : []),
             ...(ability.dna_required > 0
-              ? [`${ability.dna_required} DNA`]
+              ? [
+                  t(
+                    'cellemporium-dna-count',
+                    { count: ability.dna_required },
+                    `${ability.dna_required} DNA`,
+                  ),
+                ]
               : []),
           ].join(', ');
 
-          const costDisplay =
-            ability.dna_required > 0
-              ? `Cost: ${ability.dna_required} DNA`
-              : `Cost: ${ability.genetic_point_required} DNA`;
+          const costDisplay = t(
+            'cellemporium-cost',
+            {
+              cost:
+                ability.dna_required > 0
+                  ? ability.dna_required
+                  : ability.genetic_point_required,
+            },
+            `Cost: ${
+              ability.dna_required > 0
+                ? ability.dna_required
+                : ability.genetic_point_required
+            } DNA`,
+          );
 
           return (
             <Stack.Item key={ability.path} mt={compactMode ? 0.5 : 1}>
@@ -327,7 +385,7 @@ const ItemList = (props: ItemListProps) => {
                             {ability.name}
                             {owned && (
                               <Box color="#44bd46" inline ml={1}>
-                                (Owned)
+                                {t('cellemporium-owned', {}, '(Owned)')}
                               </Box>
                             )}
                           </Box>

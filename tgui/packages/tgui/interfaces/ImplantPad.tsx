@@ -8,6 +8,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -21,6 +22,7 @@ type Data = {
 
 export const ImplantPad = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     has_case,
     has_implant,
@@ -34,7 +36,7 @@ export const ImplantPad = (props) => {
       <Window.Content scrollable>
         <Stack bold>
           <Stack.Item grow color="good" align="center">
-            Implant Mini-Computer
+            {t('implantpad-title', {}, 'Implant Mini-Computer')}
           </Stack.Item>
           <Stack.Item>
             <Button
@@ -42,15 +44,17 @@ export const ImplantPad = (props) => {
               disabled={!has_case}
               onClick={() => act('eject_implant')}
             >
-              Eject Case
+              {t('implantpad-eject', {}, 'Eject Case')}
             </Button>
           </Stack.Item>
         </Stack>
         <Divider />
         <Section>
-          Saved Deathrattle Group: {saved_deathrattle_group || 'None'}
+          {t('implantpad-saved-group', {}, 'Saved Deathrattle Group:')}{' '}
+          {saved_deathrattle_group || t('implantpad-none', {}, 'None')}
           <br />
-          Current Deathrattle Group: {current_deathrattle_group || 'None'}
+          {t('implantpad-current-group', {}, 'Current Deathrattle Group:')}{' '}
+          {current_deathrattle_group || t('implantpad-none', {}, 'None')}
         </Section>
         <Stack>
           <Stack.Item>
@@ -58,7 +62,7 @@ export const ImplantPad = (props) => {
               disabled={!current_deathrattle_group}
               onClick={() => act('save_deathrattle_group')}
             >
-              Save Group
+              {t('implantpad-save-group', {}, 'Save Group')}
             </Button>
           </Stack.Item>
           <Stack.Item>
@@ -66,7 +70,7 @@ export const ImplantPad = (props) => {
               disabled={!!current_deathrattle_group || !has_case}
               onClick={() => act('set_deathrattle_group')}
             >
-              Set Group
+              {t('implantpad-set-group', {}, 'Set Group')}
             </Button>
           </Stack.Item>
           <Stack.Item>
@@ -75,35 +79,49 @@ export const ImplantPad = (props) => {
               // in case you want to start a new deathrattle group
               onClick={() => act('init_deathrattle_group')}
             >
-              Initialize Group
+              {t('implantpad-init-group', {}, 'Initialize Group')}
             </Button>
           </Stack.Item>
         </Stack>
         <Divider />
-        <Collapsible open={true} title="Implant Information">
+        <Collapsible open={true} title={t('implantpad-info', {}, 'Implant Information')}>
           {!has_case && (
             <Section>
-              No implant case detected. Please insert one to see its contents.
+              {t(
+                'implantpad-no-case',
+                {},
+                'No implant case detected. Please insert one to see its contents.',
+              )}
             </Section>
           )}
           {!!has_case && !has_implant && (
             <Section>
-              Implant case does not have an implant. Please insert an implant to
-              continue.
+              {t(
+                'implantpad-no-implant',
+                {},
+                'Implant case does not have an implant. Please insert an implant to continue.',
+              )}
             </Section>
           )}
           {!!has_case && !!has_implant && <Section>{case_information}</Section>}
         </Collapsible>
-        <Collapsible title="Implant Extended Information">
+        <Collapsible title={t('implantpad-info-extended', {}, 'Implant Extended Information')}>
           {!has_case && (
             <Section>
-              No implant case detected. Please insert one to see its contents.
+              {t(
+                'implantpad-no-case',
+                {},
+                'No implant case detected. Please insert one to see its contents.',
+              )}
             </Section>
           )}
           {!!has_case && !has_implant && (
             <Section>
-              Implant case does not have an implant. Please insert an implant to
-              continue.
+              {t(
+                'implantpad-no-implant',
+                {},
+                'Implant case does not have an implant. Please insert an implant to continue.',
+              )}
             </Section>
           )}
           {!!has_case && !!has_implant && <Section>{case_lore}</Section>}

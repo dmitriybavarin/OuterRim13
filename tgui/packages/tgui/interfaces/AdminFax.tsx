@@ -13,6 +13,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -28,6 +29,7 @@ const paperNameOptions = [
 const fromWhoOptions = ['Nanotrasen', 'Syndicate'] as const;
 
 export function AdminFax(props) {
+  const t = useT();
   const { act, data } = useBackend<Data>();
   const { faxes = [], stamps = [] } = data;
 
@@ -46,10 +48,15 @@ export function AdminFax(props) {
   }
 
   return (
-    <Window title="Admin Fax Panel" width={400} height={675} theme="admin">
+    <Window
+      title={t('adminfax-title', {}, 'Admin Fax Panel')}
+      width={400}
+      height={675}
+      theme="admin"
+    >
       <Window.Content scrollable>
         <Section
-          title="Fax Menu"
+          title={t('adminfax-section-fax', {}, 'Fax Menu')}
           buttons={
             <Button
               icon="arrow-up"
@@ -60,12 +67,16 @@ export function AdminFax(props) {
                 })
               }
             >
-              Follow
+              {t('adminfax-follow', {}, 'Follow')}
             </Button>
           }
         >
           <Dropdown
-            placeholder="Choose fax machine..."
+            placeholder={t(
+              'adminfax-choose-machine',
+              {},
+              'Choose fax machine...',
+            )}
             fluid
             selected={fax}
             options={faxes}
@@ -73,7 +84,7 @@ export function AdminFax(props) {
           />
         </Section>
         <Section
-          title="Paper"
+          title={t('adminfax-section-paper', {}, 'Paper')}
           buttons={
             <Button
               icon="eye"
@@ -84,14 +95,14 @@ export function AdminFax(props) {
                 })
               }
             >
-              Preview
+              {t('adminfax-preview', {}, 'Preview')}
             </Button>
           }
         >
           <Stack fill vertical>
             <Stack.Item>
               <Input
-                placeholder="Paper name..."
+                placeholder={t('adminfax-paper-name', {}, 'Paper name...')}
                 value={paperName}
                 fluid
                 onChange={setPaperName}
@@ -101,13 +112,17 @@ export function AdminFax(props) {
               <SourceButtons
                 stateSetter={setPaperName}
                 options={paperNameOptions}
-                tooltip="What is written on the top of the fax paper?"
+                tooltip={t(
+                  'adminfax-paper-name-tooltip',
+                  {},
+                  'What is written on the top of the fax paper?',
+                )}
               />
             </Stack.Item>
             <Stack.Divider />
             <Stack.Item>
               <Input
-                placeholder="From who..."
+                placeholder={t('adminfax-from-who', {}, 'From who...')}
                 value={fromWho}
                 fluid
                 onChange={setFromWho}
@@ -117,13 +132,21 @@ export function AdminFax(props) {
               <SourceButtons
                 stateSetter={setFromWho}
                 options={fromWhoOptions}
-                tooltip="What was written in fax log?"
+                tooltip={t(
+                  'adminfax-from-who-tooltip',
+                  {},
+                  'What was written in fax log?',
+                )}
               />
             </Stack.Item>
             <Stack.Divider />
             <Stack.Item>
               <TextArea
-                placeholder="Your message here..."
+                placeholder={t(
+                  'adminfax-message-placeholder',
+                  {},
+                  'Your message here...',
+                )}
                 height="200px"
                 fluid
                 value={rawText}
@@ -135,7 +158,11 @@ export function AdminFax(props) {
               <Dropdown
                 fluid
                 options={stamps}
-                selected="Choose stamp(optional)"
+                selected={t(
+                  'adminfax-choose-stamp',
+                  {},
+                  'Choose stamp(optional)',
+                )}
                 onSelected={(value) => {
                   if (value === 'None') {
                     setStamp('');
@@ -150,7 +177,7 @@ export function AdminFax(props) {
               {stamp && (
                 <>
                   <h4>
-                    X Coordinate:{' '}
+                    {t('adminfax-x-coordinate', {}, 'X Coordinate:')}{' '}
                     <NumberInput
                       step={1}
                       width="45px"
@@ -162,7 +189,7 @@ export function AdminFax(props) {
                   </h4>
 
                   <h4>
-                    Y Coordinate:{' '}
+                    {t('adminfax-y-coordinate', {}, 'Y Coordinate:')}{' '}
                     <NumberInput
                       step={1}
                       width="45px"
@@ -174,7 +201,7 @@ export function AdminFax(props) {
                   </h4>
 
                   <Box textAlign="center">
-                    <h4>Rotation Angle</h4>
+                    <h4>{t('adminfax-rotation-angle', {}, 'Rotation Angle')}</h4>
                     <Knob
                       size={1.5}
                       value={stampAngle}
@@ -189,7 +216,7 @@ export function AdminFax(props) {
             </Stack.Item>
           </Stack>
         </Section>
-        <Section title="Actions">
+        <Section title={t('adminfax-section-actions', {}, 'Actions')}>
           <Button
             disabled={!saved || !fax}
             icon="paper-plane"
@@ -199,7 +226,7 @@ export function AdminFax(props) {
               })
             }
           >
-            Send
+            {t('adminfax-send', {}, 'Send')}
           </Button>
           <Button
             icon="floppy-disk"
@@ -218,7 +245,7 @@ export function AdminFax(props) {
               });
             }}
           >
-            Save
+            {t('adminfax-save', {}, 'Save')}
           </Button>
           <Button
             disabled={!saved}
@@ -229,7 +256,7 @@ export function AdminFax(props) {
               })
             }
           >
-            Create paper
+            {t('adminfax-create-paper', {}, 'Create paper')}
           </Button>
         </Section>
       </Window.Content>

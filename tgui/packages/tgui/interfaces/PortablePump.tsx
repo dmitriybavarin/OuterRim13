@@ -6,6 +6,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import {
   PortableBasicInfo,
@@ -22,6 +23,7 @@ type PortablePumpData = {
 
 export const PortablePump = (props) => {
   const { act, data } = useBackend<PortablePumpData>();
+  const t = useT();
   const {
     direction,
     connected,
@@ -31,14 +33,18 @@ export const PortablePump = (props) => {
     minPressure,
     maxPressure,
   } = data;
-  const pump_or_port = connected ? 'Port' : 'Pump';
-  const area_or_tank = holding ? 'Tank' : 'Area';
+  const pump_or_port = connected
+    ? t('portablepump-port', {}, 'Port')
+    : t('portablepump-pump', {}, 'Pump');
+  const area_or_tank = holding
+    ? t('portablepump-tank', {}, 'Tank')
+    : t('portablepump-area', {}, 'Area');
   return (
     <Window width={300} height={340}>
       <Window.Content>
         <PortableBasicInfo />
         <Section
-          title="Pumping"
+          title={t('portablepump-pumping', {}, 'Pumping')}
           buttons={
             <Button
               color={!direction && !holding ? 'caution' : null}
@@ -51,7 +57,7 @@ export const PortablePump = (props) => {
           }
         >
           <LabeledList>
-            <LabeledList.Item label="Output">
+            <LabeledList.Item label={t('portablepump-output', {}, 'Output')}>
               <NumberInput
                 value={targetPressure}
                 unit="kPa"
@@ -66,7 +72,7 @@ export const PortablePump = (props) => {
                 }
               />
             </LabeledList.Item>
-            <LabeledList.Item label="Presets">
+            <LabeledList.Item label={t('portablepump-presets', {}, 'Presets')}>
               <Button
                 icon="minus"
                 disabled={targetPressure === minPressure}

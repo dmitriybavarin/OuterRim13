@@ -11,6 +11,7 @@ import {
 import { createSearch } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -33,6 +34,7 @@ type Outfit = {
 export const NetpodOutfits = (props) => {
   const { act, data } = useBackend<Data>();
   const { netsuit, collections = [] } = data;
+  const t = useT();
   const [selectedType, setSelectedType] = useState(collections[0]);
   const [search, setSearch] = useState('');
 
@@ -44,21 +46,25 @@ export const NetpodOutfits = (props) => {
 
   const selected =
     selectedType.outfits?.find((outfit) => outfit.path === netsuit)?.name ??
-    'None';
+    t('netpod-none', {}, 'None');
 
   return (
-    <Window title="Net Pod" height={300} width={400}>
+    <Window
+      title={t('netpod-title', {}, 'Net Pod')}
+      height={300}
+      width={400}
+    >
       <Window.Content>
         <Stack fill vertical>
           <Stack.Item grow>
             <Section
               fill
-              title="Select an outfit"
+              title={t('netpod-select-outfit', {}, 'Select an outfit')}
               buttons={
                 <Input
                   autoFocus
                   onChange={setSearch}
-                  placeholder="Search"
+                  placeholder={t('netpod-search', {}, 'Search')}
                   value={search}
                 />
               }

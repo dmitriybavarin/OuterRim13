@@ -15,6 +15,7 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
 import { COLORS } from '../constants';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { type Beaker, BeakerSectionDisplay } from './common/BeakerDisplay';
 
@@ -53,6 +54,7 @@ type ReactionDisplayProps = {
 };
 
 export const ReactionDisplay = (props: ReactionDisplayProps) => {
+  const t = useT();
   const {
     beaker,
     isFlashing,
@@ -63,13 +65,19 @@ export const ReactionDisplay = (props: ReactionDisplayProps) => {
 
   return (
     <Section
-      title="Reactions"
+      title={t('chemheater-reactions', {}, 'Reactions')}
       buttons={
         <Flex>
           <Flex.Item color="label">
             <AnimatedNumber
               value={beaker.pH}
-              format={(value) => `pH: ${round(value, 3)}`}
+              format={(value) =>
+                t(
+                  'chemheater-ph',
+                  { value: round(value, 3) },
+                  `pH: ${round(value, 3)}`,
+                )
+              }
             />
           </Flex.Item>
           <Flex.Item>
@@ -98,18 +106,22 @@ export const ReactionDisplay = (props: ReactionDisplayProps) => {
       }
     >
       {(activeReactions.length === 0 && (
-        <Box color="label">No active reactions.</Box>
+        <Box color="label">
+          {t('chemheater-no-reactions', {}, 'No active reactions.')}
+        </Box>
       )) || (
         <Table>
           <Table.Row>
             <Table.Cell bold color="label">
-              Reaction
+              {t('chemheater-reaction', {}, 'Reaction')}
             </Table.Cell>
             <Table.Cell bold color="label">
-              {!highQualityDisplay ? 'Status' : 'Reaction quality'}
+              {!highQualityDisplay
+                ? t('chemheater-status', {}, 'Status')
+                : t('chemheater-reaction-quality', {}, 'Reaction quality')}
             </Table.Cell>
             <Table.Cell bold color="label">
-              Target
+              {t('chemheater-target-column', {}, 'Target')}
             </Table.Cell>
           </Table.Row>
           {activeReactions.map((reaction) => (
@@ -182,6 +194,7 @@ export const ReactionDisplay = (props: ReactionDisplayProps) => {
 
 export const ChemHeater = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     targetTemp,
     isActive,
@@ -201,7 +214,7 @@ export const ChemHeater = (props) => {
     <Window width={350} height={350}>
       <Window.Content scrollable>
         <Section
-          title="Controls"
+          title={t('chemheater-controls', {}, 'Controls')}
           buttons={
             <Flex>
               <Button
@@ -209,7 +222,9 @@ export const ChemHeater = (props) => {
                 selected={isActive}
                 onClick={() => act('power')}
               >
-                {isActive ? 'On' : 'Off'}
+                {isActive
+                  ? t('chemheater-power-on', {}, 'On')
+                  : t('chemheater-power-off', {}, 'Off')}
               </Button>
             </Flex>
           }
@@ -217,11 +232,11 @@ export const ChemHeater = (props) => {
           <Table>
             <Table.Row>
               <Table.Cell bold collapsing color="label">
-                Heat
+                {t('chemheater-heat', {}, 'Heat')}
               </Table.Cell>
               <Table.Cell />
               <Table.Cell bold collapsing color="label">
-                Buffers
+                {t('chemheater-buffers', {}, 'Buffers')}
               </Table.Cell>
               <Table.Cell />
               <Table.Cell>
@@ -244,7 +259,7 @@ export const ChemHeater = (props) => {
             </Table.Row>
             <Table.Row>
               <Table.Cell collapsing color="label">
-                Target:
+                {t('chemheater-target', {}, 'Target:')}
               </Table.Cell>
               <Table.Cell>
                 <NumberInput
@@ -264,13 +279,13 @@ export const ChemHeater = (props) => {
                 />
               </Table.Cell>
               <Table.Cell collapsing color="label">
-                Acidic:
+                {t('chemheater-acidic', {}, 'Acidic:')}
               </Table.Cell>
               <Table.Cell>
                 <Button
                   icon={'syringe'}
                   disabled={!acidicBufferVol}
-                  tooltip={'Inject'}
+                  tooltip={t('chemheater-inject', {}, 'Inject')}
                   tooltipPosition={'left'}
                   onClick={() =>
                     act('acidBuffer', {
@@ -288,7 +303,7 @@ export const ChemHeater = (props) => {
               <Table.Cell>
                 <Button
                   icon={'upload'}
-                  tooltip={'Draw all'}
+                  tooltip={t('chemheater-draw-all', {}, 'Draw all')}
                   tooltipPosition={'top'}
                   disabled={acidicBufferVol === 100}
                   onClick={() =>
@@ -301,7 +316,7 @@ export const ChemHeater = (props) => {
             </Table.Row>
             <Table.Row>
               <Table.Cell collapsing color="label">
-                Reading:
+                {t('chemheater-reading', {}, 'Reading:')}
               </Table.Cell>
               <Table.Cell collapsing color="default">
                 <Box width="60px" textAlign="right">
@@ -315,12 +330,12 @@ export const ChemHeater = (props) => {
                 </Box>
               </Table.Cell>
               <Table.Cell collapsing color="label">
-                Basic:
+                {t('chemheater-basic', {}, 'Basic:')}
               </Table.Cell>
               <Table.Cell>
                 <Button
                   icon={'syringe'}
-                  tooltip={'Inject'}
+                  tooltip={t('chemheater-inject', {}, 'Inject')}
                   tooltipPosition={'left'}
                   disabled={!basicBufferVol}
                   onClick={() =>
@@ -336,7 +351,7 @@ export const ChemHeater = (props) => {
               <Table.Cell>
                 <Button
                   icon={'upload'}
-                  tooltip={'Draw all'}
+                  tooltip={t('chemheater-draw-all', {}, 'Draw all')}
                   disabled={basicBufferVol === 100}
                   onClick={() =>
                     act('basicBuffer', {

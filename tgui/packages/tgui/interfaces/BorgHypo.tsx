@@ -8,6 +8,7 @@ import {
 import { toFixed } from 'tgui-core/math';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type BorgHypoContext = {
@@ -46,9 +47,12 @@ export const BorgHypo = (props) => {
 
 const ReagentDisplay = (props) => {
   const { act } = useBackend();
+  const t = useT();
   const { reagents, selected, maxVolume } = props;
   if (reagents.length === 0) {
-    return <NoticeBox>No reagents available!</NoticeBox>;
+    return <NoticeBox>
+        {t('borghypo-no-reagents', {}, 'No reagents available!')}
+      </NoticeBox>;
   }
   return reagents.map((reagent) => (
     <Flex key={reagent.name} m={0.5}>
@@ -73,7 +77,7 @@ const ReagentDisplay = (props) => {
         <Button
           icon={'syringe'}
           color={reagent.name === selected ? 'green' : 'default'}
-          content={'Select'}
+          content={t('borghypo-select', {}, 'Select')}
           textAlign={'center'}
           onClick={() => act(reagent.name)}
         />

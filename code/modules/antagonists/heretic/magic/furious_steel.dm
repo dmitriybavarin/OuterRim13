@@ -127,7 +127,7 @@
 				return PROJECTILE_PIERCE_PHASE
 
 		if(victim.can_block_magic(MAGIC_RESISTANCE))
-			visible_message(span_warning("[src] drops to the ground and melts on contact [victim]!"))
+			visible_message(span_warning(loc_key("heretic-spell-furious-steel-melt", list(blade = src, victim = victim))))
 			return PROJECTILE_DELETE_WITHOUT_HITTING
 
 	return ..()

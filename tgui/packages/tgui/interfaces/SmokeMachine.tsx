@@ -9,6 +9,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import type { Beaker } from './common/BeakerDisplay';
 
@@ -21,20 +22,23 @@ type Data = {
 
 export const SmokeMachine = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { tank, active, setting, maxSetting } = data;
 
   return (
     <Window width={350} height={350}>
       <Window.Content>
         <Section
-          title="Dispersal Tank"
+          title={t('smokemachine-dispersal-tank', {}, 'Dispersal Tank')}
           buttons={
             <Button
               icon={active ? 'power-off' : 'times'}
               selected={active}
               onClick={() => act('power')}
             >
-              {active ? 'On' : 'Off'}
+              {active
+                ? t('chemistry-on', {}, 'On')
+                : t('chemistry-off', {}, 'Off')}
             </Button>
           }
         >
@@ -49,7 +53,7 @@ export const SmokeMachine = (props) => {
           </ProgressBar>
           <Box mt={1}>
             <LabeledList>
-              <LabeledList.Item label="Range">
+              <LabeledList.Item label={t('smokemachine-range', {}, 'Range')}>
                 {[1, 2, 3, 4, 5].map((amount) => (
                   <Button
                     disabled={maxSetting < amount}
@@ -66,17 +70,21 @@ export const SmokeMachine = (props) => {
           </Box>
         </Section>
         <Section
-          title="Contents"
+          title={t('smokemachine-contents', {}, 'Contents')}
           buttons={
             <Button icon="trash" onClick={() => act('purge')}>
-              Purge
+              {t('smokemachine-purge', {}, 'Purge')}
             </Button>
           }
         >
           {tank.contents.map((chemical) => (
             <Box key={chemical.name} color="label">
-              <AnimatedNumber initial={0} value={chemical.volume} /> units of{' '}
-              {chemical.name}
+              <AnimatedNumber initial={0} value={chemical.volume} />{' '}
+              {t(
+                'smokemachine-units-of',
+                { name: chemical.name },
+                'units of { $name }',
+              )}
             </Box>
           ))}
         </Section>

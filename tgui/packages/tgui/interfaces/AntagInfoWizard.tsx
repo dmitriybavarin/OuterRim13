@@ -2,6 +2,7 @@ import { Box, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import {
   type Objective,
@@ -55,6 +56,7 @@ type Info = {
 
 export const AntagInfoWizard = (props) => {
   const { data, act } = useBackend<Info>();
+  const t = useT();
   const { ritual, objectives, can_change_objective } = data;
 
   return (
@@ -65,16 +67,16 @@ export const AntagInfoWizard = (props) => {
             <Section scrollable fill>
               <Stack vertical>
                 <Stack.Item textColor="red" fontSize="20px">
-                  You are the Space Wizard!
+                  {t('antaginfo-wizard-title')}
                 </Stack.Item>
                 <Stack.Item>
                   <ObjectivePrintout
                     objectives={objectives}
-                    titleMessage="The Space Wizard Federation has given you the following tasks:"
+                    titleMessage={t('antaginfo-wizard-tasks')}
                     objectiveFollowup={
                       <ReplaceObjectivesButton
                         can_change_objective={can_change_objective}
-                        button_title={'Declare Personal Quest'}
+                        button_title={t('antaginfo-wizard-quest')}
                         button_colour={'violet'}
                       />
                     }
@@ -87,68 +89,55 @@ export const AntagInfoWizard = (props) => {
             </Section>
           </Stack.Item>
           <Stack.Item>
-            <Section fill title="Spellbook">
+            <Section fill title={t('antaginfo-wizard-spellbook')}>
               <Stack vertical fill>
                 <Stack.Item>
-                  You have a spellbook which is bound to you. You can use it to
-                  choose a magical arsenal.
+                  {t('antaginfo-wizard-book-intro')}
                   <br />
                   <span style={destructionstyle}>
-                    The deadly page has the offensive spells, to destroy your
-                    enemies.
+                    {t('antaginfo-wizard-book-deadly')}
                   </span>
                   <br />
                   <span style={defensestyle}>
-                    The defensive page has defensive spells, to keep yourself
-                    alive. Remember, you may be powerful, but you are still only
-                    human.
+                    {t('antaginfo-wizard-book-defensive')}
                   </span>
                   <br />
                   <span style={transportstyle}>
-                    The transport page has mobility spells, very important
-                    aspect of staying alive and getting things done.
+                    {t('antaginfo-wizard-book-transport')}
                   </span>
                   <br />
                   <span style={summonstyle}>
-                    The summoning page has summoning and other helpful spells
-                    for not fighting alone. Careful, not every summon is on your
-                    side.
+                    {t('antaginfo-wizard-book-summoning')}
                   </span>
                   <br />
                   <span style={ritualstyle}>
-                    The rituals page has powerful global effects, that will pit
-                    the station against itself. Do mind that these are either
-                    expensive, or just for panache.
+                    {t('antaginfo-wizard-book-rituals')}
                   </span>
                 </Stack.Item>
                 <Stack.Item textColor="lightgreen">
-                  (If you are unsure what to get or are new to the Federation,
-                  go to the &quot;Wizard Approved Loadouts&quot; section. There
-                  you will find some kits that work fairly well for new
-                  wizards.)
+                  {t('antaginfo-wizard-book-hint')}
                 </Stack.Item>
               </Stack>
             </Section>
           </Stack.Item>
           <Stack.Item>
-            <Section title="Misc Gear">
+            <Section title={t('antaginfo-wizard-gear')}>
               <Stack>
                 <Stack.Item>
-                  <span style={teleportstyle}>Teleport scroll:</span> 4 uses to
-                  teleport wherever you want. You will not be able to come back
-                  to the den, so be sure you have everything ready before
-                  departing.
+                  <span style={teleportstyle}>
+                    {t('antaginfo-wizard-scroll-name')}
+                  </span>{' '}
+                  {t('antaginfo-wizard-scroll-desc')}
                   <br />
-                  <span style={robestyle}>Wizard robes:</span> Used to cast most
-                  spells. Your spellbook will let you know which spells cannot
-                  be cast without a garb.
+                  <span style={robestyle}>{t('antaginfo-wizard-robes-name')}</span>{' '}
+                  {t('antaginfo-wizard-robes-desc')}
                 </Stack.Item>
               </Stack>
             </Section>
           </Stack.Item>
           <Stack.Item>
             <Section textAlign="center" textColor="red" fontSize="20px">
-              Remember: Do not forget to prepare your spells.
+              {t('antaginfo-wizard-reminder')}
             </Section>
           </Stack.Item>
         </Stack>
@@ -159,19 +148,21 @@ export const AntagInfoWizard = (props) => {
 
 const RitualPrintout = (props: { ritual: GrandRitual }) => {
   const { ritual } = props;
+  const t = useT();
   if (!ritual.next_area) {
     return null;
   }
   return (
     <Box>
-      Alternately, complete the{' '}
-      <span style={grandritualstyle}>Grand Ritual </span>
-      by invoking a ritual circle at several nexuses of power.
+      {t('antaginfo-wizard-ritual-pre')}{' '}
+      <span style={grandritualstyle}>{t('antaginfo-wizard-ritual-name')} </span>
+      {t('antaginfo-wizard-ritual-post')}
       <br />
-      You must complete the ritual
-      <span style={grandritualstyle}> {ritual.remaining}</span> more times.
+      {t('antaginfo-wizard-ritual-count-pre')}
+      <span style={grandritualstyle}> {ritual.remaining}</span>{' '}
+      {t('antaginfo-wizard-ritual-count-post', { count: ritual.remaining })}
       <br />
-      Your next ritual location is the
+      {t('antaginfo-wizard-ritual-area')}
       <span style={grandritualstyle}> {ritual.next_area}</span>.
     </Box>
   );

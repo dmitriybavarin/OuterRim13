@@ -12,6 +12,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -59,10 +60,11 @@ type ProgEntry = {
 
 export const Achievements = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { categories } = data;
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   return (
-    <Window title="Achievements" width={540} height={680}>
+    <Window title={t('achievements-title', {}, 'Achievements')} width={540} height={680}>
       <Window.Content scrollable>
         <Tabs>
           {categories.map((category) => (
@@ -78,13 +80,13 @@ export const Achievements = (props) => {
             selected={selectedCategory === 'High Scores'}
             onClick={() => setSelectedCategory('High Scores')}
           >
-            High Scores
+            {t('achievements-high-scores', {}, 'High Scores')}
           </Tabs.Tab>
           <Tabs.Tab
             selected={selectedCategory === 'Progress'}
             onClick={() => setSelectedCategory('Progress')}
           >
-            Progress
+            {t('achievements-progress', {}, 'Progress')}
           </Tabs.Tab>
         </Tabs>
         {(selectedCategory === 'High Scores' && <HighScoreTable />) ||
@@ -98,6 +100,7 @@ export const Achievements = (props) => {
 
 const AchievementTable = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { achievements } = data;
   const { category } = props;
   const filtered_achievements = achievements.filter(
@@ -116,12 +119,18 @@ const AchievementTable = (props) => {
             {(achievement.score && (
               <Box color={achievement.value > 0 ? 'good' : 'bad'}>
                 {achievement.value > 0
-                  ? `Earned ${achievement.value} times`
-                  : 'Locked'}
+                  ? t(
+                      'achievements-earned',
+                      { count: achievement.value },
+                      `Earned ${achievement.value} times`,
+                    )
+                  : t('achievements-locked', {}, 'Locked')}
               </Box>
             )) || (
               <Box color={achievement.value ? 'good' : 'bad'}>
-                {achievement.value ? 'Unlocked' : 'Locked'}
+                {achievement.value
+                  ? t('achievements-unlocked', {}, 'Unlocked')
+                  : t('achievements-locked', {}, 'Locked')}
               </Box>
             )}
             {!!achievement.achieve_info && (
@@ -204,6 +213,7 @@ const ProgressTable = () => {
 
 const HighScoreTable = () => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { highscores, user_key } = data;
   const [highScoreIndex, setHighScoreIndex] = useState(0);
   if (!highscores || highscores.length === 0) {
@@ -229,8 +239,12 @@ const HighScoreTable = () => {
         <Table>
           <Table.Row header>
             <Table.Cell textAlign="center">#</Table.Cell>
-            <Table.Cell textAlign="center">Key</Table.Cell>
-            <Table.Cell textAlign="center">Score</Table.Cell>
+            <Table.Cell textAlign="center">
+              {t('achievements-key', {}, 'Key')}
+            </Table.Cell>
+            <Table.Cell textAlign="center">
+              {t('achievements-score', {}, 'Score')}
+            </Table.Cell>
           </Table.Row>
           {highscore.scores.map((score, i) => (
             <Table.Row key={score.ckey} className="candystripe" m={2}>

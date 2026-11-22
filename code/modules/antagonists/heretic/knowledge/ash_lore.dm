@@ -71,7 +71,7 @@
 	if(!target.get_organ_slot(ORGAN_SLOT_EYES))
 		return
 
-	to_chat(target, span_danger("A bright green light burns your eyes horrifically!"))
+	to_chat(target, span_danger(LOC_KEY("heretic-ash-grasp-blind")))
 	target.adjust_organ_loss(ORGAN_SLOT_EYES, 15)
 	target.set_eye_blur_if_lower(20 SECONDS)
 

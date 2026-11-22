@@ -9,6 +9,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -40,9 +41,10 @@ type NotificationData = {
 export const GhostMenu = (props) => {
   const { act, data } = useBackend<Data>();
   const { has_fun, can_boo } = data;
+  const t = useT();
   return (
     <Window
-      title="Ghost Menu"
+      title={t('ghostmenu-title', {}, 'Ghost Menu')}
       width={500}
       height={630}
       buttons={
@@ -50,16 +52,24 @@ export const GhostMenu = (props) => {
           <>
             <Button
               disabled={!can_boo}
-              tooltip="Haunts things near you, with a cooldown."
+              tooltip={t(
+                'ghostmenu-boo-tooltip',
+                {},
+                'Haunts things near you, with a cooldown.',
+              )}
               onClick={() => act('boo')}
             >
-              Boo!
+              {t('ghostmenu-boo', {}, 'Boo!')}
             </Button>
             <Button
-              tooltip="Allows you to possess any non-sentient mob."
+              tooltip={t(
+                'ghostmenu-possess-tooltip',
+                {},
+                'Allows you to possess any non-sentient mob.',
+              )}
               onClick={() => act('possess')}
             >
-              Possess
+              {t('ghostmenu-possess', {}, 'Possess')}
             </Button>
           </>
         )
@@ -68,13 +78,15 @@ export const GhostMenu = (props) => {
       <Window.Content>
         <Stack fill>
           <Stack.Item width="40%">
-            <Section title="Player & Round Info">
+            <Section
+              title={t('ghostmenu-round-info', {}, 'Player & Round Info')}
+            >
               <RoundSection />
             </Section>
-            <Section title="HUDs">
+            <Section title={t('ghostmenu-huds', {}, 'HUDs')}>
               <HudSection />
             </Section>
-            <Section title="Ghost Settings">
+            <Section title={t('ghostmenu-settings', {}, 'Ghost Settings')}>
               <GhostSettingsSection />
             </Section>
           </Stack.Item>
@@ -90,6 +102,7 @@ export const GhostMenu = (props) => {
 const RoundSection = (props) => {
   const { act, data } = useBackend<Data>();
   const { body_name } = data;
+  const t = useT();
   return (
     <>
       {!!body_name && (
@@ -97,18 +110,30 @@ const RoundSection = (props) => {
           fluid
           dmIcon="icons/mob/simple/mob.dmi"
           dmIconState="ghost"
-          tooltip="Click to re-enter your corpse."
+          tooltip={t(
+            'ghostmenu-reenter-tooltip',
+            {},
+            'Click to re-enter your corpse.',
+          )}
           onClick={() => act('return_to_body')}
           fontSize="11px"
           buttons={
             <Button.Confirm
               icon="ghost"
-              tooltip="Become unable to be resusitated, permanently leaving your corpse behind."
+              tooltip={t(
+                'ghostmenu-dnr-tooltip',
+                {},
+                'Become unable to be resusitated, permanently leaving your corpse behind.',
+              )}
               onClick={() => act('DNR')}
             />
           }
         >
-          Re-enter {body_name}
+          {t(
+            'ghostmenu-reenter',
+            { name: body_name },
+            `Re-enter ${body_name}`,
+          )}
         </ImageButton>
       )}
       <ImageButton
@@ -118,7 +143,7 @@ const RoundSection = (props) => {
         onClick={() => act('crew_manifest')}
         fontSize="11px"
       >
-        View Crew Manifest
+        {t('ghostmenu-manifest', {}, 'View Crew Manifest')}
       </ImageButton>
       <ImageButton
         fluid
@@ -127,7 +152,7 @@ const RoundSection = (props) => {
         onClick={() => act('signup_pai')}
         fontSize="11px"
       >
-        Sign up as pAI
+        {t('ghostmenu-pai', {}, 'Sign up as pAI')}
       </ImageButton>
     </>
   );
@@ -136,6 +161,7 @@ const RoundSection = (props) => {
 const HudSection = (props) => {
   const { act, data } = useBackend<Data>();
   const { hud_info, lag_switch_on } = data;
+  const t = useT();
   return (
     <Stack vertical>
       {hud_info.map((individual_hud) => (
@@ -155,10 +181,14 @@ const HudSection = (props) => {
       ))}
       {!lag_switch_on && (
         <Button
-          tooltip="Performs a t-ray scan where you are."
+          tooltip={t(
+            'ghostmenu-tray-tooltip',
+            {},
+            'Performs a t-ray scan where you are.',
+          )}
           onClick={() => act('tray_scan')}
         >
-          T-ray Scan
+          {t('ghostmenu-tray', {}, 'T-ray Scan')}
         </Button>
       )}
     </Stack>
@@ -174,6 +204,7 @@ const GhostSettingsSection = (props) => {
     current_extra_view,
     lag_switch_on,
   } = data;
+  const t = useT();
   return (
     <Stack vertical>
       <Stack.Item>
@@ -190,15 +221,19 @@ const GhostSettingsSection = (props) => {
       <Stack.Item>
         <Button
           fluid
-          tooltip="Restores your ghost character's appearance and username to that in your character preferences."
+          tooltip={t(
+            'ghostmenu-restore-tooltip',
+            {},
+            "Restores your ghost character's appearance and username to that in your character preferences.",
+          )}
           onClick={() => act('restore_appearance')}
         >
-          Restore Ghost Character
+          {t('ghostmenu-restore', {}, 'Restore Ghost Character')}
         </Button>
       </Stack.Item>
       {!lag_switch_on && (
         <Stack.Item mx={1}>
-          Extra View Distance:
+          {t('ghostmenu-extra-view', {}, 'Extra View Distance:')}
           <NumberInput
             width="30px"
             step={1}
@@ -220,8 +255,9 @@ const GhostSettingsSection = (props) => {
 const NotificationPreferences = (props) => {
   const { act, data } = useBackend<Data>();
   const { notification_data } = data;
+  const t = useT();
   if (!notification_data) {
-    return 'No notifications!';
+    return t('ghostmenu-no-notifications', {}, 'No notifications!');
   }
 
   const ignores = notification_data.sort((a, b) => {
@@ -240,19 +276,31 @@ const NotificationPreferences = (props) => {
     <Section
       scrollable
       fill
-      title="Ghost Role Notifications"
+      title={t(
+        'ghostmenu-notifications',
+        {},
+        'Ghost Role Notifications',
+      )}
       buttons={
         <>
           <Button
             icon="check"
             color="good"
-            tooltip="Enable all notifications."
+            tooltip={t(
+              'ghostmenu-enable-all',
+              {},
+              'Enable all notifications.',
+            )}
             onClick={() => act('turn_all_on')}
           />
           <Button
             icon="times"
             color="bad"
-            tooltip="Disable all notifications."
+            tooltip={t(
+              'ghostmenu-disable-all',
+              {},
+              'Disable all notifications.',
+            )}
             onClick={() => act('turn_all_off')}
           />
         </>

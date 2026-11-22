@@ -14,6 +14,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { AreaCharge, powerRank } from './PowerMonitor';
 
@@ -51,10 +52,11 @@ type Data = {
 
 export function ApcControl(props) {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { authenticated } = data;
 
   return (
-    <Window title="APC Controller" width={550} height={500}>
+    <Window title={t('apccontrol-title', {}, 'APC Controller')} width={550} height={500}>
       <Window.Content>
         {authenticated ? <ApcLoggedIn /> : <ApcLoggedOut />}
       </Window.Content>
@@ -64,8 +66,11 @@ export function ApcControl(props) {
 
 function ApcLoggedOut(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { emagged } = data;
-  const text = emagged ? 'Open' : 'Log In';
+  const text = emagged
+    ? t('apccontrol-open', {}, 'Open')
+    : t('apccontrol-login', {}, 'Log In');
 
   return (
     <Section fill>
@@ -76,16 +81,13 @@ function ApcLoggedOut(props) {
               <Icon name="bolt-lightning" color="yellow" size={8} />
             </Stack.Item>
             <Stack.Item bold mt={5}>
-              Zeus™ Controller Version 0.19
+              {t('apccontrol-version', {}, 'Zeus™ Controller Version 0.19')}
             </Stack.Item>
-            <Stack.Item color="label">Copyright 2526 Nanotrasen</Stack.Item>
+            <Stack.Item color="label">{t('apccontrol-copyright', {}, 'Copyright 2526 Nanotrasen')}</Stack.Item>
           </Stack>
         </Stack.Item>
         <Stack.Item color="#2a2a2a">
-          Nanotrasen and its affiliates do not endorse this product. Risk of
-          serious bodily injury or death is inherent in the use of any device
-          that generates electricity. Nanotrasen is not responsible for any
-          damages caused by the use of this product.
+          {t('apccontrol-disclaimer', {}, 'Nanotrasen and its affiliates do not endorse this product. Risk of serious bodily injury or death is inherent in the use of any device that generates electricity. Nanotrasen is not responsible for any damages caused by the use of this product.')}
         </Stack.Item>
         <Stack.Item>
           <NoticeBox
@@ -97,7 +99,7 @@ function ApcLoggedOut(props) {
               alignItems: 'center',
             }}
           >
-            Authorized personnel only.
+            {t('apccontrol-authorized', {}, 'Authorized personnel only.')}
             <Button
               icon="sign-in-alt"
               color={emagged ? '' : 'good'}
@@ -114,6 +116,7 @@ function ApcLoggedOut(props) {
 
 function ApcLoggedIn(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { restoring } = data;
 
   const [tabIndex, setTabIndex] = useState<Screen>(Screen.ControlPanel);
@@ -130,7 +133,7 @@ function ApcLoggedIn(props) {
               act('check-apcs');
             }}
           >
-            APC Control Panel
+            {t('apccontrol-tab-control', {}, 'APC Control Panel')}
           </Tabs.Tab>
           <Tabs.Tab
             selected={tabIndex === Screen.LogView}
@@ -139,14 +142,15 @@ function ApcLoggedIn(props) {
               act('check-logs');
             }}
           >
-            Log View Panel
+            {t('apccontrol-tab-log', {}, 'Log View Panel')}
           </Tabs.Tab>
         </Tabs>
       </Stack.Item>
       {!!restoring && (
         <Dimmer fontSize="32px">
           <Icon name="cog" spin />
-          {' Resetting...'}
+          {' '}
+          {t('apccontrol-resetting', {}, 'Resetting...')}
         </Dimmer>
       )}
       <Stack.Item grow>
@@ -183,6 +187,7 @@ type ControlProps = {
 
 function ControlPanel(props: ControlProps) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { emagged, logging } = data;
   const [sortByField, setSortByField] = props.sortByState;
 
@@ -190,25 +195,25 @@ function ControlPanel(props: ControlProps) {
     <Stack justify="space-between">
       <Stack.Item>
         <Box inline mr={2} color="label">
-          Sort by:
+          {t('apccontrol-sort-by', {}, 'Sort by:')}
         </Box>
         <Button.Checkbox
           checked={sortByField === 'name'}
           onClick={() => setSortByField('name')}
         >
-          Name
+          {t('apccontrol-name', {}, 'Name')}
         </Button.Checkbox>
         <Button.Checkbox
           checked={sortByField === 'charge'}
           onClick={() => setSortByField('charge')}
         >
-          Charge
+          {t('apccontrol-charge', {}, 'Charge')}
         </Button.Checkbox>
         <Button.Checkbox
           checked={sortByField === 'draw'}
           onClick={() => setSortByField('draw')}
         >
-          Draw
+          {t('apccontrol-draw', {}, 'Draw')}
         </Button.Checkbox>
       </Stack.Item>
       <Stack.Item />
@@ -219,15 +224,17 @@ function ControlPanel(props: ControlProps) {
               color={logging ? 'bad' : 'good'}
               onClick={() => act('toggle-logs')}
             >
-              {logging ? 'Stop Logging' : 'Restore Logging'}
+              {logging
+                ? t('apccontrol-stop-logging', {}, 'Stop Logging')
+                : t('apccontrol-restore-logging', {}, 'Restore Logging')}
             </Button>
             <Button onClick={() => act('restore-console')}>
-              Reset Console
+              {t('apccontrol-reset-console', {}, 'Reset Console')}
             </Button>
           </>
         )}
         <Button icon="sign-out-alt" color="bad" onClick={() => act('log-out')}>
-          Log Out
+          {t('apccontrol-logout', {}, 'Log Out')}
         </Button>
       </Stack.Item>
     </Stack>
@@ -238,6 +245,7 @@ type WithIndex = APC & { id: string };
 
 function ApcControlScene(props) {
   const { data, act } = useBackend<Data>();
+  const t = useT();
 
   const [sortByField] = props.sortByState;
 
@@ -261,15 +269,15 @@ function ApcControlScene(props) {
   return (
     <Table>
       <Table.Row header>
-        <Table.Cell>On/Off</Table.Cell>
-        <Table.Cell>Area</Table.Cell>
-        <Table.Cell collapsing>Charge</Table.Cell>
+        <Table.Cell>{t('apccontrol-col-power', {}, 'On/Off')}</Table.Cell>
+        <Table.Cell>{t('apccontrol-col-area', {}, 'Area')}</Table.Cell>
+        <Table.Cell collapsing>{t('apccontrol-charge', {}, 'Charge')}</Table.Cell>
         <Table.Cell collapsing textAlign="right">
-          Draw
+          {t('apccontrol-draw', {}, 'Draw')}
         </Table.Cell>
-        <Table.Cell collapsing>Eqp</Table.Cell>
-        <Table.Cell collapsing>Lgt</Table.Cell>
-        <Table.Cell collapsing>Env</Table.Cell>
+        <Table.Cell collapsing>{t('apccontrol-col-eqp', {}, 'Eqp')}</Table.Cell>
+        <Table.Cell collapsing>{t('apccontrol-col-lgt', {}, 'Lgt')}</Table.Cell>
+        <Table.Cell collapsing>{t('apccontrol-col-env', {}, 'Env')}</Table.Cell>
       </Table.Row>
       {sorted.map((apc, i) => (
         <Table.Row key={apc.id} className="candystripe">

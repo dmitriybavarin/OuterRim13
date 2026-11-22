@@ -2,6 +2,7 @@ import { Button, NoticeBox, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -14,13 +15,14 @@ type Data = {
 
 export const AirlockButtonController = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { interior_door, exterior_door } = data;
   return (
     <Window width={500} height={130}>
       <Window.Content>
-        <Section title="Airlock Controller" textAlign="center">
+        <Section title={t('airlockbuttons-title', {}, 'Airlock Controller')} textAlign="center">
           {!interior_door && !exterior_door ? (
-            <NoticeBox danger>No doors detected</NoticeBox>
+            <NoticeBox danger>{t('airlockbuttons-no-doors', {}, 'No doors detected')}</NoticeBox>
           ) : (
             <Stack>
               {interior_door && (
@@ -43,6 +45,7 @@ export const AirlockButtonController = (props) => {
 
 const RetrieveButton = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     interior_door,
     exterior_door,
@@ -80,16 +83,16 @@ const RetrieveButton = (props) => {
       }}
     >
       {!our_door_closed
-        ? `Close ${
-            airlockType === interior_door ? 'interior door' : 'exterior door'
-          }`
+        ? airlockType === interior_door
+          ? t('airlockbuttons-close-interior', {}, 'Close interior door')
+          : t('airlockbuttons-close-exterior', {}, 'Close exterior door')
         : !opposite_door_closed && opposite_door
-          ? `Cycle to ${
-              airlockType === interior_door ? 'interior door' : 'exterior door'
-            }`
-          : `Open ${
-              airlockType === interior_door ? 'interior door' : 'exterior door'
-            }`}
+          ? airlockType === interior_door
+            ? t('airlockbuttons-cycle-interior', {}, 'Cycle to interior door')
+            : t('airlockbuttons-cycle-exterior', {}, 'Cycle to exterior door')
+          : airlockType === interior_door
+            ? t('airlockbuttons-open-interior', {}, 'Open interior door')
+            : t('airlockbuttons-open-exterior', {}, 'Open exterior door')}
     </Button>
   );
 };

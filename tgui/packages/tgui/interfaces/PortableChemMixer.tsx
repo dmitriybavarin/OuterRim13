@@ -2,6 +2,7 @@ import { sortBy } from 'es-toolkit';
 import { Box, Button, Section } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { type Beaker, BeakerDisplay } from './common/BeakerDisplay';
 
@@ -24,6 +25,7 @@ type Data = {
 
 export const PortableChemMixer = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { beaker } = data;
   const beakerTransferAmounts = beaker ? beaker.transferAmounts : [];
   const chemicals = sortBy(data.chemicals, [
@@ -33,7 +35,7 @@ export const PortableChemMixer = (props) => {
     <Window width={500} height={500}>
       <Window.Content scrollable>
         <Section
-          title="Dispense Controls"
+          title={t('portablechemmixer-dispense-controls', {}, 'Dispense Controls')}
           buttons={beakerTransferAmounts.map((amount) => (
             <Button
               key={amount}
@@ -69,7 +71,7 @@ export const PortableChemMixer = (props) => {
           </Box>
         </Section>
         <Section
-          title="Disposal Controls"
+          title={t('portablechemmixer-disposal-controls', {}, 'Disposal Controls')}
           buttons={beakerTransferAmounts.map((amount) => (
             <Button
               key={amount}

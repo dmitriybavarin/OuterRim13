@@ -8,6 +8,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -22,21 +23,26 @@ type Data = {
 export function AiVoiceChanger(props) {
   const { act, data } = useBackend<Data>();
   const { loud, name, on, say_verb, voices, selected } = data;
+  const t = useT();
 
   return (
-    <Window title="Voice changer settings" width={400} height={200}>
+    <Window
+      title={t('aivoice-title', {}, 'Voice changer settings')}
+      width={400}
+      height={200}
+    >
       <Section fill>
         <LabeledList>
-          <LabeledList.Item label="Power">
+          <LabeledList.Item label={t('aivoice-power', {}, 'Power')}>
             <Button
               icon={on ? 'power-off' : 'times'}
               selected={!!on}
               onClick={() => act('power')}
             >
-              {on ? 'On' : 'Off'}
+              {on ? t('aivoice-on', {}, 'On') : t('aivoice-off', {}, 'Off')}
             </Button>
           </LabeledList.Item>
-          <LabeledList.Item label="Accent">
+          <LabeledList.Item label={t('aivoice-accent', {}, 'Accent')}>
             <Dropdown
               options={voices}
               onSelected={(value) => {
@@ -47,7 +53,7 @@ export function AiVoiceChanger(props) {
               selected={selected}
             />
           </LabeledList.Item>
-          <LabeledList.Item label="Verb">
+          <LabeledList.Item label={t('aivoice-verb', {}, 'Verb')}>
             <Input
               value={say_verb}
               onBlur={(value) =>
@@ -57,16 +63,18 @@ export function AiVoiceChanger(props) {
               }
             />
           </LabeledList.Item>
-          <LabeledList.Item label="Volume">
+          <LabeledList.Item label={t('aivoice-volume', {}, 'Volume')}>
             <Button
               icon={loud ? 'power-off' : 'times'}
               selected={!!loud}
               onClick={() => act('loud')}
             >
-              {loud ? 'Loudmode on' : 'Loudmode Off'}
+              {loud
+                ? t('aivoice-loud-on', {}, 'Loudmode on')
+                : t('aivoice-loud-off', {}, 'Loudmode Off')}
             </Button>
           </LabeledList.Item>
-          <LabeledList.Item label="Fake name">
+          <LabeledList.Item label={t('aivoice-fake-name', {}, 'Fake name')}>
             <Input
               value={name}
               onBlur={(value) =>

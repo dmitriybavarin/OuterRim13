@@ -9,6 +9,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -23,6 +24,7 @@ type Data = {
 export const LTSRBT = (props) => {
   const { act, data } = useBackend<Data>();
   const { name, price, min_price, max_price, loaded_icon, desc } = data;
+  const t = useT();
 
   return (
     <Window width={300} height={380} theme="hackerman">
@@ -32,7 +34,7 @@ export const LTSRBT = (props) => {
             <Input
               width="80%"
               value={name}
-              placeholder="Insert a name"
+              placeholder={t('ltsrbt-name-placeholder', {}, 'Insert a name')}
               onBlur={(value) =>
                 act('change_name', {
                   value: value,
@@ -45,7 +47,7 @@ export const LTSRBT = (props) => {
               value={price}
               minValue={min_price}
               maxValue={max_price}
-              unit="cr"
+              unit={t('ltsrbt-unit-credits', {}, 'cr')}
               onChange={(value) =>
                 act('change_price', {
                   value: value,
@@ -72,7 +74,11 @@ export const LTSRBT = (props) => {
               height="100%"
               fluid
               value={desc}
-              placeholder="Insert a description (or don't)"
+              placeholder={t(
+                'ltsrbt-desc-placeholder',
+                {},
+                "Insert a description (or don't)",
+              )}
               onBlur={(value) =>
                 act('change_desc', {
                   value: value,
@@ -85,7 +91,7 @@ export const LTSRBT = (props) => {
             <Button.Confirm
               fluid
               icon="truck-arrow-right"
-              content="Place on Market"
+              content={t('ltsrbt-place', {}, 'Place on Market')}
               onClick={() => act('place_on_market')}
             />
           </Stack.Item>

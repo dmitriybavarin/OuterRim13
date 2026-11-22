@@ -1,6 +1,7 @@
 import { Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { ChemFilterPane } from './ChemFilter';
 
@@ -10,6 +11,7 @@ type Data = {
 
 export const BloodFilter = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { whitelist = [] } = data;
 
   return (
@@ -18,7 +20,8 @@ export const BloodFilter = (props) => {
         <Stack>
           <Stack.Item grow>
             <ChemFilterPane
-              title="Whitelist"
+              title={t('chemfilter-whitelist', {}, 'Whitelist')}
+              which="whitelist"
               list={whitelist}
               buttonColor="green"
             />

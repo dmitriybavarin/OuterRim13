@@ -896,19 +896,14 @@
 	return owner_species.mutantlungs
 
 /obj/item/organ/lungs/feel_for_damage(self_aware)
+	var/awareness = self_aware ? "aware" : "looks"
 	if(organ_flags & ORGAN_FAILING)
-		if(self_aware)
-			return span_boldwarning("Your lungs hurt madly[HAS_TRAIT(owner, TRAIT_NOBREATH) ? "" : ", and you can't breathe"]!")
-		return span_boldwarning("It hurts madly[HAS_TRAIT(owner, TRAIT_NOBREATH) ? "" : ", and you can't breathe"]!")
+		return span_boldwarning(loc_key("organ-lungs-selfcheck-failing-[awareness]", list(breathes = HAS_TRAIT(owner, TRAIT_NOBREATH) ? "no" : "yes")))
 	if(damage < low_threshold)
 		return ""
 	if(damage < high_threshold)
-		if(self_aware)
-			return span_warning("Your lungs feel tight[HAS_TRAIT(owner, TRAIT_NOBREATH) ?  "" : ", and breathing is harder"].")
-		return span_warning("It feels tight[HAS_TRAIT(owner, TRAIT_NOBREATH) ?  "" : ", and breathing is harder"].")
-	if(self_aware)
-		return span_boldwarning("Your lungs feel extremely tight[HAS_TRAIT(owner, TRAIT_NOBREATH) ?  "" : ", and every breath is a struggle"].")
-	return span_boldwarning("It feels extremely tight[HAS_TRAIT(owner, TRAIT_NOBREATH) ?  "" : ", and every breath is a struggle"].")
+		return span_warning(loc_key("organ-lungs-selfcheck-tight-[awareness]", list(breathes = HAS_TRAIT(owner, TRAIT_NOBREATH) ? "no" : "yes")))
+	return span_boldwarning(loc_key("organ-lungs-selfcheck-extreme-[awareness]", list(breathes = HAS_TRAIT(owner, TRAIT_NOBREATH) ? "no" : "yes")))
 
 /obj/item/organ/lungs/get_status_appendix(scanpower, add_tooltips)
 	var/initial_pressure_mult = initial(received_pressure_mult)

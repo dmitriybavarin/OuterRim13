@@ -1,6 +1,7 @@
 import { Box, Divider, Section } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -19,6 +20,7 @@ type CirculatorData = {
 
 export const ThermoElectricGenerator = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     error_message,
     last_power_output,
@@ -29,7 +31,9 @@ export const ThermoElectricGenerator = (props) => {
     return (
       <Window width={320} height={100}>
         <Window.Content>
-          <Section>ERROR: {error_message}</Section>
+          <Section>
+            {t('thermo-error', { message: error_message }, 'ERROR: { $message }')}
+          </Section>
         </Window.Content>
       </Window>
     );
@@ -39,37 +43,47 @@ export const ThermoElectricGenerator = (props) => {
       <Window.Content>
         <Section>
           <Box>
-            <Box>Last Output: {last_power_output}</Box>
+            <Box>
+              {t('thermo-last-output', { value: last_power_output ?? '' })}
+            </Box>
             <Divider />
             <Box m={1} textColor="cyan" bold>
-              Cold Loop
+              {t('thermo-cold-loop', {}, 'Cold Loop')}
             </Box>
             {cold_data.map((data, index) => (
               <Box key={index}>
                 <Box>
-                  Temperature Inlet: {data.temperature_inlet} K / Outlet:{' '}
-                  {data.temperature_outlet} K
+                  {t('thermo-temperature', {
+                    inlet: data.temperature_inlet ?? '',
+                    outlet: data.temperature_outlet ?? '',
+                  })}
                 </Box>
                 <Box>
-                  Pressure Inlet: {data.pressure_inlet} kPa / Outlet:{' '}
-                  {data.pressure_outlet} kPa
+                  {t('thermo-pressure', {
+                    inlet: data.pressure_inlet ?? '',
+                    outlet: data.pressure_outlet ?? '',
+                  })}
                 </Box>
               </Box>
             ))}
           </Box>
           <Box>
             <Box m={1} textColor="red" bold>
-              Hot loop{' '}
+              {t('thermo-hot-loop', {}, 'Hot loop')}
             </Box>
             {hot_data.map((data, index) => (
               <Box key={index}>
                 <Box>
-                  Temperature Inlet: {data.temperature_inlet} K / Outlet:{' '}
-                  {data.temperature_outlet} K
+                  {t('thermo-temperature', {
+                    inlet: data.temperature_inlet ?? '',
+                    outlet: data.temperature_outlet ?? '',
+                  })}
                 </Box>
                 <Box>
-                  Pressure Inlet: {data.pressure_inlet} kPa / Outlet:{' '}
-                  {data.pressure_outlet} kPa
+                  {t('thermo-pressure', {
+                    inlet: data.pressure_inlet ?? '',
+                    outlet: data.pressure_outlet ?? '',
+                  })}
                 </Box>
               </Box>
             ))}

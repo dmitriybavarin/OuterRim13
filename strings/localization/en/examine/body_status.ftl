@@ -143,3 +143,63 @@ bodypart-hand-upper_right_hand_2 = upper right hand #2
 bodypart-hand-upper_left_hand_3 = upper left hand #3
 
 bodypart-hand-upper_right_hand_3 = upper right hand #3
+
+bodypart-selfcheck-looks-ok = Your { $zone } looks OK.
+
+bodypart-selfcheck-disabled-looks-ok = Your { $zone } is disabled but otherwise looks OK.
+
+bodypart-selfcheck-looks-bad = Your { $zone } looks { $status }.
+
+bodypart-selfcheck-disabled-looks-bad = Your { $zone } is disabled and looks { $status }.
+
+bodypart-selfcheck-aware-ok = Your { $zone } has no damage.
+
+bodypart-selfcheck-disabled-aware-ok = Your { $zone } is disabled but otherwise has no damage.
+
+bodypart-selfcheck-aware-bad = Your { $zone } has { $status }.
+
+bodypart-selfcheck-disabled-aware-bad = Your { $zone } is disabled and has { $status }.
+
+bodypart-selfcheck-damage-numbers = { $brute } brute damage and { $burn } burn damage
+
+bodypart-selfcheck-and = { " and " }
+
+bodypart-status-bruised_and_feels_sore = bruised and feels sore
+
+bodypart-status-battered = battered
+
+bodypart-status-mangled = mangled
+
+bodypart-status-red_and_feels_numb = red and feels numb
+
+bodypart-status-blistered = blistered
+
+bodypart-status-like_its_peeling_away = like its peeling away
+
+bodypart-status-marred = marred
+
+bodypart-status-dented = dented
+
+bodypart-status-like_its_falling_apart = like its falling apart
+
+bodypart-status-scorched = scorched
+
+bodypart-status-charred = charred
+
+bodypart-status-smoldering = smoldering
+
+mob-human_defense-examines_self = { $user } examines { $reflexive }.
+
+mob-human_defense-limb_missing = Your { $zone } is missing!
+
+bodypart-selfcheck-embedded-stuck = There is { $icon } { $item } stuck to your { $zone }!
+
+bodypart-selfcheck-embedded-in = There is { $icon } { $item } embedded in your { $zone }!
+
+bodypart-selfcheck-tourniquet-neck = There is { $item } tightly secured around your neck!
+
+bodypart-selfcheck-tourniquet-limb = There is { $item } tightly secured around it.
+
+bodypart-selfcheck-gauze = There is { $item } wrapped around your { $zone }.
+
+bodypart-selfcheck-bleed-hint = You are loosing blood. You should wrap your limb in gauze or apply pressure to it by grabbing yourself (while targeting the limb) to stem the flow.

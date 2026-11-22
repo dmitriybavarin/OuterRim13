@@ -2,6 +2,7 @@ import { Box, Button, LabeledList, Section } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { NtosWindow } from '../layouts';
 
 type Data = {
@@ -27,27 +28,32 @@ export const NtosShipping = (props) => {
 const ShippingHub = (props) => {
   const { act, data } = useBackend<Data>();
   const { current_user, card_owner, paperamt, barcode_split } = data;
+  const t = useT();
 
   return (
     <Section
-      title="NTOS Shipping Hub."
+      title={t('ntosshipping-hub', {}, 'NTOS Shipping Hub.')}
       buttons={
         <Button
           icon="eject"
-          content="Eject Id"
+          content={t('ntosshipping-eject', {}, 'Eject Id')}
           onClick={() => act('ejectid')}
         />
       }
     >
       <LabeledList>
-        <LabeledList.Item label="Current User">
-          {current_user || 'N/A'}
+        <LabeledList.Item label={t('ntosshipping-current-user', {}, 'Current User')}>
+          {current_user || t('ntosshipping-na', {}, 'N/A')}
         </LabeledList.Item>
-        <LabeledList.Item label="Inserted Card">
-          {card_owner || 'N/A'}
+        <LabeledList.Item label={t('ntosshipping-inserted-card', {}, 'Inserted Card')}>
+          {card_owner || t('ntosshipping-na', {}, 'N/A')}
         </LabeledList.Item>
-        <LabeledList.Item label="Available Paper">{paperamt}</LabeledList.Item>
-        <LabeledList.Item label="Profit on Sale">
+        <LabeledList.Item
+          label={t('ntosshipping-paper', {}, 'Available Paper')}
+        >
+          {paperamt}
+        </LabeledList.Item>
+        <LabeledList.Item label={t('ntosshipping-profit', {}, 'Profit on Sale')}>
           {barcode_split}%
         </LabeledList.Item>
       </LabeledList>
@@ -59,42 +65,55 @@ const ShippingHub = (props) => {
 const ShippingOptions = (props) => {
   const { act, data } = useBackend<Data>();
   const { has_id_slot, current_user } = data;
+  const t = useT();
 
   return (
-    <Section title="Shipping Options">
+    <Section title={t('ntosshipping-options', {}, 'Shipping Options')}>
       <Box>
         <Button
           icon="id-card"
-          tooltip="The currently ID card will become the current user."
+          tooltip={t(
+            'ntosshipping-set-id-tooltip',
+            {},
+            'The currently ID card will become the current user.',
+          )}
           tooltipPosition="right"
           disabled={!has_id_slot}
           onClick={() => act('selectid')}
-          content="Set Current ID"
+          content={t('ntosshipping-set-id', {}, 'Set Current ID')}
         />
       </Box>
       <Box>
         <Button
           icon="print"
-          tooltip="Print a barcode to use on a wrapped package."
+          tooltip={t(
+            'ntosshipping-print-tooltip',
+            {},
+            'Print a barcode to use on a wrapped package.',
+          )}
           tooltipPosition="right"
           disabled={!current_user}
           onClick={() => act('print')}
-          content="Print Barcode"
+          content={t('ntosshipping-print', {}, 'Print Barcode')}
         />
       </Box>
       <Box>
         <Button
           icon="tags"
-          tooltip="Set how much profit you'd like on your package."
+          tooltip={t(
+            'ntosshipping-split-tooltip',
+            {},
+            "Set how much profit you'd like on your package.",
+          )}
           tooltipPosition="right"
           onClick={() => act('setsplit')}
-          content="Set Profit Margin"
+          content={t('ntosshipping-split', {}, 'Set Profit Margin')}
         />
       </Box>
       <Box>
         <Button
           icon="sync-alt"
-          content="Reset ID"
+          content={t('ntosshipping-reset', {}, 'Reset ID')}
           onClick={() => act('resetid')}
         />
       </Box>

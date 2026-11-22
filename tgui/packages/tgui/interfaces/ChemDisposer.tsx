@@ -6,6 +6,7 @@ import {
   Section,
 } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -16,25 +17,28 @@ type Data = {
 
 export function ChemDisposer() {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { enabled, max_volume, disposal_rate } = data;
 
   return (
     <Window width={320} height={105}>
       <Window.Content>
         <Section
-          title="Control Panel"
+          title={t('chemdisposer-control-panel', {}, 'Control Panel')}
           buttons={
             <Button
               icon="power-off"
               selected={enabled}
               onClick={() => act('toggle_power')}
             >
-              {enabled ? 'On' : 'Off'}
+              {enabled
+                ? t('chemistry-on', {}, 'On')
+                : t('chemistry-off', {}, 'Off')}
             </Button>
           }
         >
           <LabeledList>
-            <LabeledList.Item label="Volume">
+            <LabeledList.Item label={t('chemdisposer-volume', {}, 'Volume')}>
               <NumberInput
                 value={disposal_rate}
                 unit="u"

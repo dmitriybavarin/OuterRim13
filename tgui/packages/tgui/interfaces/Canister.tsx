@@ -15,6 +15,7 @@ import { toFixed } from 'tgui-core/math';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 const formatPressure = (value: number) => {
@@ -49,6 +50,7 @@ type Data = {
 
 export const Canister = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     shielding,
     holdingTank,
@@ -73,18 +75,22 @@ export const Canister = (props) => {
         <Flex direction="column" height="100%">
           <Flex.Item mb={1}>
             <Section
-              title="Canister"
+              title={t('canister-title', {}, 'Canister')}
               buttons={
                 <>
                   <Button
                     icon={shielding ? 'power-off' : 'times'}
-                    content={shielding ? 'Shielding-ON' : 'Shielding-OFF'}
+                    content={
+                      shielding
+                        ? t('canister-shielding-on', {}, 'Shielding-ON')
+                        : t('canister-shielding-off', {}, 'Shielding-OFF')
+                    }
                     selected={shielding}
                     onClick={() => act('shielding')}
                   />
                   <Button
                     icon="pencil-alt"
-                    content="Relabel"
+                    content={t('canister-relabel', {}, 'Relabel')}
                     onClick={() => act('relabel')}
                   />
                   <Button icon="palette" onClick={() => act('recolor')} />
@@ -92,7 +98,10 @@ export const Canister = (props) => {
               }
             >
               <LabeledControls>
-                <LabeledControls.Item minWidth="66px" label="Pressure">
+                <LabeledControls.Item
+                  minWidth="66px"
+                  label={t('canister-pressure', {}, 'Pressure')}
+                >
                   <RoundGauge
                     size={1.75}
                     value={tankPressure}
@@ -107,7 +116,7 @@ export const Canister = (props) => {
                     format={formatPressure}
                   />
                 </LabeledControls.Item>
-                <LabeledControls.Item label="Regulator">
+                <LabeledControls.Item label={t('canister-regulator', {}, 'Regulator')}>
                   <Box position="relative" left="-8px">
                     <Knob
                       size={1.25}
@@ -152,7 +161,7 @@ export const Canister = (props) => {
                     />
                   </Box>
                 </LabeledControls.Item>
-                <LabeledControls.Item label="Valve">
+                <LabeledControls.Item label={t('canister-valve', {}, 'Valve')}>
                   <Button
                     my={0.5}
                     width="50px"
@@ -161,13 +170,21 @@ export const Canister = (props) => {
                     color={
                       valveOpen ? (holdingTank ? 'caution' : 'danger') : null
                     }
-                    content={valveOpen ? 'Open' : 'Closed'}
+                    content={
+                      valveOpen
+                        ? t('canister-valve-open', {}, 'Open')
+                        : t('canister-valve-closed', {}, 'Closed')
+                    }
                     onClick={() => act('valve')}
                   />
                 </LabeledControls.Item>
-                <LabeledControls.Item mr={1} label="Port">
+                <LabeledControls.Item mr={1} label={t('canister-port', {}, 'Port')}>
                   <Tooltip
-                    content={portConnected ? 'Connected' : 'Disconnected'}
+                    content={
+                      portConnected
+                        ? t('canister-connected', {}, 'Connected')
+                        : t('canister-disconnected', {}, 'Disconnected')
+                    }
                     position="top"
                   >
                     <Box position="relative">
@@ -183,15 +200,17 @@ export const Canister = (props) => {
             </Section>
             <Section>
               <LabeledList>
-                <LabeledList.Item label="Cell Charge">
-                  {cellCharge > 0 ? `${cellCharge}%` : 'Missing Cell'}
+                <LabeledList.Item label={t('canister-cell-charge', {}, 'Cell Charge')}>
+                  {cellCharge > 0 ? `${cellCharge}%` : t('canister-cell-missing', {}, 'Missing Cell')}
                 </LabeledList.Item>
                 {!!hasHypernobCrystal && (
-                  <LabeledList.Item label="Reaction Suppression">
+                  <LabeledList.Item label={t('canister-suppression', {}, 'Reaction Suppression')}>
                     <Button
                       icon={reactionSuppressionEnabled ? 'snowflake' : 'times'}
                       content={
-                        reactionSuppressionEnabled ? 'Enabled' : 'Disabled'
+                        reactionSuppressionEnabled
+                          ? t('canister-suppression-enabled', {}, 'Enabled')
+                          : t('canister-suppression-disabled', {}, 'Disabled')
                       }
                       selected={reactionSuppressionEnabled}
                       onClick={() => act('reaction_suppression')}
@@ -204,13 +223,13 @@ export const Canister = (props) => {
           <Flex.Item grow={1}>
             <Section
               height="100%"
-              title="Holding Tank"
+              title={t('canister-holding-tank', {}, 'Holding Tank')}
               buttons={
                 !!holdingTank && (
                   <Button
                     icon="eject"
                     color={valveOpen && 'danger'}
-                    content="Eject"
+                    content={t('canister-eject', {}, 'Eject')}
                     onClick={() => act('eject')}
                   />
                 )
@@ -218,10 +237,10 @@ export const Canister = (props) => {
             >
               {!!holdingTank && (
                 <LabeledList>
-                  <LabeledList.Item label="Label">
+                  <LabeledList.Item label={t('canister-label', {}, 'Label')}>
                     {holdingTank.name}
                   </LabeledList.Item>
-                  <LabeledList.Item label="Pressure">
+                  <LabeledList.Item label={t('canister-pressure', {}, 'Pressure')}>
                     <RoundGauge
                       value={holdingTank.tankPressure}
                       minValue={0}
@@ -244,7 +263,9 @@ export const Canister = (props) => {
                   </LabeledList.Item>
                 </LabeledList>
               )}
-              {!holdingTank && <Box color="average">No Holding Tank</Box>}
+              {!holdingTank && <Box color="average">
+                  {t('canister-no-holding-tank', {}, 'No Holding Tank')}
+                </Box>}
             </Section>
           </Flex.Item>
         </Flex>

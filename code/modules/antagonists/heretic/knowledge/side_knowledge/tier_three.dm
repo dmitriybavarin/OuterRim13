@@ -89,33 +89,33 @@
 		if(body.stat != DEAD)
 			continue
 		if(!IS_VALID_GHOUL_MOB(body) || HAS_TRAIT(body, TRAIT_HUSK))
-			to_chat(user, span_hierophant_warning("[body] is not in a valid state to be made into a ghoul."))
+			to_chat(user, span_hierophant_warning(loc_key("heretic-side-ghoul-invalid", list(body = body))))
 			continue
 		if(!body.mind)
-			to_chat(user, span_hierophant_warning("[body] is mindless and cannot be made into a ghoul."))
+			to_chat(user, span_hierophant_warning(loc_key("heretic-side-ghoul-mindless", list(body = body))))
 			continue
 		if(!body.client && !body.mind.get_ghost(ghosts_with_clients = TRUE))
-			to_chat(user, span_hierophant_warning("[body] is soulless and cannot be made into a ghoul."))
+			to_chat(user, span_hierophant_warning(loc_key("heretic-side-ghoul-soulless", list(body = body))))
 			continue
 
 		// We will only accept valid bodies with a mind, or with a ghost connected that used to control the body
 		selected_atoms += body
 		return TRUE
 
-	loc.balloon_alert(user, "ritual failed, no valid body!")
+	loc.balloon_alert(user, LOC_KEY("heretic-ritual-failed-no-body"))
 	return FALSE
 
 /datum/heretic_knowledge/limited_amount/risen_corpse/on_finished_recipe(mob/living/user, list/selected_atoms, turf/loc)
 	var/mob/living/carbon/human/soon_to_be_ghoul = locate() in selected_atoms
 	if(QDELETED(soon_to_be_ghoul)) // No body? No ritual
 		stack_trace("[type] reached on_finished_recipe without a human in selected_atoms to make a ghoul out of.")
-		loc.balloon_alert(user, "ritual failed, no valid body!")
+		loc.balloon_alert(user, LOC_KEY("heretic-ritual-failed-no-body"))
 		return FALSE
 
 	soon_to_be_ghoul.grab_ghost()
 	if(!soon_to_be_ghoul.mind || !soon_to_be_ghoul.client)
 		stack_trace("[type] reached on_finished_recipe without a minded / cliented human in selected_atoms to make a ghoul out of.")
-		loc.balloon_alert(user, "ritual failed, no valid body!")
+		loc.balloon_alert(user, LOC_KEY("heretic-ritual-failed-no-body"))
 		return FALSE
 
 	selected_atoms -= soon_to_be_ghoul
@@ -282,13 +282,13 @@
 		return CLOSET_TELEPORT_FORCED
 
 	if(isliving(sending_through) && !consents_to_entry(sending_through))
-		locker.balloon_alert(sending_through, "the door refuses you!")
+		locker.balloon_alert(sending_through, LOC_KEY("heretic-side-gate-refuses"))
 		return CLOSET_TELEPORT_BLOCKED
 
 	for(var/mob/living/entering in sending_through.get_all_contents())
 		if(!consents_to_entry(entering))
 			if(isliving(sending_through))
-				locker.balloon_alert(sending_through, "the door refuses you!")
+				locker.balloon_alert(sending_through, LOC_KEY("heretic-side-gate-refuses"))
 			return CLOSET_TELEPORT_BLOCKED
 
 	return CLOSET_TELEPORT_FORCED
@@ -342,7 +342,7 @@
 /area/centcom/heretic_backdoor/proc/greet_message(mob/living/arrived_mob)
 	if(QDELETED(arrived_mob) || get_area(arrived_mob) != src)
 		return
-	to_chat(arrived_mob, span_mansus("A hollow sun shines down from above."))
+	to_chat(arrived_mob, span_mansus(LOC_KEY("heretic-side-gate-greet")))
 
 /datum/movespeed_modifier/heretic_backdoor_slowdown
 	multiplicative_slowdown = 0.5

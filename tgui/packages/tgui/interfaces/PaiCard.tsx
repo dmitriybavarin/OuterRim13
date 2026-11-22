@@ -11,6 +11,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { decodeHtmlEntities } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -42,10 +43,11 @@ type Pai = {
 
 export const PaiCard = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { pai } = data;
 
   return (
-    <Window width={400} height={400} title="pAI Options Menu">
+    <Window width={400} height={400} title={t('paicard-title', {}, 'pAI Options Menu')}>
       <Window.Content scrollable>
         {!pai ? <PaiDownload /> : <PaiOptions />}
       </Window.Content>
@@ -56,6 +58,7 @@ export const PaiCard = (props) => {
 /** Gives a list of candidates as cards */
 const PaiDownload = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { candidates = [] } = data;
 
   return (
@@ -64,16 +67,20 @@ const PaiDownload = (props) => {
         <NoticeBox info>
           <Stack fill>
             <Stack.Item grow fontSize="16px">
-              pAI Candidates
+              {t('paicard-candidates', {}, 'pAI Candidates')}
             </Stack.Item>
             <Stack.Item>
               <Button
                 color="good"
                 icon="bell"
                 onClick={() => act('request')}
-                tooltip="Request more candidates from beyond."
+                tooltip={t(
+                  'paicard-request-tooltip',
+                  {},
+                  'Request more candidates from beyond.',
+                )}
               >
-                Request
+                {t('paicard-request', {}, 'Request')}
               </Button>
             </Stack.Item>
           </Stack>
@@ -95,6 +102,7 @@ const PaiDownload = (props) => {
  */
 const CandidateDisplay = (props: { candidate: Candidate; index: number }) => {
   const { act } = useBackend<Data>();
+  const t = useT();
   const {
     candidate: { comments, ckey, description, name },
     index,
@@ -104,21 +112,25 @@ const CandidateDisplay = (props: { candidate: Candidate; index: number }) => {
     <Section
       buttons={
         <Button icon="save" onClick={() => act('download', { ckey })}>
-          Download
+          {t('paicard-download', {}, 'Download')}
         </Button>
       }
       overflow="hidden"
-      title={`Candidate ${index}`}
+      title={t('paicard-candidate', { index }, `Candidate ${index}`)}
     >
       <Stack vertical>
         <Stack.Item>
           <Box color="label" mb={1}>
-            Name:
+            {t('paicard-name', {}, 'Name:')}
           </Box>
           {name ? (
             <Box color="green">{name}</Box>
           ) : (
-            'None provided - name will be randomized.'
+            t(
+              'paicard-no-name',
+              {},
+              'None provided - name will be randomized.',
+            )
           )}
         </Stack.Item>
         {!!description && (
@@ -126,7 +138,7 @@ const CandidateDisplay = (props: { candidate: Candidate; index: number }) => {
             <Stack.Divider />
             <Stack.Item>
               <Box color="label" mb={1}>
-                IC Description:
+                {t('paicard-ic-description', {}, 'IC Description:')}
               </Box>
               {description}
             </Stack.Item>
@@ -137,7 +149,7 @@ const CandidateDisplay = (props: { candidate: Candidate; index: number }) => {
             <Stack.Divider />
             <Stack.Item>
               <Box color="label" mb={1}>
-                OOC Notes:
+                {t('paicard-ooc-notes', {}, 'OOC Notes:')}
               </Box>
               {comments}
             </Stack.Item>
@@ -151,6 +163,7 @@ const CandidateDisplay = (props: { candidate: Candidate; index: number }) => {
 /** Once a pAI has been loaded, you can alter its settings here */
 const PaiOptions = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     range_max,
     range_min,
@@ -167,15 +180,20 @@ const PaiOptions = (props) => {
       range,
     },
   } = data;
-  const suppliedLaws = laws[0] ? decodeHtmlEntities(laws[0]) : 'None';
+  const suppliedLaws = laws[0] ? decodeHtmlEntities(laws[0])
+    : t('paicard-none', {}, 'None');
 
   return (
-    <Section fill scrollable title={`Settings: ${name.toUpperCase()}`}>
+    <Section fill scrollable title={t(
+        'paicard-settings',
+        { name: name.toUpperCase() },
+        `Settings: ${name.toUpperCase()}`,
+      )}>
       <LabeledList>
-        <LabeledList.Item label="Master">
+        <LabeledList.Item label={t('paicard-master', {}, 'Master')}>
           {master || (
             <Button icon="dna" onClick={() => act('set_dna')}>
-              Imprint
+              {t('paicard-imprint', {}, 'Imprint')}
             </Button>
           )}
         </LabeledList.Item>
@@ -184,28 +202,30 @@ const PaiOptions = (props) => {
             {dna}
           </LabeledList.Item>
         )}
-        <LabeledList.Item label="Laws">
+        <LabeledList.Item label={t('paicard-laws', {}, 'Laws')}>
           <BlockQuote>{suppliedLaws}</BlockQuote>
         </LabeledList.Item>
-        <LabeledList.Item label="Holoform">
+        <LabeledList.Item label={t('paicard-holoform', {}, 'Holoform')}>
           <Button
             icon={can_holo ? 'toggle-on' : 'toggle-off'}
             onClick={() => act('toggle_holo')}
             selected={can_holo}
           >
-            Toggle
+            {t('paicard-toggle', {}, 'Toggle')}
           </Button>
         </LabeledList.Item>
-        <LabeledList.Item label="Leash">
+        <LabeledList.Item label={t('paicard-leash', {}, 'Leash')}>
           <Button
             icon={leashed ? 'toggle-on' : 'toggle-off'}
             onClick={() => act('toggle_leash')}
             selected={leashed}
           >
-            {leashed ? 'Unleash' : 'Leash'}
+            {leashed
+              ? t('paicard-unleash', {}, 'Unleash')
+              : t('paicard-leash', {}, 'Leash')}
           </Button>
         </LabeledList.Item>
-        <LabeledList.Item label="Holoform Range">
+        <LabeledList.Item label={t('paicard-range', {}, 'Holoform Range')}>
           <Stack>
             <Stack.Item>
               <Button
@@ -224,35 +244,35 @@ const PaiOptions = (props) => {
             </Stack.Item>
           </Stack>
         </LabeledList.Item>
-        <LabeledList.Item label="Transmit">
+        <LabeledList.Item label={t('paicard-transmit', {}, 'Transmit')}>
           <Button
             icon={transmit ? 'toggle-on' : 'toggle-off'}
             onClick={() => act('toggle_radio', { option: 'transmit' })}
             selected={transmit}
           >
-            Toggle
+            {t('paicard-toggle', {}, 'Toggle')}
           </Button>
         </LabeledList.Item>
-        <LabeledList.Item label="Receive">
+        <LabeledList.Item label={t('paicard-receive', {}, 'Receive')}>
           <Button
             icon={receive ? 'toggle-on' : 'toggle-off'}
             onClick={() => act('toggle_radio', { option: 'receive' })}
             selected={receive}
           >
-            Toggle
+            {t('paicard-toggle', {}, 'Toggle')}
           </Button>
         </LabeledList.Item>
-        <LabeledList.Item label="Troubleshoot">
+        <LabeledList.Item label={t('paicard-troubleshoot', {}, 'Troubleshoot')}>
           <Button icon="comment" onClick={() => act('fix_speech')}>
-            Fix Speech
+            {t('paicard-fix-speech', {}, 'Fix Speech')}
           </Button>
           <Button icon="edit" onClick={() => act('set_laws')}>
-            Set Laws
+            {t('paicard-set-laws', {}, 'Set Laws')}
           </Button>
         </LabeledList.Item>
-        <LabeledList.Item label="Personality">
+        <LabeledList.Item label={t('paicard-personality', {}, 'Personality')}>
           <Button icon="trash" onClick={() => act('wipe_pai')}>
-            Erase
+            {t('paicard-erase', {}, 'Erase')}
           </Button>
         </LabeledList.Item>
       </LabeledList>
@@ -263,7 +283,7 @@ const PaiOptions = (props) => {
           mt={1}
           onClick={() => act('reset_software')}
         >
-          Reset Software
+          {t('paicard-reset', {}, 'Reset Software')}
         </Button>
       )}
     </Section>

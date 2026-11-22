@@ -1,4 +1,5 @@
 import { useBackend } from 'tgui/backend';
+import { useT } from 'tgui/i18n';
 import { Window } from 'tgui/layouts';
 import { Box, Button, Image, LabeledList, Stack } from 'tgui-core/components';
 
@@ -15,9 +16,10 @@ type SpriteAuditorData = {
 
 export const SpriteAuditor = (props) => {
   const { act, data } = useBackend<SpriteAuditorData>();
+  const t = useT();
   const { entries } = data;
   return (
-    <Window width={360} height={720} title="Sprite Auditor">
+    <Window width={360} height={720} title={t('spriteauditor-title', {}, 'Sprite Auditor')}>
       <Window.Content>
         <Stack vertical overflowY="scroll">
           {entries?.map((entry, i) => {
@@ -34,14 +36,14 @@ export const SpriteAuditor = (props) => {
                   </Stack.Item>
                   <Stack.Item grow>
                     <LabeledList>
-                      <LabeledList.Item label="Creation Timestamp">
+                      <LabeledList.Item label={t('spriteauditor-timestamp', {}, 'Creation Timestamp')}>
                         {timestamp}
                       </LabeledList.Item>
-                      <LabeledList.Item label="Creator">
+                      <LabeledList.Item label={t('spriteauditor-creator', {}, 'Creator')}>
                         <Box inline>{`${name} (${ckey})`}</Box>
                         <Button
                           inline
-                          tooltip="Show Player Panel"
+                          tooltip={t('spriteauditor-pp', {}, 'Show Player Panel')}
                           onClick={() => act('playerPanel', { ckey })}
                         >
                           PP

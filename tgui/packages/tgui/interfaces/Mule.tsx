@@ -10,6 +10,7 @@ import { capitalize } from 'tgui-core/string';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { InterfaceLockNoticeBox } from './common/InterfaceLockNoticeBox';
 
@@ -36,6 +37,7 @@ type Data = {
 
 const MuleControls = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     load,
     loadName,
@@ -54,33 +56,34 @@ const MuleControls = (props) => {
   return (
     <>
       <Section
-        title="Controls"
+        title={t('mule-controls', {}, 'Controls')}
         buttons={
           <>
             {!!load && (
               <Button icon="eject" onClick={() => act('unload')}>
-                Unload
+                {t('mule-unload', {}, 'Unload')}
               </Button>
             )}
             {!!paiInserted && (
               <Button icon="eject" onClick={() => act('eject_pai')}>
-                Eject PAI
+                {t('mule-eject-pai', {}, 'Eject PAI')}
               </Button>
             )}
           </>
         }
       >
         <LabeledList>
-          <LabeledList.Item label="ID">
+          <LabeledList.Item label={t('mule-id', {}, 'ID')}>
             <Button onClick={() => act('setid')}>{botId}</Button>
           </LabeledList.Item>
-          <LabeledList.Item label="Home">
+          <LabeledList.Item label={t('mule-home', {}, 'Home')}>
             <Button onClick={() => act('sethome')}>{homeDestination}</Button>
           </LabeledList.Item>
-          <LabeledList.Item label="Destination">
+          <LabeledList.Item label={t('mule-destination', {}, 'Destination')}>
             <Dropdown
               over
               selected={destination || 'None'}
+              displayText={destination || t('mule-none', {}, 'None')}
               options={destinationsList}
               width="188px"
               onSelected={(value) => act('destination', { value })}
@@ -88,7 +91,7 @@ const MuleControls = (props) => {
           </LabeledList.Item>
         </LabeledList>
       </Section>
-      <Section title="Actions">
+      <Section title={t('mule-actions', {}, 'Actions')}>
         <Stack style={{ padding: '0px 30px' }}>
           <Stack.Item grow>
             <Button
@@ -97,7 +100,7 @@ const MuleControls = (props) => {
               color="bad"
               onClick={() => act('stop')}
             >
-              Stop
+              {t('mule-stop', {}, 'Stop')}
             </Button>
           </Stack.Item>
           <Stack.Item grow>
@@ -107,27 +110,27 @@ const MuleControls = (props) => {
               color="average"
               onClick={() => act('go')}
             >
-              Go
+              {t('mule-go', {}, 'Go')}
             </Button>
           </Stack.Item>
           <Stack.Item>
             <Button width="60px" icon="home" onClick={() => act('home')}>
-              Home
+              {t('mule-home', {}, 'Home')}
             </Button>
           </Stack.Item>
         </Stack>
       </Section>
-      <Section title="Settings">
+      <Section title={t('mule-settings', {}, 'Settings')}>
         <Button.Checkbox checked={autoReturn} onClick={() => act('autoret')}>
-          Auto-Return
+          {t('mule-auto-return', {}, 'Auto-Return')}
         </Button.Checkbox>
         <br />
         <Button.Checkbox checked={autoPickup} onClick={() => act('autopick')}>
-          Auto-Pickup
+          {t('mule-auto-pickup', {}, 'Auto-Pickup')}
         </Button.Checkbox>
         <br />
         <Button.Checkbox checked={reportDelivery} onClick={() => act('report')}>
-          Report-Delivery
+          {t('mule-report-delivery', {}, 'Report-Delivery')}
         </Button.Checkbox>
         <br />
         {!!allowPossession && (
@@ -135,7 +138,7 @@ const MuleControls = (props) => {
             checked={possessionEnabled}
             onClick={() => act('toggle_personality')}
           >
-            Download Personality
+            {t('mule-download-personality', {}, 'Download Personality')}
           </Button.Checkbox>
         )}
       </Section>
@@ -145,6 +148,7 @@ const MuleControls = (props) => {
 
 export const Mule = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     powerStatus,
     cellPercent,
@@ -163,11 +167,11 @@ export const Mule = (props) => {
       <Window.Content scrollable>
         <InterfaceLockNoticeBox />
         <Section
-          title="Status"
+          title={t('mule-status', {}, 'Status')}
           buttons={
             <>
               <Button icon="fa-poll-h" onClick={() => act('rename')}>
-                Rename
+                {t('mule-rename', {}, 'Rename')}
               </Button>
               {!mulebotLocked && (
                 <Button
@@ -175,7 +179,9 @@ export const Mule = (props) => {
                   selected={powerStatus}
                   onClick={() => act('on')}
                 >
-                  {powerStatus ? 'On' : 'Off'}
+                  {powerStatus
+                    ? t('mule-power-on', {}, 'On')
+                    : t('mule-power-off', {}, 'Off')}
                 </Button>
               )}
             </>
@@ -188,14 +194,19 @@ export const Mule = (props) => {
           <Stack mt={1} vertical>
             <Stack.Item grow>
               <LabeledList>
-                <LabeledList.Item label="Mode" color={modeStatus}>
+                <LabeledList.Item
+                  label={t('mule-mode', {}, 'Mode')}
+                  color={modeStatus}
+                >
                   {mode}
                 </LabeledList.Item>
                 <LabeledList.Item
-                  label="Load"
+                  label={t('mule-load', {}, 'Load')}
                   color={load ? 'good' : 'average'}
                 >
-                  {load ? capitalize(loadName ?? '') : 'None'}
+                  {load
+                    ? capitalize(loadName ?? '')
+                    : t('mule-none', {}, 'None')}
                 </LabeledList.Item>
               </LabeledList>
             </Stack.Item>

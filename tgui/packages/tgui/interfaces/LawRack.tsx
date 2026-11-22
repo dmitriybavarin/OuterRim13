@@ -11,6 +11,7 @@ import {
 } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 enum SlotSecurity {
@@ -89,6 +90,7 @@ const LawSlotScrew = (props: {
 
 const LawSlot = (props: { slot: SlotData; index: number }) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
 
   const { slot, index } = props;
   const {
@@ -112,9 +114,17 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
           <LawSlotScrew
             tooltip={
               slot.security === SlotSecurity.SCREWED && !holding_screwdriver
-                ? 'You need a screwdriver to unscrew this module.'
+                ? t(
+                    'lawrack-need-screwdriver',
+                    {},
+                    'You need a screwdriver to unscrew this module.',
+                  )
                 : holding_screwdriver && slot.security === SlotSecurity.WELDED
-                  ? `You can't remove the screws before unwelding it.`
+                  ? t(
+                      'lawrack-screws-welded',
+                      {},
+                      "You can't remove the screws before unwelding it.",
+                    )
                   : undefined
             }
             noscrew={slot.empty || slot.security === SlotSecurity.NONE}
@@ -134,11 +144,19 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
               fluid
               tooltip={
                 slot.security === SlotSecurity.WELDED && !holding_welder
-                  ? `You can't remove this module before unwelding it.`
+                  ? t(
+                      'lawrack-remove-welded',
+                      {},
+                      "You can't remove this module before unwelding it.",
+                    )
                   : holding_welder &&
                       slot.security === SlotSecurity.NONE &&
                       !slot.empty
-                    ? 'Screw this module in place before welding.'
+                    ? t(
+                        'lawrack-screw-first',
+                        {},
+                        'Screw this module in place before welding.',
+                      )
                     : undefined
               }
               className={
@@ -154,10 +172,10 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
               onClick={() => act('weld_module', { slot: index + 1 })}
             >
               {slot.security === SlotSecurity.WELDED
-                ? 'Welded'
+                ? t('lawrack-welded', {}, 'Welded')
                 : slot.empty
-                  ? slot.name || 'Empty'
-                  : 'Weld Module'}
+                  ? slot.name || t('lawrack-empty', {}, 'Empty')
+                  : t('lawrack-weld', {}, 'Weld Module')}
             </Button>
           )}
           {slot.security !== SlotSecurity.WELDED && !!holding_multitool && (
@@ -169,7 +187,7 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
               disabled={!slot.ioned}
               onClick={() => act('multitool_module', { slot: index + 1 })}
             >
-              Repair Ion Damage
+              {t('lawrack-repair-ion', {}, 'Repair Ion Damage')}
             </Button>
           )}
           {slot.security !== SlotSecurity.WELDED &&
@@ -182,7 +200,11 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
                 fluid
                 tooltip={
                   slot.security === SlotSecurity.SCREWED
-                    ? `You can't remove this module before unscrewing it.`
+                    ? t(
+                        'lawrack-remove-screwed',
+                        {},
+                        "You can't remove this module before unscrewing it.",
+                      )
                     : undefined
                 }
                 disabled={
@@ -199,7 +221,7 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
                   )
                 }
               >
-                {slot.name || 'Empty'}
+                {slot.name || t('lawrack-empty', {}, 'Empty')}
               </Button>
             )}
         </Flex.Item>
@@ -207,9 +229,17 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
           <LawSlotScrew
             tooltip={
               slot.security === SlotSecurity.SCREWED && !holding_screwdriver
-                ? 'You need a screwdriver to unscrew this module.'
+                ? t(
+                    'lawrack-need-screwdriver',
+                    {},
+                    'You need a screwdriver to unscrew this module.',
+                  )
                 : holding_screwdriver && slot.security === SlotSecurity.WELDED
-                  ? `You can't remove the screws before unwelding it.`
+                  ? t(
+                      'lawrack-screws-welded',
+                      {},
+                      "You can't remove the screws before unwelding it.",
+                    )
                   : undefined
             }
             noscrew={slot.empty || slot.security === SlotSecurity.NONE}
@@ -366,6 +396,7 @@ const AiFlavorDisplay = (props: { show_face: string }) => {
 const BroadcasterDisplay = () => {
   const { data, act } = useBackend<Data>();
   const { depowered, parent_rack, linkable_racks } = data;
+  const t = useT();
 
   const [rackLink, setRackLink] = useState(true);
   return (
@@ -373,10 +404,12 @@ const BroadcasterDisplay = () => {
       <Stack.Item width="50%">
         <Stack p={1} className="LawRack__Console" vertical>
           <Stack.Item>
-            &gt; <b>Linked Rack:</b>
+            &gt; <b>{t('lawrack-linked-rack', {}, 'Linked Rack:')}</b>
           </Stack.Item>
           <Stack.Item>
-            {parent_rack ? capitalize(parent_rack.name) : 'N/A'}
+            {parent_rack
+              ? capitalize(parent_rack.name)
+              : t('lawrack-na', {}, 'N/A')}
           </Stack.Item>
         </Stack>
       </Stack.Item>
@@ -389,16 +422,16 @@ const BroadcasterDisplay = () => {
               disabled={depowered || !parent_rack}
               tooltip={
                 depowered
-                  ? 'No power!'
+                  ? t('lawrack-no-power', {}, 'No power!')
                   : parent_rack
                     ? undefined
-                    : 'No linked rack!'
+                    : t('lawrack-no-linked-rack', {}, 'No linked rack!')
               }
               fontFamily="monospace"
               color={depowered || !parent_rack ? 'grey' : 'black'}
               onClick={() => act('unlink_rack')}
             >
-              &gt; Unlink Rack
+              &gt; {t('lawrack-unlink-rack', {}, 'Unlink Rack')}
             </Button>
           </Stack.Item>
           <Stack.Item>
@@ -420,18 +453,22 @@ const BroadcasterDisplay = () => {
                   }
                   tooltip={
                     depowered
-                      ? 'No power!'
+                      ? t('lawrack-no-power', {}, 'No power!')
                       : linkable_racks?.length
                         ? parent_rack
-                          ? 'Already linked!'
+                          ? t('lawrack-already-linked', {}, 'Already linked!')
                           : undefined
-                        : 'No linkable racks!'
+                        : t(
+                            'lawrack-no-linkable-racks',
+                            {},
+                            'No linkable racks!',
+                          )
                   }
                   fontFamily="monospace"
                   color={depowered || parent_rack ? 'grey' : 'black'}
                   onClick={() => setRackLink(!rackLink)}
                 >
-                  &gt; New Link
+                  &gt; {t('lawrack-new-link', {}, 'New Link')}
                 </Button>
               }
             />
@@ -445,6 +482,7 @@ const BroadcasterDisplay = () => {
 const BaseDisplay = () => {
   const { data, act } = useBackend<Data>();
   const { depowered, linkable_silicons, linked_mobs, parent_rack } = data;
+  const t = useT();
 
   const [siliconLink, setSiliconLink] = useState(true);
   const [siliconUnlink, setSiliconUnlink] = useState(true);
@@ -454,10 +492,12 @@ const BaseDisplay = () => {
       <Stack.Item>
         <Stack p={1} className="LawRack__Console" vertical>
           <Stack.Item>
-            &gt; <b>Linked Silicons:</b>
+            &gt; <b>{t('lawrack-linked-silicons', {}, 'Linked Silicons:')}</b>
           </Stack.Item>
           <Stack.Item style={{ wordBreak: 'break-word' }}>
-            {linked_mobs?.length ? linked_mobs.join(', ') : 'N/A'}
+            {linked_mobs?.length
+              ? linked_mobs.join(', ')
+              : t('lawrack-na', {}, 'N/A')}
           </Stack.Item>
         </Stack>
       </Stack.Item>
@@ -467,7 +507,9 @@ const BaseDisplay = () => {
             show_floating={siliconUnlink}
             unlinkable={linked_mobs || []}
             can_unlink={!depowered}
-            unlink_tooltip={depowered ? 'No power!' : undefined}
+            unlink_tooltip={
+              depowered ? t('lawrack-no-power', {}, 'No power!') : undefined
+            }
             unlink_act={(index, name) =>
               act('unlink_silicon', {
                 silicon_index: index,
@@ -481,16 +523,20 @@ const BaseDisplay = () => {
                 disabled={!linked_mobs?.length || depowered}
                 tooltip={
                   depowered
-                    ? 'No power!'
+                    ? t('lawrack-no-power', {}, 'No power!')
                     : linked_mobs?.length
                       ? undefined
-                      : 'No linked silicons!'
+                      : t(
+                          'lawrack-no-linked-silicons',
+                          {},
+                          'No linked silicons!',
+                        )
                 }
                 color={depowered || !linked_mobs?.length ? 'grey' : 'black'}
                 fontFamily="monospace"
                 onClick={() => setSiliconUnlink(!siliconUnlink)}
               >
-                &gt; Manage Connections
+                &gt; {t('lawrack-manage', {}, 'Manage Connections')}
               </Button>
             }
           />
@@ -513,12 +559,20 @@ const BaseDisplay = () => {
                   }
                   tooltip={
                     depowered
-                      ? 'No power!'
+                      ? t('lawrack-no-power', {}, 'No power!')
                       : linkable_silicons?.length
                         ? parent_rack
-                          ? 'Linked to another rack!'
+                          ? t(
+                              'lawrack-linked-other',
+                              {},
+                              'Linked to another rack!',
+                            )
                           : undefined
-                        : 'No linkable silicons!'
+                        : t(
+                            'lawrack-no-linkable-silicons',
+                            {},
+                            'No linkable silicons!',
+                          )
                   }
                   color={
                     depowered || !linkable_silicons?.length ? 'gray' : 'black'
@@ -526,7 +580,7 @@ const BaseDisplay = () => {
                   fontFamily="monospace"
                   onClick={() => setSiliconLink(!siliconLink)}
                 >
-                  &gt; New Connection
+                  &gt; {t('lawrack-new-connection', {}, 'New Connection')}
                 </Button>
               }
             />
@@ -548,6 +602,7 @@ export const LawRack = () => {
     has_core_slot,
     linked_rack_module_count,
   } = data;
+  const t = useT();
 
   const screen_display = () => {
     if (depowered) {
@@ -560,7 +615,7 @@ export const LawRack = () => {
   };
 
   return (
-    <Window title="Module Rack" width={400} height={slots.length * 40 + 200}>
+    <Window title={t('lawrack-title', {}, 'Module Rack')} width={400} height={slots.length * 40 + 200}>
       <Window.Content>
         <Section>
           <Stack vertical>
@@ -576,14 +631,18 @@ export const LawRack = () => {
                 p={0.5}
                 textAlign="center"
               >
-                <b>{linked_rack_module_count}</b> other module(s) are being
-                loaded remotely.
+                <b>{linked_rack_module_count}</b>{' '}
+                {t(
+                  'lawrack-remote-modules',
+                  { count: linked_rack_module_count },
+                  'other module(s) are being loaded remotely.',
+                )}
               </Stack.Item>
             )}
           </Stack>
         </Section>
         <Section
-          title="Controls"
+          title={t('lawrack-controls', {}, 'Controls')}
           buttons={
             <Button
               icon="refresh"
@@ -591,10 +650,18 @@ export const LawRack = () => {
               tooltipPosition="left"
               tooltip={
                 depowered
-                  ? 'No power!'
+                  ? t('lawrack-no-power', {}, 'No power!')
                   : refresh_cooldown > 0
-                    ? `Cooldown: ${Math.round(refresh_cooldown / 10)}s`
-                    : 'Refreshes module and link data.'
+                    ? t(
+                        'lawrack-cooldown',
+                        { seconds: Math.round(refresh_cooldown / 10) },
+                        'Cooldown: { $seconds }s',
+                      )
+                    : t(
+                        'lawrack-refresh',
+                        {},
+                        'Refreshes module and link data.',
+                      )
               }
               onClick={() => act('refresh')}
             />

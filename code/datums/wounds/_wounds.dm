@@ -674,15 +674,16 @@
  * Return a string, to be concatenated with other organ / limb status strings. Include spans and punctuation.
  */
 /datum/wound/proc/get_self_check_description(self_aware)
+	var/list/wound_args = list(wound = "[a_or_from] [LOWER_TEXT(undiagnosed_name || name)]")
 	switch(severity)
 		if(WOUND_SEVERITY_TRIVIAL)
-			return span_danger("It's suffering [a_or_from] [LOWER_TEXT(undiagnosed_name || name)].")
+			return span_danger(loc_key("wound-selfcheck-suffering-trivial", wound_args))
 		if(WOUND_SEVERITY_MODERATE)
-			return span_warning("It's suffering [a_or_from] [LOWER_TEXT(undiagnosed_name || name)].")
+			return span_warning(loc_key("wound-selfcheck-suffering-moderate", wound_args))
 		if(WOUND_SEVERITY_SEVERE)
-			return span_boldwarning("It's suffering [a_or_from] [LOWER_TEXT(undiagnosed_name || name)]!")
+			return span_boldwarning(loc_key("wound-selfcheck-suffering-severe", wound_args))
 		if(WOUND_SEVERITY_CRITICAL)
-			return span_boldwarning("It's suffering [a_or_from] [LOWER_TEXT(undiagnosed_name || name)]!!")
+			return span_boldwarning(loc_key("wound-selfcheck-suffering-critical", wound_args))
 
 /// A hook proc used to modify desc before it is spanned via [get_desc_intensity]. Useful for inserting spans yourself.
 /datum/wound/proc/modify_desc_before_span(desc, mob/user)

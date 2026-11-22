@@ -3,6 +3,7 @@ import { Blink, Box, Button, Section, Stack } from 'tgui-core/components';
 import { formatMoney } from 'tgui-core/format';
 import { classes } from 'tgui-core/react';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -30,10 +31,6 @@ type Reel = {
   symbols: string[];
 };
 
-const pluralS = (amount: number) => {
-  return amount === 1 ? '' : 's';
-};
-
 const pickRandomMany = <T,>(items: T[], n: number) => {
   const result: T[] = [];
   for (let i = 0; i < n; i += 1) {
@@ -48,6 +45,7 @@ const pickRandom = <T,>(items: T[]) => {
 
 export const SlotMachine = () => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { symbols, cost, reels, balance } = data;
   const spinning = data.working === 1;
 
@@ -84,7 +82,7 @@ export const SlotMachine = () => {
           <Stack.Item>
             <Section fill align={'center'}>
               <Box inline textAlign={'center'} color="good" bold>
-                Jackpot:
+                {t('slotmachine-jackpot', {}, 'Jackpot:')}
               </Box>
               {jackpotSymbol && (
                 <Box
@@ -99,7 +97,7 @@ export const SlotMachine = () => {
               {trapSymbol && (
                 <>
                   <Box inline color="bad" bold ml={5} mr={1}>
-                    Trap:
+                    {t('slotmachine-trap', {}, 'Trap:')}
                   </Box>
                   <Box
                     className={classes([
@@ -117,18 +115,18 @@ export const SlotMachine = () => {
               <Stack.Item grow={1}>
                 <Section
                   fill
-                  title="Balance"
+                  title={t('slotmachine-balance', {}, 'Balance')}
                   buttons={
                     <Button
                       onClick={() => act('payout')}
                       disabled={balance <= 0}
                     >
-                      Refund
+                      {t('slotmachine-refund', {}, 'Refund')}
                     </Button>
                   }
                 >
                   <Box textAlign={'center'} fontSize={2}>
-                    {formatMoney(balance)} cr
+                    {formatMoney(balance)} {t('slotmachine-cr', {}, 'cr')}
                   </Box>
                 </Section>
               </Stack.Item>
@@ -142,7 +140,7 @@ export const SlotMachine = () => {
                     onClick={() => act('spin')}
                     disabled={spinning || balance < cost}
                   >
-                    Spin!
+                    {t('slotmachine-spin', {}, 'Spin!')}
                   </Button>
                 </Section>
               </Stack.Item>
@@ -204,6 +202,7 @@ const WINNING_TEXTS = [
 
 const Banner = () => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const [page, setPage] = useState(0);
 
   useEffect(() => {
@@ -213,8 +212,13 @@ const Banner = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const winningText = WINNING_TEXTS[data.winning];
-  if (winningText) {
+  const winningFallback = WINNING_TEXTS[data.winning];
+  if (winningFallback) {
+    const winningText = t(
+      `slotmachine-win-${data.winning}`,
+      {},
+      winningFallback,
+    );
     return (
       <Section className={'SlotMachine__Banner SlotMachine__Banner--winning'}>
         <BannerTitle text={winningText} />
@@ -237,15 +241,20 @@ type BannerTitleProps = {
 
 const BannerTitle = (props: BannerTitleProps) => {
   const { data } = useBackend<Data>();
-  const defaultText = useRef(pickRandom(BANNER_TEXTS));
+  const t = useT();
+  const defaultIndex = useRef(Math.floor(Math.random() * BANNER_TEXTS.length));
   let text = props.text;
   if (!text) {
     if (data.balance <= 0) {
-      text = 'INSERT COIN';
+      text = t('slotmachine-insert-coin', {}, 'INSERT COIN');
     } else if (data.balance <= 5) {
-      text = 'ONE LAST SPIN';
+      text = t('slotmachine-last-spin', {}, 'ONE LAST SPIN');
     } else {
-      text = defaultText.current;
+      text = t(
+        `slotmachine-banner-${defaultIndex.current + 1}`,
+        {},
+        BANNER_TEXTS[defaultIndex.current],
+      );
     }
   }
   const letters = text.split('');
@@ -260,19 +269,25 @@ const BannerTitle = (props: BannerTitleProps) => {
 
 const BannerOnlyFewCreds = () => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const variant = useRef(pickRandom([0, 1]));
 
   if (variant.current === 1) {
     return (
       <div>
-        For only{' '}
+        {t('slotmachine-for-only', {}, 'For only')}{' '}
         <Blink interval={200} time={200}>
           <b>{data.cost}</b>
         </Blink>{' '}
-        credit{pluralS(data.cost)}!
+        {t(
+          'slotmachine-credit-word',
+          { count: data.cost },
+          data.cost === 1 ? 'credit' : 'credits',
+        )}
+        !
         <br />
         <Box inline fontSize={'12px'}>
-          You can fix all your problems!
+          {t('slotmachine-fix-problems', {}, 'You can fix all your problems!')}
         </Box>
       </div>
     );
@@ -280,25 +295,35 @@ const BannerOnlyFewCreds = () => {
 
   return (
     <div>
-      Only{' '}
+      {t('slotmachine-only', {}, 'Only')}{' '}
       <Blink interval={200} time={200}>
         <b>{data.cost}</b>
       </Blink>{' '}
-      credit{pluralS(data.cost)} for a chance
+      {t(
+        'slotmachine-credit-chance',
+        { count: data.cost },
+        `${data.cost === 1 ? 'credit' : 'credits'} for a chance`,
+      )}
       <br />
-      to win <b>big</b>!
+      {t('slotmachine-to-win', {}, 'to win')} <b>{t('slotmachine-big', {}, 'big')}</b>
+      !
     </div>
   );
 };
 
 const BannerPrizeMoney = () => {
   const { data } = useBackend<Data>();
+  const t = useT();
   return (
     <div>
-      Available prize money:
+      {t('slotmachine-prize-money', {}, 'Available prize money:')}
       <br />
       <b>
-        {data.money} credit{pluralS(data.money)}
+        {t(
+          'slotmachine-credits',
+          { count: data.money },
+          `${data.money} credit${data.money === 1 ? '' : 's'}`,
+        )}
       </b>
     </div>
   );
@@ -306,12 +331,18 @@ const BannerPrizeMoney = () => {
 
 const BannerJackpot = () => {
   const { data } = useBackend<Data>();
+  const t = useT();
   return (
     <div>
-      Current jackpot:
+      {t('slotmachine-current-jackpot', {}, 'Current jackpot:')}
       <br />
       <b>
-        {data.money + data.jackpot} credit{pluralS(data.money + data.jackpot)}!
+        {t(
+          'slotmachine-credits',
+          { count: data.money + data.jackpot },
+          `${data.money + data.jackpot} credit${data.money + data.jackpot === 1 ? '' : 's'}`,
+        )}
+        !
       </b>
     </div>
   );
@@ -319,18 +350,28 @@ const BannerJackpot = () => {
 
 const BannerStats = () => {
   const { data } = useBackend<Data>();
+  const t = useT();
   return (
     <div>
       <Box inline fontSize={'13px'}>
-        So far people have spun{' '}
+        {t('slotmachine-so-far', {}, 'So far people have spun')}{' '}
         <b>
-          {data.plays} time{pluralS(data.plays)}
+          {t(
+            'slotmachine-times',
+            { count: data.plays },
+            `${data.plays} time${data.plays === 1 ? '' : 's'}`,
+          )}
         </b>
       </Box>
       <br />
-      and won{' '}
+      {t('slotmachine-and-won', {}, 'and won')}{' '}
       <b>
-        {data.jackpots} jackpot{pluralS(data.jackpots)}!
+        {t(
+          'slotmachine-jackpots',
+          { count: data.jackpots },
+          `${data.jackpots} jackpot${data.jackpots === 1 ? '' : 's'}`,
+        )}
+        !
       </b>
     </div>
   );

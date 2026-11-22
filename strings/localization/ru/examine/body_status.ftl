@@ -268,3 +268,63 @@ bodypart-hand-upper_left_hand_3 = верхняя левая рука №3
 
 bodypart-hand-upper_right_hand_3 = верхняя правая рука №3
     .pre = верхней правой руке №3
+
+bodypart-selfcheck-looks-ok = Ваша { $zone } в порядке.
+
+bodypart-selfcheck-disabled-looks-ok = Ваша { $zone } не работает, но в остальном в порядке.
+
+bodypart-selfcheck-looks-bad = Ваша { $zone } { $status }.
+
+bodypart-selfcheck-disabled-looks-bad = Ваша { $zone } не работает и { $status }.
+
+bodypart-selfcheck-aware-ok = В вашей { PRE($zone) } нет повреждений.
+
+bodypart-selfcheck-disabled-aware-ok = Ваша { $zone } не работает, но повреждений в ней нет.
+
+bodypart-selfcheck-aware-bad = В вашей { PRE($zone) } { $status }.
+
+bodypart-selfcheck-disabled-aware-bad = Ваша { $zone } не работает, и в ней { $status }.
+
+bodypart-selfcheck-damage-numbers = { $brute } ед. механических повреждений и { $burn } ед. ожогов
+
+bodypart-selfcheck-and = { " и " }
+
+bodypart-status-bruised_and_feels_sore = ушиблена и ноет
+
+bodypart-status-battered = сильно избита
+
+bodypart-status-mangled = изуродована
+
+bodypart-status-red_and_feels_numb = покраснела и онемела
+
+bodypart-status-blistered = покрыта волдырями
+
+bodypart-status-like_its_peeling_away = словно отслаивается
+
+bodypart-status-marred = поцарапана
+
+bodypart-status-dented = помята
+
+bodypart-status-like_its_falling_apart = разваливается
+
+bodypart-status-scorched = опалена
+
+bodypart-status-charred = обуглена
+
+bodypart-status-smoldering = тлеет
+
+mob-human_defense-examines_self = { $user } осматривает себя.
+
+bodypart-selfcheck-embedded-stuck = К зоне «{ $zone }» у вас прилип предмет: { $icon } { $item }!
+
+bodypart-selfcheck-embedded-in = В зоне «{ $zone }» у вас застрял предмет: { $icon } { $item }!
+
+bodypart-selfcheck-tourniquet-neck = На вашей шее туго затянуто: { $item }!
+
+bodypart-selfcheck-tourniquet-limb = Здесь туго затянуто: { $item }.
+
+bodypart-selfcheck-gauze = Зона «{ $zone }» перевязана: { $item }.
+
+bodypart-selfcheck-bleed-hint = Вы теряете кровь. Обмотайте конечность бинтом или прижмите рану, схватив себя (целясь в эту конечность), чтобы остановить кровотечение.
+
+mob-human_defense-limb_missing =У вас нет { GEN($zone) }!

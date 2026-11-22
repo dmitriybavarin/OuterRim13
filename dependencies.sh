@@ -31,3 +31,10 @@ export CUTTER_REPO=spacestation13/hypnagogic
 #hypnagogic git tag
 export CUTTER_VERSION=v5.0.1
 
+
+#Local TTS server (.TTS, optional, Windows)
+#Rust toolchain: winget install Rustlang.Rustup
+export TTS_RUST_TOOLCHAIN=stable
+#Visual Studio Build Tools 2022 with C++ workload
+#CMake, LLVM (set LIBCLANG_PATH=C:\Program Files\LLVM\bin), FFmpeg in PATH
+export TTS_PIPER_RS_VERSION=0.2.0

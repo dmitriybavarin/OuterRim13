@@ -2,6 +2,7 @@ import { Button, ColorBox, Flex, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type DecalInfo = {
@@ -49,6 +50,7 @@ const filterBoxColor = (color: string) => {
 
 export const DecalPainter = (props) => {
   const { act, data } = useBackend<DecalPainterData>();
+  const t = useT();
 
   const {
     categories,
@@ -78,7 +80,7 @@ export const DecalPainter = (props) => {
       <Window.Content>
         <Stack fill vertical>
           <Stack.Item>
-            <Section title="Category">
+            <Section title={t('decalpainter-category', {}, 'Category')}>
               {categories.map((category) => (
                 <Button
                   align="center"
@@ -97,7 +99,7 @@ export const DecalPainter = (props) => {
           </Stack.Item>
           {color_list.length > 1 && (
             <Stack.Item>
-              <Section title="Color">
+              <Section title={t('decalpainter-color', {}, 'Color')}>
                 {color_list.map((color) => {
                   if (color.color === 'custom') {
                     return (
@@ -107,7 +109,7 @@ export const DecalPainter = (props) => {
                         onClick={() => act('pick_custom_color')}
                       >
                         <ColorBox color={current_custom_color} mr={0.5} />
-                        Custom
+                        {t('decalpainter-custom', {}, 'Custom')}
                       </Button>
                     );
                   }
@@ -130,7 +132,11 @@ export const DecalPainter = (props) => {
             </Stack.Item>
           )}
           <Stack.Item grow>
-            <Section title="Style" fill scrollable>
+            <Section
+              title={t('decalpainter-style', {}, 'Style')}
+              fill
+              scrollable
+            >
               <Flex wrap="wrap">
                 {decal_list.map((decal) => {
                   const nondirectional = decal.directional === 0;

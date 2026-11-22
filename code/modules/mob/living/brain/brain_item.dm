@@ -287,11 +287,11 @@
 		return ""
 	if(self_aware)
 		if(damage < high_threshold)
-			return span_warning("Your brain hurts a bit.")
-		return span_warning("Your brain hurts a lot.")
+			return span_warning(LOC_KEY("organ-brain-selfcheck-aware-low"))
+		return span_warning(LOC_KEY("organ-brain-selfcheck-aware-high"))
 	if(damage < high_threshold)
-		return span_warning("It feels a bit fuzzy.")
-	return span_warning("It aches incessantly.")
+		return span_warning(LOC_KEY("organ-brain-selfcheck-looks-low"))
+	return span_warning(LOC_KEY("organ-brain-selfcheck-looks-high"))
 
 /obj/item/organ/brain/attack(mob/living/carbon/C, mob/user)
 	if(!istype(C))

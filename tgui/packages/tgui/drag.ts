@@ -281,22 +281,40 @@ export function dragStartHandler(event): void {
   (event.target as HTMLElement)?.focus();
   document.addEventListener('mousemove', dragMoveHandler);
   document.addEventListener('mouseup', dragEndHandler);
-  dragMoveHandler(event);
+  window.addEventListener('blur', dragEndHandler);
+  applyDrag(event);
 }
 
 // End dragging the window
-function dragEndHandler(event): void {
+function dragEndHandler(event: Event): void {
+  if (!dragging) {
+    return;
+  }
   logger.log('drag end');
-  dragMoveHandler(event);
+  if (event instanceof MouseEvent) {
+    applyDrag(event);
+  }
   flushWinsetNow();
   document.removeEventListener('mousemove', dragMoveHandler);
   document.removeEventListener('mouseup', dragEndHandler);
+  window.removeEventListener('blur', dragEndHandler);
   dragging = false;
   storeWindowGeometry();
 }
 
 // Move the window while dragging
 function dragMoveHandler(event: MouseEvent): void {
+  if (!dragging) {
+    return;
+  }
+  if (event.buttons === 0) {
+    dragEndHandler(event);
+    return;
+  }
+  applyDrag(event);
+}
+
+function applyDrag(event: MouseEvent): void {
   if (!dragging) {
     return;
   }
@@ -325,22 +343,40 @@ export const resizeStartHandler =
     (event.target as HTMLElement)?.focus();
     document.addEventListener('mousemove', resizeMoveHandler);
     document.addEventListener('mouseup', resizeEndHandler);
-    resizeMoveHandler(event);
+    window.addEventListener('blur', resizeEndHandler);
+    applyResize(event);
   };
 
 // End resizing the window
-function resizeEndHandler(event: MouseEvent): void {
+function resizeEndHandler(event: Event): void {
+  if (!resizing) {
+    return;
+  }
   logger.log('resize end', size);
-  resizeMoveHandler(event);
+  if (event instanceof MouseEvent) {
+    applyResize(event);
+  }
   flushWinsetNow();
   document.removeEventListener('mousemove', resizeMoveHandler);
   document.removeEventListener('mouseup', resizeEndHandler);
+  window.removeEventListener('blur', resizeEndHandler);
   resizing = false;
   storeWindowGeometry();
 }
 
 // Move the window while resizing
 function resizeMoveHandler(event: MouseEvent): void {
+  if (!resizing) {
+    return;
+  }
+  if (event.buttons === 0) {
+    resizeEndHandler(event);
+    return;
+  }
+  applyResize(event);
+}
+
+function applyResize(event: MouseEvent): void {
   if (!resizing) {
     return;
   }

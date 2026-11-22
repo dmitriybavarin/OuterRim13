@@ -2,6 +2,7 @@ import { sortBy } from 'es-toolkit';
 import { Box, Button, LabeledList, Section, Table } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type FaxData = {
@@ -39,6 +40,7 @@ type FaxSpecial = {
 export const Fax = (props) => {
   const { act } = useBackend();
   const { data } = useBackend<FaxData>();
+  const t = useT();
   const faxes = data.faxes
     ? sortBy(
         data.syndicate_network
@@ -56,34 +58,40 @@ export const Fax = (props) => {
   return (
     <Window width={340} height={540}>
       <Window.Content scrollable>
-        <Section title="About Fax">
-          <LabeledList.Item label="Network name">
+        <Section title={t('fax-about', {}, 'About Fax')}>
+          <LabeledList.Item label={t('fax-network-name', {}, 'Network name')}>
             {data.fax_name}
           </LabeledList.Item>
-          <LabeledList.Item label="Network ID">{data.fax_id}</LabeledList.Item>
-          <LabeledList.Item label="Visible to Network">
-            {data.visible ? 'true' : 'false'}
+          <LabeledList.Item label={t('fax-network-id', {}, 'Network ID')}>{data.fax_id}</LabeledList.Item>
+          <LabeledList.Item label={t('fax-visible', {}, 'Visible to Network')}>
+            {data.visible
+              ? t('fax-true', {}, 'true')
+              : t('fax-false', {}, 'false')}
           </LabeledList.Item>
         </Section>
         <Section
-          title="Paper"
+          title={t('fax-paper-title', {}, 'Paper')}
           buttons={
             <Button onClick={() => act('remove')} disabled={!data.has_paper}>
-              Remove
+              {t('fax-remove', {}, 'Remove')}
             </Button>
           }
         >
-          <LabeledList.Item label="Paper">
+          <LabeledList.Item label={t('fax-paper', {}, 'Paper')}>
             {data.has_paper ? (
-              <Box color="green">Paper in tray</Box>
+              <Box color="green">{t('fax-paper-in-tray', {}, 'Paper in tray')}</Box>
             ) : (
-              <Box color="red">No paper</Box>
+              <Box color="red">{t('fax-no-paper', {}, 'No paper')}</Box>
             )}
           </LabeledList.Item>
         </Section>
-        <Section title="Send">
+        <Section title={t('fax-send', {}, 'Send')}>
           {faxes.length === 0 && special_networks.length === 0 ? (
-            "The fax couldn't detect any other faxes on the network."
+            t(
+              'fax-none',
+              {},
+              "The fax couldn't detect any other faxes on the network.",
+            )
           ) : (
             <Box mt={0.4}>
               {special_networks.map((special: FaxSpecial) => (
@@ -124,13 +132,13 @@ export const Fax = (props) => {
           )}
         </Section>
         <Section
-          title="History"
+          title={t('fax-history', {}, 'History')}
           buttons={
             <Button
               onClick={() => act('history_clear')}
               disabled={!data.fax_history}
             >
-              Clear
+              {t('fax-clear', {}, 'Clear')}
             </Button>
           }
         >
@@ -145,7 +153,11 @@ export const Fax = (props) => {
                             history.history_type === 'Send' ? 'Green' : 'Red'
                           }
                         >
-                          {history.history_type}
+                          {history.history_type === 'Send'
+                            ? t('fax-history-send', {}, 'Send')
+                            : history.history_type === 'Receive'
+                              ? t('fax-history-receive', {}, 'Receive')
+                              : history.history_type}
                         </Box>
                       }
                       {history.history_fax_name} - {history.history_time}

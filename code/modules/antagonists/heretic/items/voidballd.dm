@@ -18,7 +18,7 @@
 	playsound(src, /datum/sound_effect/shatter, 50, TRUE)
 	playsound(src, 'sound/effects/magic/voidblink.ogg', 50, FALSE)
 	if(IS_HERETIC_OR_MONSTER(user))
-		to_chat(user, span_mansus("You smash [src], releasing its power around you!"))
+		to_chat(user, span_mansus(loc_key("heretic-item-prison-smash", list(item = src))))
 		for(var/mob/living/nearby_mob in view(3, user))
 			if(IS_HERETIC_OR_MONSTER(nearby_mob))
 				continue
@@ -26,28 +26,28 @@
 				continue
 			if(nearby_mob.can_block_magic(MAGIC_RESISTANCE))
 				nearby_mob.visible_message(
-					span_danger("A swirling, cold void wraps around [nearby_mob], but they burst free in a wave of heat!"),
-					span_userdanger("A yawning void begins to open before you, but a great wave of heat bursts it apart! You are protected!!")
+					span_danger(loc_key("heretic-item-prison-protected-others", list(target = nearby_mob))),
+					span_userdanger(LOC_KEY("heretic-item-prison-protected-self"))
 				)
 				continue
 			nearby_mob.visible_message(
-				span_danger("A swirling, cold void wraps around [nearby_mob]!"),
-				span_userdanger("A yawning void opens before you! You are swallowed by the darkness, and find yourself in complete nothingness..."),
+				span_danger(loc_key("heretic-item-prison-swallowed-others", list(target = nearby_mob))),
+				span_userdanger(LOC_KEY("heretic-item-prison-swallowed-self")),
 			)
 			nearby_mob.apply_status_effect(/datum/status_effect/void_prison)
 
 	else if(user.can_block_magic(MAGIC_RESISTANCE))
-		to_chat(user, span_hypnophrase("You smash [src], but its power begins to encompass you!"))
+		to_chat(user, span_hypnophrase(loc_key("heretic-item-prison-encompass", list(item = src))))
 		user.visible_message(
-			span_danger("A swirling, cold void wraps around [user], but they burst free in a wave of heat!"),
-			span_userdanger("A yawning void begins to open before you, but a great wave of heat bursts it apart! You are protected!!")
+			span_danger(loc_key("heretic-item-prison-protected-others", list(target = user))),
+			span_userdanger(LOC_KEY("heretic-item-prison-protected-self"))
 		)
 
 	else
-		to_chat(user, span_hypnophrase("You smash [src], but its power begins to encompass you!"))
+		to_chat(user, span_hypnophrase(loc_key("heretic-item-prison-encompass", list(item = src))))
 		user.visible_message(
-			span_danger("A swirling, cold void wraps around [user]!"),
-			span_userdanger("A yawning void opens before you! You are swallowed by the darkness, and find yourself in complete nothingness..."),
+			span_danger(loc_key("heretic-item-prison-swallowed-others", list(target = user))),
+			span_userdanger(LOC_KEY("heretic-item-prison-swallowed-self")),
 		)
 		user.apply_status_effect(/datum/status_effect/void_prison)
 

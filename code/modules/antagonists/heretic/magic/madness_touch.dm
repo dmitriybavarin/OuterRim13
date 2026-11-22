@@ -23,11 +23,11 @@
 
 /datum/action/cooldown/spell/touch/mad_touch/on_antimagic_triggered(obj/item/melee/touch_attack/hand, atom/victim, mob/living/carbon/caster)
 	victim.visible_message(
-		span_danger("The spell bounces off of [victim]!"),
-		span_danger("The spell bounces off of you!"),
+		span_danger(loc_key("heretic-spell-bounce-others", list(target = victim))),
+		span_danger(LOC_KEY("heretic-spell-bounce-self")),
 	)
 
 /datum/action/cooldown/spell/touch/mad_touch/cast_on_hand_hit(obj/item/melee/touch_attack/hand, mob/living/carbon/human/victim, mob/living/carbon/caster)
-	to_chat(caster, span_warning("[victim.name] has been cursed!"))
+	to_chat(caster, span_warning(loc_key("heretic-spell-madness-touch-cursed", list(target = victim.name))))
 	victim.add_mood_event("gates_of_mansus", /datum/mood_event/gates_of_mansus)
 	return TRUE

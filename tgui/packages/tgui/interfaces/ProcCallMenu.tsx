@@ -9,6 +9,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Port = {
@@ -27,6 +28,7 @@ type ProcCallMenuData = {
 
 export const ProcCallMenu = (props) => {
   const { act, data } = useBackend<ProcCallMenuData>();
+  const t = useT();
   const {
     input_ports,
     possible_types,
@@ -39,9 +41,11 @@ export const ProcCallMenu = (props) => {
       <Window.Content scrollable>
         <Stack fill>
           <Stack.Item>
-            <Section fill title="Options">
+            <Section fill title={t('proccallmenu-options', {}, 'Options')}>
               <Stack vertical width="180px">
-                <Stack.Item color="label">Expected Output:</Stack.Item>
+                <Stack.Item color="label">
+                  {t('proccallmenu-expected', {}, 'Expected Output:')}
+                </Stack.Item>
                 <Stack.Item>
                   <Dropdown
                     width="100%"
@@ -56,7 +60,7 @@ export const ProcCallMenu = (props) => {
                 <Stack.Divider />
                 <Stack.Item>
                   <Button.Checkbox
-                    content="Resolve Weakref"
+                    content={t('proccallmenu-weakref', {}, 'Resolve Weakref')}
                     textAlign="center"
                     checked={resolve_weakref}
                     onClick={() => act('resolve_weakref')}
@@ -65,15 +69,18 @@ export const ProcCallMenu = (props) => {
                 </Stack.Item>
                 <Stack.Item>
                   <NoticeBox info width="100%">
-                    This determines whether we automatically resolve any
-                    weakrefs in lists.
+                    {t(
+                      'proccallmenu-weakref-info',
+                      {},
+                      'This determines whether we automatically resolve any weakrefs in lists.',
+                    )}
                   </NoticeBox>
                 </Stack.Item>
               </Stack>
             </Section>
           </Stack.Item>
           <Stack.Item grow>
-            <Section fill title="Arguments">
+            <Section fill title={t('proccallmenu-arguments', {}, 'Arguments')}>
               <Stack vertical>
                 {input_ports.map((val, index) => (
                   <PortEntry
@@ -104,7 +111,7 @@ export const ProcCallMenu = (props) => {
                 <Stack.Item>
                   <Button
                     fluid
-                    content="Add Argument"
+                    content={t('proccallmenu-add', {}, 'Add Argument')}
                     color="good"
                     icon="plus"
                     onClick={() => act('add_argument')}
@@ -120,6 +127,7 @@ export const ProcCallMenu = (props) => {
 };
 
 const PortEntry = (props) => {
+  const t = useT();
   const {
     onRemove,
     onEnter,
@@ -135,7 +143,7 @@ const PortEntry = (props) => {
     <Stack.Item {...rest}>
       <Stack>
         <Stack.Item grow>
-          <Input placeholder="Name" value={name} onChange={onEnter} fluid />
+          <Input placeholder={t('proccallmenu-name', {}, 'Name')} value={name} onChange={onEnter} fluid />
         </Stack.Item>
         <Stack.Item>
           <Dropdown

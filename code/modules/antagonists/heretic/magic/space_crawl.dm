@@ -41,7 +41,7 @@
 	if(is_valid_turf())
 		return TRUE
 	if(feedback)
-		to_chat(owner, span_warning("You must stand in space, or an outdoor area with low pressure!"))
+		to_chat(owner, span_warning(LOC_KEY("heretic-spell-space-crawl-invalid")))
 	return FALSE
 
 
@@ -74,7 +74,7 @@
 
 	if(!.)
 		reset_spell_cooldown()
-		to_chat(jaunter, span_warning("You are unable to space crawl!"))
+		to_chat(jaunter, span_warning(LOC_KEY("heretic-spell-space-crawl-unable")))
 
 /**
  * Attempts to enter the passed space or misc turfs.
@@ -100,7 +100,7 @@
 
 	jaunter.add_traits(jaunting_traits, SPACE_PHASING)
 	playsound(our_turf, 'sound/effects/magic/cosmic_energy.ogg', 50, TRUE, -1)
-	our_turf.visible_message(span_warning("[jaunter] sinks into [our_turf]!"))
+	our_turf.visible_message(span_warning(loc_key("heretic-spell-space-crawl-enter", list(user = jaunter, turf = our_turf))))
 	new /obj/effect/temp_visual/space_explosion(our_turf)
 	jaunter.extinguish_mob()
 
@@ -112,13 +112,13 @@
  */
 /datum/action/cooldown/spell/jaunt/space_crawl/proc/try_exit_jaunt(turf/our_turf, mob/living/jaunter, force = FALSE)
 	if(!force && HAS_TRAIT_FROM(jaunter, TRAIT_NO_TRANSFORM, REF(src)))
-		to_chat(jaunter, span_warning("You cannot exit yet!!"))
+		to_chat(jaunter, span_warning(LOC_KEY("heretic-spell-space_crawl-exit-blocked")))
 		return FALSE
 
 	if(!exit_jaunt(jaunter, our_turf))
 		return FALSE
 	jaunter.remove_traits(jaunting_traits, SPACE_PHASING)
-	our_turf.visible_message(span_boldwarning("[jaunter] rises out of [our_turf]!"))
+	our_turf.visible_message(span_boldwarning(loc_key("heretic-spell-space-crawl-exit", list(user = jaunter, turf = our_turf))))
 	return TRUE
 
 /datum/action/cooldown/spell/jaunt/space_crawl/on_jaunt_exited(obj/effect/dummy/phased_mob/jaunt, mob/living/unjaunter)

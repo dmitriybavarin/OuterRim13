@@ -1,6 +1,7 @@
 import { Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { type Objective, ObjectivePrintout } from './common/Objectives';
 
@@ -11,6 +12,7 @@ type Info = {
 };
 
 export const AntagInfoBrother = (props) => {
+  const t = useT();
   const { data } = useBackend<Info>();
   const { antag_name, brothers, objectives } = data;
   return (
@@ -19,7 +21,7 @@ export const AntagInfoBrother = (props) => {
         <Section scrollable fill>
           <Stack vertical>
             <Stack.Item textColor="red" fontSize="20px">
-              You are the {antag_name}!
+              {t('antaginfo-common-you-are', { name: antag_name })}
             </Stack.Item>
             <Stack.Item>
               <ObjectivePrintout objectives={objectives} />

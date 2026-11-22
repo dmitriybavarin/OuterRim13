@@ -30,7 +30,7 @@
 
 	for(var/mob/living/alive in orange(5, owner))
 		if(alive.stat != DEAD && alive.client && (owner in view(alive)))
-			owner.balloon_alert(owner, "other minds nearby!")
+			owner.balloon_alert(owner, LOC_KEY("heretic-spell-caretaker-minds-balloon"))
 			return . | SPELL_CANCEL_CAST
 
 	if(!cast_on.has_status_effect(/datum/status_effect/caretaker_refuge))

@@ -4,6 +4,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { capitalizeFirst } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { SearchBar } from './common/SearchBar';
 
@@ -24,6 +25,7 @@ type EmotePanelData = {
 export const EmotePanelContent = (props) => {
   const { act, data } = useBackend<EmotePanelData>();
   const { emotes } = data;
+  const t = useT();
 
   const [filterVisible, toggleVisualFilter] = useState(false);
 
@@ -74,7 +76,7 @@ export const EmotePanelContent = (props) => {
   return (
     <Section>
       <Section
-        title="Filters"
+        title={t('emotepanel-filters', {}, 'Filters')}
         buttons={
           <Flex>
             <Button
@@ -82,7 +84,7 @@ export const EmotePanelContent = (props) => {
               width="100%"
               height="100%"
               align="center"
-              tooltip="Visible"
+              tooltip={t('emotepanel-visible', {}, 'Visible')}
               selected={filterVisible}
               onClick={() => toggleVisualFilter(!filterVisible)}
             />
@@ -91,7 +93,7 @@ export const EmotePanelContent = (props) => {
               width="100%"
               height="100%"
               align="center"
-              tooltip="Audible"
+              tooltip={t('emotepanel-audible', {}, 'Audible')}
               selected={filterAudible}
               onClick={() => toggleAudibleFilter(!filterAudible)}
             />
@@ -100,7 +102,7 @@ export const EmotePanelContent = (props) => {
               width="100%"
               height="100%"
               align="center"
-              tooltip="Sound"
+              tooltip={t('emotepanel-sound', {}, 'Sound')}
               selected={filterSound}
               onClick={() => toggleSoundFilter(!filterSound)}
             />
@@ -109,7 +111,7 @@ export const EmotePanelContent = (props) => {
               width="100%"
               height="100%"
               align="center"
-              tooltip="Hands"
+              tooltip={t('emotepanel-hands', {}, 'Hands')}
               selected={filterHands}
               onClick={() => toggleHandsFilter(!filterHands)}
             />
@@ -118,7 +120,7 @@ export const EmotePanelContent = (props) => {
               width="100%"
               height="100%"
               align="center"
-              tooltip="Params"
+              tooltip={t('emotepanel-params', {}, 'Params')}
               selected={filterUseParams}
               onClick={() => toggleUseParamsFilter(!filterUseParams)}
             />
@@ -128,26 +130,32 @@ export const EmotePanelContent = (props) => {
         <SearchBar
           query={searchText}
           onSearch={setSearchText}
-          placeholder="Search all emotes..."
+          placeholder={t('emotepanel-search', {}, 'Search all emotes...')}
         />
       </Section>
       <Section
         title={
           searchText.length > 0
-            ? `Search results of "${searchText}"`
-            : `All Emotes`
+            ? t(
+                'emotepanel-results',
+                { text: searchText },
+                'Search results of "{ $text }"',
+              )
+            : t('emotepanel-all', {}, 'All Emotes')
         }
         buttons={
           <Flex>
             <Flex.Item>
               <Button onClick={() => toggleShowNames(!showNames)}>
-                {showNames ? 'Show Names' : 'Show Keys'}
+                {showNames
+                  ? t('emotepanel-show-names', {}, 'Show Names')
+                  : t('emotepanel-show-keys', {}, 'Show Keys')}
               </Button>
               <Button
                 selected={showIcons}
                 onClick={() => toggleShowIcons(!showIcons)}
               >
-                Show Icons
+                {t('emotepanel-show-icons', {}, 'Show Icons')}
               </Button>
             </Flex.Item>
             <Flex.Item>
@@ -156,7 +164,7 @@ export const EmotePanelContent = (props) => {
                 selected={useParams}
                 onClick={() => toggleUseParams(!useParams)}
               >
-                Use Params
+                {t('emotepanel-use-params', {}, 'Use Params')}
               </Button>
             </Flex.Item>
           </Flex>
@@ -200,6 +208,7 @@ type EmoteButtonProps = {
 
 const EmoteButton = (props: EmoteButtonProps) => {
   const { emote, showIcons, showNames, onPlay, onPreview } = props;
+  const t = useT();
 
   return (
     <Stack
@@ -249,7 +258,7 @@ const EmoteButton = (props: EmoteButtonProps) => {
           <Button
             fluid
             icon="volume-up"
-            tooltip="Preview Sound"
+            tooltip={t('emotepanel-preview', {}, 'Preview Sound')}
             onClick={onPreview}
           />
         </Stack.Item>

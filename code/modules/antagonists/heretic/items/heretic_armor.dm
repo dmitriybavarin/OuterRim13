@@ -173,7 +173,7 @@
 		user.extinguish()
 		STOP_PROCESSING(SSobj, src)
 
-	user.balloon_alert(user, flame_generation ? "enabled" : "disabled")
+	user.balloon_alert(user, flame_generation ? LOC_KEY("heretic-item-armor-enabled") : LOC_KEY("heretic-item-armor-disabled"))
 	user.fire_stack_decay_rate = flame_generation ? 0 : initial(user.fire_stack_decay_rate)
 	// Extinguishes the wearer after they disable the flames
 
@@ -388,10 +388,10 @@
 /obj/item/clothing/suit/hooded/cultrobes/eldritch/cosmic/proc/toggle_gravity(mob/living/user)
 	if(!weightless_enabled)
 		user.add_traits(list(TRAIT_NEGATES_GRAVITY, TRAIT_MOVE_FLYING, TRAIT_FREE_HYPERSPACE_MOVEMENT), REF(src))
-		user.balloon_alert(user, "enabled")
+		user.balloon_alert(user, LOC_KEY("heretic-item-armor-enabled"))
 	else
 		user.remove_traits(list(TRAIT_NEGATES_GRAVITY, TRAIT_MOVE_FLYING, TRAIT_FREE_HYPERSPACE_MOVEMENT), REF(src))
-		user.balloon_alert(user, "disabled")
+		user.balloon_alert(user, LOC_KEY("heretic-item-armor-disabled"))
 	weightless_enabled = !weightless_enabled
 
 /obj/item/clothing/head/hooded/cult_hoodie/eldritch/cosmic
@@ -570,10 +570,10 @@
 	)
 	/// Message sent to blind people nearby
 	var/static/list/blind_message_list = list(
-		"You hear echoing laughter.",
-		"You hear a distance chorus.",
-		"You hear the sound of bells and whistles.",
-		"You hear the clack of a tambourine.",
+		LOC_KEY("heretic-item-moonrobe-blind-1"),
+		LOC_KEY("heretic-item-moonrobe-blind-2"),
+		LOC_KEY("heretic-item-moonrobe-blind-3"),
+		LOC_KEY("heretic-item-moonrobe-blind-4"),
 	)
 	/// List of all signals registered, used for cleanup
 	var/signal_registered = list()
@@ -696,7 +696,7 @@
 		return ..()
 	var/mob/living/carbon/human/wearer = user
 	if(wearer.get_organ_loss(ORGAN_SLOT_BRAIN) > 0)
-		wearer.balloon_alert(user, "can't strip, brain damaged!")
+		wearer.balloon_alert(user, LOC_KEY("heretic-item-moonrobe-cant-strip"))
 		return FALSE
 	return ..()
 
@@ -732,7 +732,7 @@
 	var/obj/item/bodypart/head/to_explode = human_wearer.get_bodypart(BODY_ZONE_HEAD)
 	if(!to_explode)
 		return
-	human_wearer.visible_message(span_warning("[human_wearer]'s head splatters with a sickening crunch!"), ignored_mobs = list(human_wearer))
+	human_wearer.visible_message(span_warning(loc_key("heretic-item-moonrobe-head-splatter", list(user = human_wearer))), ignored_mobs = list(human_wearer))
 	new /obj/effect/gibspawner/generic(get_turf(human_wearer), human_wearer)
 	to_explode.dismember(dam_type = BRUTE, silent = TRUE)
 	to_explode.drop_organs()
@@ -781,7 +781,7 @@
 	braindead = TRUE
 	wearer.set_organ_loss(ORGAN_SLOT_BRAIN, INFINITY)
 	playsound(wearer, 'sound/effects/pope_entry.ogg', 50)
-	to_chat(wearer, span_bold(span_hypnophrase("A terrible fate has befallen you.")))
+	to_chat(wearer, span_bold(span_hypnophrase(LOC_KEY("heretic-item-moonrobe-fate"))))
 	addtimer(CALLBACK(src, PROC_REF(kill_wearer), wearer), 5 SECONDS)
 
 /obj/item/clothing/head/hooded/cult_hoodie/eldritch/moon
@@ -1210,8 +1210,8 @@
 		return
 
 	// Let examiners know this works as a focus only if the hood is down
-	. += span_notice("Allows you to cast heretic spells while the hood is down.")
-	. += span_notice("Is space worthy as long as the hood is down.")
+	. += span_notice(LOC_KEY("heretic-item-voidcloak-examine-focus"))
+	. += span_notice(LOC_KEY("heretic-item-voidcloak-examine-space"))
 
 /obj/item/clothing/suit/hooded/cultrobes/void/on_hood_down(obj/item/clothing/head/hooded/hood)
 	make_visible()
@@ -1224,7 +1224,7 @@
 	if(IS_HERETIC_OR_MONSTER(wearer))
 		return TRUE
 
-	loc.balloon_alert(loc, "can't get the hood up!")
+	loc.balloon_alert(loc, LOC_KEY("heretic-item-voidcloak-no-hood"))
 	return FALSE
 
 /obj/item/clothing/suit/hooded/cultrobes/void/on_hood_created(obj/item/clothing/head/hooded/hood)
@@ -1239,8 +1239,8 @@
 	if(isliving(loc))
 		loc.remove_traits(list(TRAIT_RESISTLOWPRESSURE, TRAIT_RESISTCOLD), REF(src))
 		REMOVE_TRAIT(loc, TRAIT_RESISTLOWPRESSURE, REF(src))
-		loc.balloon_alert(loc, "cloak hidden")
-		loc.visible_message(span_notice("Light shifts around [loc], making the cloak around them invisible!"))
+		loc.balloon_alert(loc, LOC_KEY("heretic-item-voidcloak-hidden"))
+		loc.visible_message(span_notice(loc_key("heretic-item-voidcloak-hide-others", list(user = loc))))
 
 /// Makes our cloak "visible" again.
 /obj/item/clothing/suit/hooded/cultrobes/void/proc/make_visible()
@@ -1249,5 +1249,5 @@
 
 	if(isliving(loc))
 		loc.add_traits(list(TRAIT_RESISTLOWPRESSURE, TRAIT_RESISTCOLD), REF(src))
-		loc.balloon_alert(loc, "cloak revealed")
-		loc.visible_message(span_notice("A kaleidoscope of colours collapses around [loc], a cloak appearing suddenly around their person!"))
+		loc.balloon_alert(loc, LOC_KEY("heretic-item-voidcloak-revealed"))
+		loc.visible_message(span_notice(loc_key("heretic-item-voidcloak-reveal-others", list(user = loc))))

@@ -1,6 +1,7 @@
 import { LabeledList, NumberInput } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -14,16 +15,18 @@ const States = ['Filling', 'Heating', 'Cooling', 'Emptying'] as const;
 
 export const ChemAcclimator = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { chem_temp, target_temperature, max_volume, acclimate_state } = data;
+  const state = States[acclimate_state];
 
   return (
     <Window width={320} height={130}>
       <Window.Content>
         <LabeledList>
-          <LabeledList.Item label="Current Temperature">
+          <LabeledList.Item label={t('chemacclimator-current-temperature', {}, 'Current Temperature')}>
             {chem_temp} K
           </LabeledList.Item>
-          <LabeledList.Item label="Target Temperature">
+          <LabeledList.Item label={t('chemacclimator-target-temperature', {}, 'Target Temperature')}>
             <NumberInput
               value={target_temperature}
               unit="K"
@@ -39,7 +42,7 @@ export const ChemAcclimator = (props) => {
               }
             />
           </LabeledList.Item>
-          <LabeledList.Item label="Buffer">
+          <LabeledList.Item label={t('chemacclimator-buffer', {}, 'Buffer')}>
             <NumberInput
               value={max_volume}
               unit="u"
@@ -55,8 +58,9 @@ export const ChemAcclimator = (props) => {
               }
             />
           </LabeledList.Item>
-          <LabeledList.Item label="Current State">
-            {States[acclimate_state]}
+          <LabeledList.Item label={t('chemacclimator-current-state', {}, 'Current State')}>
+            {state &&
+              t(`chemacclimator-state-${state.toLowerCase()}`, {}, state)}
           </LabeledList.Item>
         </LabeledList>
       </Window.Content>

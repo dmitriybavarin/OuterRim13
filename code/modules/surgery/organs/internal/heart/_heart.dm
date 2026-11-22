@@ -157,12 +157,12 @@
 
 /obj/item/organ/heart/feel_for_damage(self_aware)
 	if(owner.needs_heart() && (!beating || (organ_flags & ORGAN_FAILING)))
-		return span_boldwarning("[self_aware ? "Your heart is not beating!" : "You don't feel your heart beating."]")
+		return span_boldwarning(loc_key("organ-heart-selfcheck-stopped-[self_aware ? "aware" : "looks"]"))
 	if(damage < low_threshold)
 		return ""
 	if(damage < high_threshold)
-		return span_warning("[self_aware ? "Your heart hurts." : "It hurts, and your heart rate feels irregular."]")
-	return span_boldwarning("[self_aware ? "Your heart seriously hurts!" : "It seriously hurts, and your heart rate is all over the place."]")
+		return span_warning(loc_key("organ-heart-selfcheck-hurts-[self_aware ? "aware" : "looks"]"))
+	return span_boldwarning(loc_key("organ-heart-selfcheck-severe-[self_aware ? "aware" : "looks"]"))
 
 /// by default, returns the hearts beat_noise var as a notice span. May do other things when overridden, such as eldritch insanity or electrocution. Whatever you want, really.
 /obj/item/organ/heart/proc/hear_beat_noise(mob/living/hearer)

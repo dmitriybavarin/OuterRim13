@@ -21,8 +21,8 @@ material-plastitanium-glass-name = пластитановое стекло
 material-alien-alloy-name = чужеродный сплав
     .gen = чужеродного сплава
 
-material-iron-name = железо
-    .gen = железа
+material-iron-name = сталь
+    .gen = стали
 
 material-glass-name = стекло
     .gen = стекла

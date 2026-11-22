@@ -132,7 +132,7 @@
 /atom/movable/screen/alert/MouseEntered(location,control,params)
 	. = ..()
 	if(!QDELETED(src))
-		openToolTip(usr,src,params,title = name,content = desc,theme = alerttooltipstyle)
+		openToolTip(usr,src,params,title = loc_alert_name(src, name),content = loc_alert_desc(src, desc),theme = alerttooltipstyle)
 
 /atom/movable/screen/alert/MouseExited()
 	closeToolTip(usr)

@@ -71,7 +71,7 @@
 	// You may wonder why we don't straight up prevent them from invoking the ritual if they don't have one -
 	// Hunt and sacrifice should always be invokable for clarity's sake, even if it'll fail immediately.
 	if(heretic_datum.has_living_heart() != HERETIC_HAS_LIVING_HEART)
-		loc.balloon_alert(user, "ritual failed, no living heart!")
+		loc.balloon_alert(user, LOC_KEY("heretic-ritual-failed-no-heart"))
 		return FALSE
 
 	// We've got no targets set, let's try to set some.
@@ -81,25 +81,25 @@
 		return TRUE
 
 	if(istype(get_area(loc), /area/centcom/heretic_backdoor))
-		loc.balloon_alert(user, "ritual failed, invalid location!")
+		loc.balloon_alert(user, LOC_KEY("heretic-ritual-failed-bad-location"))
 		switch(backdoor_sacrifice_attempts)
 			if(0)
-				to_chat(user, span_mansus("Attempting a sacrifice so close to the gods is risky..."))
+				to_chat(user, span_mansus(LOC_KEY("heretic-sacrifice-backdoor-risky")))
 			if(1)
-				to_chat(user, span_mansus("<i>You hear a knocking sound[HAS_TRAIT(user, TRAIT_DEAF) ? ", despite your deafness" : ""]...</i>"))
+				to_chat(user, span_mansus(HAS_TRAIT(user, TRAIT_DEAF) ? LOC_KEY("heretic-sacrifice-backdoor-knock-deaf") : LOC_KEY("heretic-sacrifice-backdoor-knock")))
 			if(2)
-				to_chat(user, span_mansus("<i>The knocking grows louder..."))
+				to_chat(user, span_mansus(LOC_KEY("heretic-sacrifice-backdoor-louder")))
 				user.soundbang_act(SOUNDBANG_NORMAL, deafen_pwr = 10 SECONDS, stun_pwr = 1 SECONDS, damage_pwr = 10, ignore_deafness = TRUE)
 			if(3)
-				to_chat(user, span_mansus("<i>The knocking becomes deafening!</i>"))
+				to_chat(user, span_mansus(LOC_KEY("heretic-sacrifice-backdoor-deafening")))
 				user.soundbang_act(SOUNDBANG_OVERWHELMING, deafen_pwr = 20 SECONDS, stun_pwr = 4 SECONDS, damage_pwr = 20, ignore_deafness = TRUE)
 			if(4)
 				if(begin_sacrifice(user))
-					to_chat(user, span_mansus("<b><i>Your insolence is punished!</i></b>"))
+					to_chat(user, span_mansus(LOC_KEY("heretic-sacrifice-backdoor-punished")))
 				else
-					to_chat(user, span_mansus("The knocking stops - but you can't help but feel like you've dodged a bullet, somehow."))
+					to_chat(user, span_mansus(LOC_KEY("heretic-sacrifice-backdoor-dodged")))
 			if(5 to INFINITY)
-				to_chat(user, span_mansus("You don't think trying it again would provide any more insight..."))
+				to_chat(user, span_mansus(LOC_KEY("heretic-sacrifice-backdoor-enough")))
 
 		backdoor_sacrifice_attempts++
 		return FALSE
@@ -119,7 +119,7 @@
 		return TRUE
 
 	// or FALSE if we don't
-	loc.balloon_alert(user, "ritual failed, no sacrifice found!")
+	loc.balloon_alert(user, LOC_KEY("heretic-ritual-failed-no-sacrifice"))
 	return FALSE
 
 /datum/heretic_knowledge/hunt_and_sacrifice/on_finished_recipe(mob/living/user, list/selected_atoms, turf/loc)
@@ -130,7 +130,7 @@
 		if(obtain_targets(user, heretic_datum = heretic_datum))
 			return TRUE
 		else
-			loc.balloon_alert(user, "ritual failed, no targets found!")
+			loc.balloon_alert(user, LOC_KEY("heretic-ritual-failed-no-targets"))
 			return FALSE
 
 	sacrifice_process(user, selected_atoms, loc)
@@ -160,7 +160,7 @@
 
 	if(!length(valid_targets))
 		if(!silent)
-			to_chat(user, span_mansus("No sacrifice targets could be found!"))
+			to_chat(user, span_mansus(LOC_KEY("heretic-sacrifice-no-targets")))
 		return FALSE
 
 	// Now, let's try to get four targets.
@@ -198,12 +198,12 @@
 		target_sanity++
 
 	if(!silent)
-		to_chat(user, span_danger("Your targets have been determined. Your Living Heart will allow you to track their position. Go and sacrifice them!"))
+		to_chat(user, span_danger(LOC_KEY("heretic-sacrifice-targets-chosen")))
 
 	for(var/datum/mind/chosen_mind as anything in final_targets)
 		heretic_datum.add_sacrifice_target(chosen_mind.current)
 		if(!silent)
-			to_chat(user, span_danger("[chosen_mind.current.real_name], the [chosen_mind.assigned_role?.title]."))
+			to_chat(user, span_danger(loc_key("heretic-sacrifice-target-line", list(name = chosen_mind.current.real_name, job = chosen_mind.assigned_role?.title))))
 
 	return TRUE
 
@@ -229,7 +229,7 @@
 	for(var/datum/antagonist/heretic/all_heretic in GLOB.antagonists)
 		all_heretic.remove_sacrifice_target(sacrifice)
 
-	var/feedback = "Your patrons accept your offer"
+	var/feedback = LOC_KEY("heretic-sacrifice-accepted")
 	var/sac_job_flag = sacrifice.mind?.assigned_role?.job_flags | sacrifice.last_mind?.assigned_role?.job_flags
 	var/datum/antagonist/cult/cultist_datum = GET_CULTIST(sacrifice)
 	// Heads give 3 points, cultists give 1 point (and a special reward), normal sacrifices give 2 points.
@@ -238,7 +238,7 @@
 	if((sac_job_flag & JOB_HEAD_OF_STAFF))
 		heretic_datum.adjust_knowledge_points(3)
 		heretic_datum.high_value_sacrifices++
-		feedback += " <i>graciously</i>"
+		feedback = LOC_KEY("heretic-sacrifice-accepted-high")
 	if(cultist_datum)
 		heretic_datum.adjust_knowledge_points(1)
 		grant_reward(user, sacrifice, loc)
@@ -249,19 +249,17 @@
 			for(var/datum/mind/mind as anything in cultist_datum.cult_team.members)
 				if(mind.current)
 					SEND_SOUND(mind.current, 'sound/effects/magic/clockwork/narsie_attack.ogg')
-					var/message = span_narsie("A vile heretic has ") + \
-					span_cult_large(span_hypnophrase("sacrificed")) + \
-					span_narsie(" one of our own. Destroy and sacrifice the infidel before it claims more!")
+					var/message = span_narsie(loc_key("heretic-sacrifice-cult-warning", list(verb = span_cult_large(span_hypnophrase(LOC_KEY("heretic-sacrifice-cult-warning-verb"))))))
 					to_chat(mind.current, message)
 			// he(retic) gets a warn too
-			to_chat(user, span_narsiesmall("How DARE you!? I will see you destroyed for this."))
-			var/non_flavor_warning = span_cult_bold("You feel that your action has attracted ") + span_hypnophrase("attention") + span_cult_bold(".")
+			to_chat(user, span_narsiesmall(LOC_KEY("heretic-sacrifice-cult-retort")))
+			var/non_flavor_warning = span_cult_bold(loc_key("heretic-sacrifice-cult-attention", list(attention = span_hypnophrase(LOC_KEY("heretic-sacrifice-cult-attention-word")))))
 			to_chat(user, non_flavor_warning)
 		return
 	else
 		heretic_datum.adjust_knowledge_points(2)
 
-	to_chat(user, span_hypnophrase("[feedback]."))
+	to_chat(user, span_hypnophrase(feedback))
 	if(!begin_sacrifice(sacrifice))
 		disembowel_target(sacrifice)
 		return
@@ -272,8 +270,8 @@
 /datum/heretic_knowledge/hunt_and_sacrifice/proc/grant_reward(mob/living/user, mob/living/sacrifice, turf/loc)
 
 	// Visible and audible encouragement!
-	to_chat(user, span_big(span_hypnophrase("A servant of the Sanguine Apostate!")))
-	to_chat(user, span_mansus("Your patrons are rapturous!"))
+	to_chat(user, span_big(span_hypnophrase(LOC_KEY("heretic-sacrifice-reward-servant"))))
+	to_chat(user, span_mansus(LOC_KEY("heretic-sacrifice-reward-rapturous")))
 	playsound(sacrifice, 'sound/effects/magic/disintegrate.ogg', 75, TRUE)
 
 	// Drop all items and splatter them around messily.
@@ -357,7 +355,7 @@
 
 	var/turf/destination = get_turf(destination_landmark)
 
-	sac_target.visible_message(span_danger("[sac_target] begins to shudder violenty as dark tendrils begin to drag them into thin air!"))
+	sac_target.visible_message(span_danger(loc_key("heretic-sacrifice-begin-shudder", list(target = sac_target))))
 	sac_target.equip_to_slot_or_del(new /obj/item/restraints/handcuffs/cult, ITEM_SLOT_HANDCUFFED, indirect_action = TRUE)
 	sac_target.dropItemToGround(sac_target.legcuffed, TRUE)
 
@@ -371,13 +369,13 @@
 	// If our target is dead, try to revive them
 	// and if we fail to revive them, don't proceede the chain
 	sac_target.adjust_oxy_loss(-100, FALSE)
-	if(!sac_target.heal_and_revive(50, span_danger("[sac_target]'s heart begins to beat with an unholy force as they return from death!")))
+	if(!sac_target.heal_and_revive(50, span_danger(loc_key("heretic-sacrifice-revive", list(target = sac_target)))))
 		return
 
 	if(sac_target.AdjustUnconscious(SACRIFICE_SLEEP_DURATION))
-		to_chat(sac_target, span_hypnophrase("Your mind feels torn apart as you fall into a shallow slumber..."))
+		to_chat(sac_target, span_hypnophrase(LOC_KEY("heretic-sacrifice-victim-slumber")))
 	else
-		to_chat(sac_target, span_hypnophrase("Your mind begins to tear apart as you watch dark tendrils envelop you."))
+		to_chat(sac_target, span_hypnophrase(LOC_KEY("heretic-sacrifice-victim-tendrils")))
 
 	sac_target.AdjustParalyzed(SACRIFICE_SLEEP_DURATION * 1.2)
 	sac_target.AdjustImmobilized(SACRIFICE_SLEEP_DURATION * 1.2)
@@ -416,11 +414,11 @@
 	// and we fail to revive them (using a lower number than before),
 	// just disembowel them and stop the chain
 	sac_target.adjust_oxy_loss(-100, FALSE)
-	if(!sac_target.heal_and_revive(60, span_danger("[sac_target]'s heart begins to beat with an unholy force as they return from death!")))
+	if(!sac_target.heal_and_revive(60, span_danger(loc_key("heretic-sacrifice-revive", list(target = sac_target)))))
 		disembowel_target(sac_target)
 		return
 
-	to_chat(sac_target, span_big(span_hypnophrase("Unnatural forces begin to claw at your every being from beyond the veil.")))
+	to_chat(sac_target, span_big(span_hypnophrase(LOC_KEY("heretic-sacrifice-victim-claw"))))
 
 	playsound(sac_target, 'sound/music/antag/heretic/heretic_sacrifice.ogg', 50, FALSE) // play theme
 
@@ -446,7 +444,7 @@
 		to_give.Insert(sac_target)
 
 	new /obj/effect/gibspawner/human/bodypartless(get_turf(sac_target), sac_target)
-	sac_target.visible_message(span_boldwarning("Several organs force themselves out of [sac_target]!"))
+	sac_target.visible_message(span_boldwarning(loc_key("heretic-sacrifice-organs-out", list(target = sac_target))))
 
 /**
  * This proc is called from [proc/after_target_sleeps] when the [sac_target] should be waking up.)
@@ -476,8 +474,8 @@
 	sac_target.adjust_hallucinations(24 SECONDS)
 	sac_target.emote("scream")
 
-	to_chat(sac_target, span_reallybig(span_hypnophrase("The grasp of the Mansus reveal themselves to you!")))
-	to_chat(sac_target, span_hypnophrase("You feel invigorated! Fight to survive!"))
+	to_chat(sac_target, span_reallybig(span_hypnophrase(LOC_KEY("heretic-sacrifice-victim-grasp"))))
+	to_chat(sac_target, span_hypnophrase(LOC_KEY("heretic-sacrifice-victim-invigorated")))
 	// When it runs out, let them know they're almost home free
 	addtimer(CALLBACK(src, PROC_REF(after_helgrasp_ends), sac_target), helgrasp_time)
 	// Win condition
@@ -493,7 +491,7 @@
 	if(QDELETED(sac_target) || sac_target.stat == DEAD)
 		return
 
-	to_chat(sac_target, span_hypnophrase("The worst is behind you... Not much longer! Hold fast, or expire!"))
+	to_chat(sac_target, span_hypnophrase(LOC_KEY("heretic-sacrifice-victim-worst-over")))
 
 /**
  * This proc is called from [proc/begin_sacrifice] if the target survived the shadow realm), or [COMSIG_LIVING_DEATH] if they don't.
@@ -555,16 +553,8 @@
 		after_return_live_target(sac_target)
 
 	if(heretic_mind?.current)
-		var/composed_return_message = ""
-		composed_return_message += span_notice("Your victim, [sac_target], was returned to the station - ")
-		if(sac_target.stat == DEAD)
-			composed_return_message += span_red("dead. ")
-		else
-			composed_return_message += span_green("alive, but with a shattered mind. ")
-
-		composed_return_message += span_notice("You hear a whisper... ")
-		composed_return_message += span_mansus(get_area_name(safe_turf, TRUE))
-		to_chat(heretic_mind.current, composed_return_message)
+		var/return_state = sac_target.stat == DEAD ? span_red(LOC_KEY("heretic-sacrifice-returned-dead")) : span_green(LOC_KEY("heretic-sacrifice-returned-alive"))
+		to_chat(heretic_mind.current, span_notice(loc_key("heretic-sacrifice-returned", list(target = sac_target, state = return_state, area = span_mansus(get_area_name(safe_turf, TRUE))))))
 
 /**
  * If they die in the shadow realm, they lost. Send them back.
@@ -583,7 +573,7 @@
 /datum/heretic_knowledge/hunt_and_sacrifice/proc/on_target_escape(mob/living/carbon/human/sac_target, old_z, new_z)
 	SIGNAL_HANDLER
 
-	to_chat(sac_target, span_boldwarning("Your attempt to escape the Mansus is not taken kindly!"))
+	to_chat(sac_target, span_boldwarning(LOC_KEY("heretic-sacrifice-victim-escape")))
 	// Ends up calling return_target() via death signal to clean up.
 	disembowel_target(sac_target)
 
@@ -593,11 +583,11 @@
  * Gives the sacrifice target some after effects upon ariving back to reality.
  */
 /datum/heretic_knowledge/hunt_and_sacrifice/proc/after_return_live_target(mob/living/carbon/human/sac_target)
-	to_chat(sac_target, span_hypnophrase("The fight is over, but at great cost. You have been returned to the station in one piece."))
+	to_chat(sac_target, span_hypnophrase(LOC_KEY("heretic-sacrifice-victim-survived")))
 	if(IS_HERETIC(sac_target))
-		to_chat(sac_target, span_big(span_hypnophrase("You don't remember anything leading up to the experience, but you feel your connection with the Mansus weakened - Knowledge once known, forgotten...")))
+		to_chat(sac_target, span_big(span_hypnophrase(LOC_KEY("heretic-sacrifice-victim-survived-heretic"))))
 	else
-		to_chat(sac_target, span_big(span_hypnophrase("You don't remember anything leading up to the experience - All you can think about are those horrific hands...")))
+		to_chat(sac_target, span_big(span_hypnophrase(LOC_KEY("heretic-sacrifice-victim-survived-other"))))
 
 	// Oh god where are we?
 	sac_target.flash_act()
@@ -626,8 +616,8 @@
  * it spawns a special red broken illusion on their spot, for style.
  */
 /datum/heretic_knowledge/hunt_and_sacrifice/proc/after_return_dead_target(mob/living/carbon/human/sac_target)
-	to_chat(sac_target, span_hypnophrase("You failed to resist the horrors of the Mansus! Your ruined body has been returned to the station."))
-	to_chat(sac_target, span_big(span_hypnophrase("The experience leaves your mind torn and memories tattered. You will not remember anything leading up to the experience if revived.")))
+	to_chat(sac_target, span_hypnophrase(LOC_KEY("heretic-sacrifice-victim-failed")))
+	to_chat(sac_target, span_big(span_hypnophrase(LOC_KEY("heretic-sacrifice-victim-failed-memory"))))
 
 	var/obj/effect/visible_heretic_influence/illusion = new(get_turf(sac_target))
 	illusion.name = "\improper weakened rift in reality"
@@ -647,8 +637,8 @@
 		sac_target.investigate_log("has been killed by heretic sacrifice.", INVESTIGATE_DEATHS)
 		sac_target.death()
 	sac_target.visible_message(
-		span_danger("[sac_target]'s organs are pulled out of [sac_target.p_their()] chest by shadowy hands!"),
-		span_userdanger("Your organs are violently pulled out of your chest by shadowy hands!")
+		span_danger(loc_key("heretic-sacrifice-disembowel-others", list(target = sac_target, gender = sac_target.get_visible_gender()))),
+		span_userdanger(LOC_KEY("heretic-sacrifice-disembowel-self"))
 	)
 
 	new /obj/effect/gibspawner/human/bodypartless(get_turf(sac_target), sac_target)

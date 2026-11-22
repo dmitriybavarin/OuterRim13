@@ -105,7 +105,7 @@
 		return
 
 	if(IS_HERETIC(user))
-		to_chat(user, span_boldwarning("You know better than to tempt forces out of your control!"))
+		to_chat(user, span_boldwarning(LOC_KEY("heretic-influence-touch-heretic")))
 		return TRUE
 
 	var/mob/living/carbon/human/human_user = user
@@ -114,11 +114,11 @@
 		return TRUE
 
 	if(prob(25))
-		to_chat(human_user, span_userdanger("An otherwordly presence tears and atomizes your [their_poor_arm.name] as you try to touch the hole in the very fabric of reality!"))
+		to_chat(human_user, span_userdanger(loc_key("heretic-influence-touch-arm-torn", list(arm = loc_entity(their_poor_arm, their_poor_arm.name)))))
 		if (their_poor_arm.dismember())
 			their_poor_arm.forceMove(src) // stored for later fishage
 	else
-		to_chat(human_user,span_danger("You pull your hand away from the hole as the eldritch energy flails, trying to latch onto existence itself!"))
+		to_chat(human_user,span_danger(LOC_KEY("heretic-influence-touch-pull-away")))
 	return TRUE
 
 /obj/effect/visible_heretic_influence/attack_tk(mob/user)
@@ -128,7 +128,7 @@
 	. = COMPONENT_CANCEL_ATTACK_CHAIN
 
 	if(IS_HERETIC(user))
-		to_chat(user, span_boldwarning("You know better than to tempt forces out of your control!"))
+		to_chat(user, span_boldwarning(LOC_KEY("heretic-influence-touch-heretic")))
 		return
 
 	var/mob/living/carbon/human/human_user = user
@@ -136,11 +136,11 @@
 	// You see, these tendrils are psychic. That's why you can't see them. Definitely not laziness. Just psychic. The character can feel but not see them.
 	// Because they're psychic. Yeah.
 	if(human_user.can_block_magic(MAGIC_RESISTANCE_MIND))
-		visible_message(span_danger("Psychic endrils lash out from [src], batting ineffectively at [user]'s head."))
+		visible_message(span_danger(loc_key("heretic-influence-psychic-blocked", list(influence = src, user = user))))
 		return
 
 	// A very elaborate way to suicide
-	visible_message(span_userdanger("Psychic tendrils lash out from [src], psychically grabbing onto [user]'s psychically sensitive mind and tearing [user.p_their()] head off!"))
+	visible_message(span_userdanger(loc_key("heretic-influence-psychic-beheaded", list(influence = src, user = user, gender = user.get_visible_gender()))))
 	var/obj/item/bodypart/head/head = human_user.get_bodypart(BODY_ZONE_HEAD)
 	if(head?.dismember())
 		head.forceMove(src) // stored for later fishage
@@ -155,7 +155,7 @@
 	if(IS_HERETIC(user) || !ishuman(user))
 		return
 
-	. += span_userdanger("Your mind burns as you stare at the tear!")
+	. += span_userdanger(LOC_KEY("heretic-influence-examine-burn"))
 	user.adjust_organ_loss(ORGAN_SLOT_BRAIN, 10, 190)
 	user.add_mood_event("gates_of_mansus", /datum/mood_event/gates_of_mansus)
 
@@ -199,7 +199,7 @@
 		return SECONDARY_ATTACK_CALL_NORMAL
 
 	if(being_drained)
-		loc.balloon_alert(user, "already being drained!")
+		loc.balloon_alert(user, LOC_KEY("heretic-influence-already-draining"))
 	else
 		INVOKE_ASYNC(src, PROC_REF(drain_influence), user, 1)
 
@@ -229,7 +229,7 @@
 /obj/effect/heretic_influence/proc/drain_influence(mob/living/user, knowledge_to_gain, drain_speed = HERETIC_RIFT_DEFAULT_DRAIN_SPEED)
 
 	being_drained = TRUE
-	loc.balloon_alert(user, "draining influence...")
+	loc.balloon_alert(user, LOC_KEY("heretic-influence-draining"))
 
 	// Only gives you the dripping eye effect if you have faster drain speed than default
 	var/mutable_appearance/draining_overlay = mutable_appearance('icons/mob/effects/heretic_aura.dmi', "heretic_eye_dripping")
@@ -239,12 +239,12 @@
 
 	if(!do_after(user, drain_speed, src, timed_action_flags = HIDE_INTERACTION))
 		being_drained = FALSE
-		loc.balloon_alert(user, "interrupted!")
+		loc.balloon_alert(user, LOC_KEY("heretic-influence-interrupted"))
 		user.cut_overlay(draining_overlay)
 		return
 
 	// We don't need to set being_drained back since we delete after anyways
-	loc.balloon_alert(user, "influence drained")
+	loc.balloon_alert(user, LOC_KEY("heretic-influence-drained"))
 	user.cut_overlay(draining_overlay)
 
 	var/datum/antagonist/heretic/heretic_datum = GET_HERETIC(user)
@@ -260,7 +260,7 @@
 /obj/effect/heretic_influence/proc/after_drain(mob/living/user)
 	if(user)
 		to_chat(user, span_hypnophrase(pick_list(HERETIC_INFLUENCE_FILE, "drain_message")))
-		to_chat(user, span_warning("[src] begins to fade into reality!"))
+		to_chat(user, span_warning(loc_key("heretic-influence-fading", list(influence = src))))
 
 	var/obj/effect/visible_heretic_influence/illusion = new /obj/effect/visible_heretic_influence(drop_location())
 	illusion.name = "\improper" + pick_list(HERETIC_INFLUENCE_FILE, "drained") + " " + format_text(name)

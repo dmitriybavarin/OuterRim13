@@ -40,12 +40,12 @@
 	var/turf/owner_turf = get_turf(owner)
 	if(!is_reflection_nearby(get_turf(owner_turf)))
 		if(feedback)
-			to_chat(owner, span_warning("There are no reflective surfaces nearby to [we_are_phasing ? "exit":"enter"] the mirror's realm here!"))
+			to_chat(owner, span_warning((we_are_phasing ? LOC_KEY("heretic-spell-mirror_walk_no_reflection-here-exit") : LOC_KEY("heretic-spell-mirror_walk_no_reflection-here-enter"))))
 		return FALSE
 
 	if(owner_turf.is_blocked_turf(exclude_mobs = TRUE))
 		if(feedback)
-			to_chat(owner, span_warning("Something is blocking you from [we_are_phasing ? "exiting":"entering"] the mirror's realm here!"))
+			to_chat(owner, span_warning((we_are_phasing ? LOC_KEY("heretic-spell-mirror_walk-blocked-exit") : LOC_KEY("heretic-spell-mirror_walk-blocked-enter"))))
 		return FALSE
 
 	return TRUE
@@ -60,18 +60,18 @@
 /datum/action/cooldown/spell/jaunt/mirror_walk/enter_jaunt(mob/living/jaunter, turf/loc_override)
 	var/atom/nearby_reflection = is_reflection_nearby(jaunter)
 	if(!nearby_reflection)
-		to_chat(jaunter, span_warning("There are no reflective surfaces nearby to enter the mirror's realm!"))
+		to_chat(jaunter, span_warning(LOC_KEY("heretic-spell-mirror_walk_no-reflection-enter")))
 		return
 
 	jaunter.Beam(nearby_reflection, icon_state = "light_beam", time = phase_out_time)
-	nearby_reflection.visible_message(span_warning("[nearby_reflection] begins to shimmer and shake slightly!"))
+	nearby_reflection.visible_message(span_warning(loc_key("heretic-spell-mirror-walk-shimmer", list(item = nearby_reflection))))
 	if(!do_after(jaunter, phase_out_time, nearby_reflection, IGNORE_USER_LOC_CHANGE|IGNORE_INCAPACITATED|HIDE_INTERACTION))
 		return
 
 	playsound(jaunter, 'sound/effects/magic/ethereal_enter.ogg', 50, TRUE, -1)
 	jaunter.visible_message(
-		span_boldwarning("[jaunter] phases out of reality, vanishing before your very eyes!"),
-		span_notice("You jump into the reflection coming off of [nearby_reflection], entering the mirror's realm."),
+		span_boldwarning(loc_key("heretic-spell-mirror_walk-enter-others", list(user = jaunter))),
+		span_notice(loc_key("heretic-spell-mirror_walk-enter-self", list(item = nearby_reflection))),
 	)
 
 	// Pass the turf of the nearby reflection to the parent call
@@ -86,17 +86,17 @@
 	var/turf/phase_turf = get_turf(unjaunter)
 	var/atom/nearby_reflection = is_reflection_nearby(phase_turf)
 	if(!nearby_reflection)
-		to_chat(unjaunter, span_warning("There are no reflective surfaces nearby to exit from the mirror's realm!"))
+		to_chat(unjaunter, span_warning(LOC_KEY("heretic-spell-mirror_walk_no-reflection-exit")))
 		return FALSE
 
 	// It would likely be a bad idea to teleport into an ai monitored area (ai sat)
 	var/area/phase_area = get_area(phase_turf)
 	if(phase_area.motion_monitored)
-		to_chat(unjaunter, span_warning("It's probably not a very wise idea to exit the mirror's realm here."))
+		to_chat(unjaunter, span_warning(LOC_KEY("heretic-spell-mirror-walk-unwise")))
 		return FALSE
 
 	nearby_reflection.Beam(phase_turf, icon_state = "light_beam", time = phase_in_time)
-	nearby_reflection.visible_message(span_warning("[nearby_reflection] begins to shimmer and shake slightly!"))
+	nearby_reflection.visible_message(span_warning(loc_key("heretic-spell-mirror-walk-shimmer", list(item = nearby_reflection))))
 	if(!do_after(unjaunter, phase_in_time, nearby_reflection, timed_action_flags = HIDE_INTERACTION))
 		return FALSE
 
@@ -119,8 +119,8 @@
 	if (!nearby_reflection) // Should only be true if you're forced out somehow, like by having the spell removed
 		return
 	unjaunter.visible_message(
-		span_boldwarning("[unjaunter] phases into reality before your very eyes!"),
-		span_notice("You jump out of the reflection coming off of [nearby_reflection], exiting the mirror's realm."),
+		span_boldwarning(loc_key("heretic-spell-mirror_walk-exit-others", list(user = unjaunter))),
+		span_notice(loc_key("heretic-spell-mirror_walk-exit-self", list(item = nearby_reflection))),
 	)
 
 /**

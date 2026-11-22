@@ -14,6 +14,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { NtosWindow } from '../layouts';
 
 // 3.5x crate value, 10 minutes
@@ -47,19 +48,23 @@ type Info = {
 
 const CooldownEstimate = (props) => {
   const { cost } = props;
+  const t = useT();
   const cooldownColor =
     (cost >= COST_VERY_LONG_BOUND && 'red') ||
     (cost >= COST_LONG_BOUND && 'orange') ||
     (cost >= COST_MODERATE_BOUND && 'yellow') ||
     'green';
   const cooldownText =
-    (cost >= COST_VERY_LONG_BOUND && 'very long') ||
-    (cost >= COST_LONG_BOUND && 'long') ||
-    (cost >= COST_MODERATE_BOUND && 'moderate') ||
-    'short';
+    (cost >= COST_VERY_LONG_BOUND &&
+      t('ntosdeptorder-cooldown-very-long', {}, 'very long cooldown.')) ||
+    (cost >= COST_LONG_BOUND &&
+      t('ntosdeptorder-cooldown-long', {}, 'long cooldown.')) ||
+    (cost >= COST_MODERATE_BOUND &&
+      t('ntosdeptorder-cooldown-moderate', {}, 'moderate cooldown.')) ||
+    t('ntosdeptorder-cooldown-short', {}, 'short cooldown.');
   return (
     <Box as="span" textColor={cooldownColor}>
-      {cooldownText} cooldown.
+      {cooldownText}
     </Box>
   );
 };
@@ -67,6 +72,7 @@ const CooldownEstimate = (props) => {
 export const DepartmentOrderContent = (props) => {
   const { data } = useBackend<Info>();
   const { no_link, time_left } = data;
+  const t = useT();
   if (!data) {
     return null;
   }
@@ -84,11 +90,11 @@ export const DepartmentOrderContent = (props) => {
         <Stack fill vertical>
           <Stack.Item>
             <NoticeBox info>
-              As employees of Nanotrasen, the selection of orders here are
-              completely free of charge, only incurring a cooldown on the
-              service. Cheaper items will make you wait for less time before
-              Nanotrasen allows another purchase, to encourage tasteful
-              spending.
+              {t(
+                'ntosdeptorder-info',
+                {},
+                'As employees of Nanotrasen, the selection of orders here are completely free of charge, only incurring a cooldown on the service. Cheaper items will make you wait for less time before Nanotrasen allows another purchase, to encourage tasteful spending.',
+              )}
             </NoticeBox>
           </Stack.Item>
           <Stack.Item grow>
@@ -101,8 +107,13 @@ export const DepartmentOrderContent = (props) => {
 };
 
 export const NtosDeptOrder = () => {
+  const t = useT();
   return (
-    <NtosWindow title="Department Orders" width={620} height={580}>
+    <NtosWindow
+      title={t('ntosdeptorder-window-title', {}, 'Department Orders')}
+      width={620}
+      height={580}
+    >
       <NtosWindow.Content>
         <DepartmentOrderContent />
       </NtosWindow.Content>
@@ -113,6 +124,7 @@ export const NtosDeptOrder = () => {
 const CooldownDimmer = () => {
   const { act, data } = useBackend<Info>();
   const { can_override, time_left } = data;
+  const t = useT();
   return (
     <Dimmer>
       <Stack vertical>
@@ -120,7 +132,11 @@ const CooldownDimmer = () => {
           <Icon color="bug" name="route" size={20} />
         </Stack.Item>
         <Stack.Item fontSize="18px" color="orange">
-          Ready for another order in {time_left}...
+          {t(
+            'ntosdeptorder-ready-in',
+            { time: time_left ?? '' },
+            `Ready for another order in ${time_left}...`,
+          )}
         </Stack.Item>
         <Stack.Item textAlign="center" color="orange">
           <Button
@@ -128,15 +144,23 @@ const CooldownDimmer = () => {
             lineHeight={2}
             tooltip={
               (!!can_override &&
-                'This action requires Head of Staff access!') ||
-              'Crate already shipped! No cancelling now!'
+                t(
+                  'ntosdeptorder-override-need-access',
+                  {},
+                  'This action requires Head of Staff access!',
+                )) ||
+              t(
+                'ntosdeptorder-override-shipped',
+                {},
+                'Crate already shipped! No cancelling now!',
+              )
             }
             fontSize="14px"
             color="red"
             disabled={!can_override}
             onClick={() => act('override_order')}
           >
-            <Box fontSize="22px">Override</Box>
+            <Box fontSize="22px">{t('ntosdeptorder-override', {}, 'Override')}</Box>
           </Button>
         </Stack.Item>
       </Stack>
@@ -147,6 +171,7 @@ const CooldownDimmer = () => {
 const NoLinkDimmer = () => {
   const { act, data } = useBackend<Info>();
   const { id_inside } = data;
+  const t = useT();
   return (
     <Dimmer>
       <Stack vertical>
@@ -156,11 +181,15 @@ const NoLinkDimmer = () => {
           </Blink>
         </Stack.Item>
         <Stack.Item textAlign="center" fontSize="22px" color="red">
-          Unlinked!
+          {t('ntosdeptorder-unlinked', {}, 'Unlinked!')}
         </Stack.Item>
         <Stack.Item textAlign="center" fontSize="14px" color="red">
           <Button disabled={!id_inside} onClick={() => act('link')}>
-            Please insert a silver Head of Staff ID and press to continue.
+            {t(
+              'ntosdeptorder-link',
+              {},
+              'Please insert a silver Head of Staff ID and press to continue.',
+            )}
           </Button>
         </Stack.Item>
       </Stack>
@@ -171,6 +200,7 @@ const NoLinkDimmer = () => {
 const DepartmentCatalog = () => {
   const { act, data } = useBackend<Info>();
   const { supplies } = data;
+  const t = useT();
   const [tabCategory, setTabCategory] = useState(supplies[0]);
 
   return (
@@ -216,7 +246,7 @@ const DepartmentCatalog = () => {
                         })
                       }
                     >
-                      Order
+                      {t('ntosdeptorder-order', {}, 'Order')}
                     </Button>
                   </Stack.Item>
                 </Stack>

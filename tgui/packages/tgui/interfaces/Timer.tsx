@@ -2,6 +2,7 @@ import { Button, Section } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -14,23 +15,32 @@ type Data = {
 export const Timer = (props) => {
   const { act, data } = useBackend<Data>();
   const { timing, loop } = data;
+  const t = useT();
 
   return (
     <Window width={275} height={115}>
       <Window.Content>
         <Section
-          title="Timing Unit"
+          title={t('timer-title', {}, 'Timing Unit')}
           buttons={
             <>
               <Button
                 icon={'sync'}
-                content={loop ? 'Repeating' : 'Repeat'}
+                content={
+                  loop
+                    ? t('timer-repeating', {}, 'Repeating')
+                    : t('timer-repeat', {}, 'Repeat')
+                }
                 selected={loop}
                 onClick={() => act('repeat')}
               />
               <Button
                 icon={'clock-o'}
-                content={timing ? 'Stop' : 'Start'}
+                content={
+                  timing
+                    ? t('timer-stop', {}, 'Stop')
+                    : t('timer-start', {}, 'Start')
+                }
                 selected={timing}
                 onClick={() => act('time')}
               />

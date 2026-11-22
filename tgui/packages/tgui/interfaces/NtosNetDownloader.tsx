@@ -18,6 +18,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { createSearch } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { NtosWindow } from '../layouts';
 
 type Data = {
@@ -60,6 +61,7 @@ export const NtosNetDownloader = (props) => {
     categories = [],
     programs = [],
   } = data;
+  const t = useT();
   const all_categories = categories;
   const downloadpercentage = toFixed(
     scale(downloadcompletion, 0, downloadsize) * 100,
@@ -95,13 +97,16 @@ export const NtosNetDownloader = (props) => {
         {!!error && (
           <NoticeBox>
             <Box mb={1}>{error}</Box>
-            <Button content="Reset" onClick={() => act('PRG_reseterror')} />
+            <Button
+              content={t('ntosnetdownloader-reset', {}, 'Reset')}
+              onClick={() => act('PRG_reseterror')}
+            />
           </NoticeBox>
         )}
         <Section>
           <LabeledList>
             <LabeledList.Item
-              label="Hard drive"
+              label={t('ntosnetdownloader-hard-drive', {}, 'Hard drive')}
               buttons={
                 (!!downloading && (
                   <Button
@@ -110,7 +115,11 @@ export const NtosNetDownloader = (props) => {
                     tooltipPosition="left"
                     tooltip={
                       !!downloading &&
-                      `Download: ${downloadname}.prg (${downloadpercentage}%)`
+                      t(
+                        'ntosnetdownloader-downloading',
+                        { name: downloadname, percent: downloadpercentage },
+                        `Download: ${downloadname}.prg (${downloadpercentage}%)`,
+                      )
                     }
                   />
                 )) ||
@@ -119,7 +128,11 @@ export const NtosNetDownloader = (props) => {
                     color="good"
                     icon="download"
                     tooltipPosition="left"
-                    tooltip={`${downloadname}.prg downloaded`}
+                    tooltip={t(
+                      'ntosnetdownloader-downloaded',
+                      { name: downloadname },
+                      `${downloadname}.prg downloaded`,
+                    )}
                   />
                 ))
               }
@@ -130,7 +143,11 @@ export const NtosNetDownloader = (props) => {
                 maxValue={disk_size}
               >
                 <Box textAlign="left">
-                  {`${disk_free_space} GQ free of ${disk_size} GQ`}
+                  {t(
+                    'ntosnetdownloader-free-space',
+                    { free: disk_free_space, total: disk_size },
+                    `${disk_free_space} GQ free of ${disk_size} GQ`,
+                  )}
                 </Box>
               </ProgressBar>
             </LabeledList.Item>
@@ -140,7 +157,11 @@ export const NtosNetDownloader = (props) => {
           <Input
             autoFocus
             height="23px"
-            placeholder="Search program name..."
+            placeholder={t(
+              'ntosnetdownloader-search',
+              {},
+              'Search program name...',
+            )}
             fluid
             value={searchItem}
             onChange={setSearchItem}
@@ -183,6 +204,7 @@ const Program = (props) => {
     emagged,
   } = data;
   const disk_free = disk_size - disk_used;
+  const t = useT();
   return (
     <Section>
       <Stack align="baseline">
@@ -197,7 +219,7 @@ const Program = (props) => {
           color="label"
           nowrap
         >
-          {program.size} GQ
+          {t('ntosnetdownloader-size', { size: program.size }, `${program.size} GQ`)}
         </Stack.Item>
         <Stack.Item shrink={0} width="134px" textAlign="right">
           {(downloading && program.filename === downloadname && (
@@ -217,10 +239,17 @@ const Program = (props) => {
                 <Button
                   bold
                   icon="download"
-                  content="Download"
+                  content={t('ntosnetdownloader-download', {}, 'Download')}
                   disabled={downloading}
                   tooltipPosition="left"
-                  tooltip={!!downloading && 'Awaiting download completion...'}
+                  tooltip={
+                    !!downloading &&
+                    t(
+                      'ntosnetdownloader-awaiting',
+                      {},
+                      'Awaiting download completion...',
+                    )
+                  }
                   onClick={() =>
                     act('PRG_downloadfile', {
                       filename: program.filename,
@@ -240,12 +269,12 @@ const Program = (props) => {
                 }
                 content={
                   program.installed
-                    ? 'Installed'
+                    ? t('ntosnetdownloader-installed', {}, 'Installed')
                     : !program.compatible
-                      ? 'Incompatible'
+                      ? t('ntosnetdownloader-incompatible', {}, 'Incompatible')
                       : !program.access
-                        ? 'No Access'
-                        : 'No Space'
+                        ? t('ntosnetdownloader-no-access', {}, 'No Access')
+                        : t('ntosnetdownloader-no-space', {}, 'No Space')
                 }
               />
             )}
@@ -256,8 +285,11 @@ const Program = (props) => {
       </Box>
       {!program.verifiedsource && (
         <NoticeBox mt={1} mb={0} danger fontSize="12px">
-          Unverified source. Please note that Nanotrasen does not recommend
-          download and usage of software from non-official servers.
+          {t(
+            'ntosnetdownloader-unverified',
+            {},
+            'Unverified source. Please note that Nanotrasen does not recommend download and usage of software from non-official servers.',
+          )}
         </NoticeBox>
       )}
     </Section>

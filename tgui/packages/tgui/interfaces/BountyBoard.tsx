@@ -12,6 +12,7 @@ import {
 import { formatMoney } from 'tgui-core/format';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { UserDetails } from './Vending';
 
@@ -62,16 +63,17 @@ export const BountyBoardContent = (props) => {
     bountyText,
     user,
   } = data;
+  const t = useT();
   const color = 'rgba(13, 13, 213, 0.7)';
   const backColor = 'rgba(50, 50, 170, 0.5)';
   return (
     <>
       <Section
-        title={'User Details'}
+        title={t('bountyboard-user', {}, 'User Details')}
         buttons={
           <Button
             icon="power-off"
-            content="Reset Account"
+            content={t('bountyboard-reset', {}, 'Reset Account')}
             onClick={() => act('clear')}
           />
         }
@@ -88,13 +90,13 @@ export const BountyBoardContent = (props) => {
                     {request.owner}
                   </Stack.Item>
                   <Stack.Item width="100px">
-                    {`${formatMoney(request.value)} cr`}
+                    {`${formatMoney(request.value)} ${t('bountyboard-cr', {}, 'cr')}`}
                   </Stack.Item>
                   <Stack.Item>
                     <Button
                       fluid
                       icon="pen-fancy"
-                      content="Apply"
+                      content={t('bountyboard-apply', {}, 'Apply')}
                       disabled={request.owner === user.name}
                       onClick={() =>
                         act('apply', {
@@ -105,7 +107,7 @@ export const BountyBoardContent = (props) => {
                     <Button
                       fluid
                       icon="trash-alt"
-                      content="Delete"
+                      content={t('bountyboard-delete', {}, 'Delete')}
                       color="red"
                       onClick={() =>
                         act('deleteRequest', {
@@ -118,7 +120,7 @@ export const BountyBoardContent = (props) => {
                 <BlockQuote pt={1} align="center">
                   <i>&quot;{request.description}&quot;</i>
                 </BlockQuote>
-                <Section title="Request Applicants">
+                <Section title={t('bountyboard-applicants', {}, 'Request Applicants')}>
                   {applicants?.map(
                     (applicant) =>
                       applicant.request_id === request.acc_number && (
@@ -140,7 +142,7 @@ export const BountyBoardContent = (props) => {
                               fluid
                               p={1}
                               icon="cash-register"
-                              tooltip="Pay out to this applicant."
+                              tooltip={t('bountyboard-pay', {}, 'Pay out to this applicant.')}
                               onClick={() =>
                                 act('payApplicant', {
                                   applicant: applicant.requestee_id,
@@ -158,7 +160,7 @@ export const BountyBoardContent = (props) => {
           ))}
         </Flex.Item>
         <Flex.Item>
-          <Collapsible title="New Bounty" width="220px" color="green">
+          <Collapsible title={t('bountyboard-new', {}, 'New Bounty')} width="220px" color="green">
             <Section>
               <TextArea
                 height="150px"
@@ -172,7 +174,7 @@ export const BountyBoardContent = (props) => {
               <Box>
                 <NumberInput
                   animated
-                  unit="cr"
+                  unit={t('bountyboard-cr', {}, 'cr')}
                   minValue={1}
                   maxValue={1000}
                   value={bountyValue}
@@ -186,7 +188,7 @@ export const BountyBoardContent = (props) => {
                 />
                 <Button
                   icon="print"
-                  content="Submit bounty"
+                  content={t('bountyboard-submit', {}, 'Submit bounty')}
                   disabled={user.name === 'Unknown'}
                   onClick={() => act('createBounty')}
                 />

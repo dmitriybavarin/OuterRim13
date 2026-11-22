@@ -71,7 +71,7 @@
 
 /obj/item/organ/wings/moth/feel_for_damage(self_aware)
 	if(burnt)
-		return "Your wings are all burnt up!"
+		return LOC_KEY("organ-wings-moth-selfcheck-burnt")
 	return ..()
 
 ///Moth wing bodypart overlay, including burn functionality!

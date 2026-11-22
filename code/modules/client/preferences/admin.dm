@@ -93,6 +93,9 @@
 	savefile_identifier = PREFERENCE_PLAYER
 	default_value = TRUE
 
+/datum/preference/toggle/admin_tgui_context_menu/apply_to_client(client/client, value)
+	client.refresh_popup_menus()
+
 /datum/preference/toggle/admin_tgui_context_menu/is_accessible(datum/preferences/preferences)
 	if (!..(preferences))
 		return FALSE

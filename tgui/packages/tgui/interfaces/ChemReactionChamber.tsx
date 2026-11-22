@@ -12,6 +12,7 @@ import {
 import { round, toFixed } from 'tgui-core/math';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import type { MixingData, Reagent } from './ChemMixingChamber';
 
@@ -24,6 +25,7 @@ type ReactingData = MixingData & {
 
 export const ChemReactionChamber = (props) => {
   const { act, data } = useBackend<ReactingData>();
+  const t = useT();
 
   const [reagentQuantity, setReagentQuantity] = useState(1);
 
@@ -44,10 +46,10 @@ export const ChemReactionChamber = (props) => {
         <Stack vertical fill>
           <Stack.Item>
             <Section
-              title="Conditions"
+              title={t('chemmixing-conditions', {}, 'Conditions')}
               buttons={
                 <Stack>
-                  <Stack.Item mt={0.3}>{'Target:'}</Stack.Item>
+                  <Stack.Item mt={0.3}>{t('chemmixing-target', {}, 'Target:')}</Stack.Item>
                   <Stack.Item>
                     <NumberInput
                       tickWhileDragging
@@ -72,7 +74,11 @@ export const ChemReactionChamber = (props) => {
                 <Stack.Item>
                   <Stack fill>
                     <Stack.Item textColor="label">
-                      Current Temperature:
+                      {t(
+                        'chemmixing-current-temperature',
+                        {},
+                        'Current Temperature:',
+                      )}
                     </Stack.Item>
                     <Stack.Item grow>
                       <AnimatedNumber
@@ -108,20 +114,17 @@ export const ChemReactionChamber = (props) => {
                 </Stack.Item>
                 <Stack.Item>
                   <Stack fill>
-                    <Stack.Item textColor="label">{'ph:'}</Stack.Item>
+                    <Stack.Item textColor="label">{t('chemreaction-ph', {}, 'ph:')}</Stack.Item>
                     <Stack.Item grow={15}>{ph}</Stack.Item>
                     <Stack.Item grow mt={1} mb={-0.5}>
                       <Button
                         color="transparent"
                         icon="question"
-                        tooltip={`
-                        In chemistry, pH is a scale used to specify
-                        the acidity or basicity of an aqueous solution.
-                        Acidic solutions are measured to have lower
-                        pH values than basic or alkaline solutions.
-                        The pH scale is logarithmic and inversely
-                        indicates the concentration of hydrogen ions
-                        in the solution.`}
+                        tooltip={t(
+                          'chemreaction-ph-tooltip',
+                          {},
+                          'In chemistry, pH is a scale used to specify the acidity or basicity of an aqueous solution. Acidic solutions are measured to have lower pH values than basic or alkaline solutions. The pH scale is logarithmic and inversely indicates the concentration of hydrogen ions in the solution.',
+                        )}
                         tooltipPosition="bottom-start"
                       />
                     </Stack.Item>
@@ -132,13 +135,13 @@ export const ChemReactionChamber = (props) => {
           </Stack.Item>
           <Stack.Item grow>
             <Section
-              title="Settings"
+              title={t('chemmixing-settings', {}, 'Settings')}
               fill
               scrollable
               buttons={
                 (isReacting && (
                   <Box inline bold color={'purple'}>
-                    {'Reacting'}
+                    {t('chemmixing-reacting', {}, 'Reacting')}
                   </Box>
                 )) || (
                   <Box
@@ -147,7 +150,9 @@ export const ChemReactionChamber = (props) => {
                     bold
                     color={emptying ? 'bad' : 'good'}
                   >
-                    {emptying ? 'Emptying' : 'Filling'}
+                    {emptying
+                      ? t('chemmixing-emptying', {}, 'Emptying')
+                      : t('chemmixing-filling', {}, 'Filling')}
                   </Box>
                 )
               }
@@ -155,7 +160,7 @@ export const ChemReactionChamber = (props) => {
               <Stack vertical fill>
                 <Stack.Item>
                   <LabeledList>
-                    <LabeledList.Item label="Acidic pH limit">
+                    <LabeledList.Item label={t('chemreaction-acidic-limit', {}, 'Acidic pH limit')}>
                       <NumberInput
                         tickWhileDragging
                         value={reagentAcidic}
@@ -171,7 +176,7 @@ export const ChemReactionChamber = (props) => {
                         }
                       />
                     </LabeledList.Item>
-                    <LabeledList.Item label="Alkaline pH limit">
+                    <LabeledList.Item label={t('chemreaction-alkaline-limit', {}, 'Alkaline pH limit')}>
                       <NumberInput
                         tickWhileDragging
                         value={reagentAlkaline}
@@ -202,7 +207,7 @@ export const ChemReactionChamber = (props) => {
                           })
                         }
                       >
-                        Add Reagent
+                        {t('chemmixing-add-reagent', {}, 'Add Reagent')}
                       </Button>
                     </Stack.Item>
                     <Stack.Item>
@@ -235,10 +240,11 @@ export const ChemReactionChamber = (props) => {
                           <Stack.Item>
                             <Button
                               color="transparent"
-                              tooltip={`
-                                This button converts this reagent entry into a catalyst.
-                                Catalyst reagents are not removed from the reaction chamber
-                                on completion. Useful for certain reactions.`}
+                              tooltip={t(
+                                'chemreaction-catalyst-tooltip',
+                                {},
+                                'This button converts this reagent entry into a catalyst. Catalyst reagents are not removed from the reaction chamber on completion. Useful for certain reactions.',
+                              )}
                               tooltipPosition="bottom-start"
                               onClick={() =>
                                 act('catalyst', {
@@ -269,7 +275,11 @@ export const ChemReactionChamber = (props) => {
             </Section>
           </Stack.Item>
           <Stack.Item grow={0.7}>
-            <Section title="Catalysts" fill scrollable>
+            <Section
+              title={t('chemreaction-catalysts', {}, 'Catalysts')}
+              fill
+              scrollable
+            >
               <Stack.Item>
                 <Stack vertical fill>
                   {catalysts.map((reagent) => (

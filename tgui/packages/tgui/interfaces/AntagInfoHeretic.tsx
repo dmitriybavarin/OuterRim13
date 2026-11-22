@@ -13,6 +13,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useServerText, useT } from '../i18n';
 import { Window } from '../layouts';
 import { logger } from '../logging';
 import {
@@ -115,12 +116,18 @@ type Info = {
 
 const IntroductionSection = (props) => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { objectives, ascended, can_change_objective } = data;
 
   return (
     <Stack justify="space-evenly" height="100%" width="100%">
       <Stack.Item grow>
-        <Section title="You are the Heretic!" fill fontSize="14px" scrollable>
+        <Section
+          title={t('antaginfo-heretic-title')}
+          fill
+          fontSize="14px"
+          scrollable
+        >
           <Stack vertical>
             <FlavorSection />
             <Stack.Divider />
@@ -134,18 +141,16 @@ const IntroductionSection = (props) => {
                   fill
                   titleMessage={
                     can_change_objective
-                      ? 'In order to ascend, you have these tasks to fulfill'
-                      : 'Use your dark knowledge to fulfil your personal goal'
+                      ? t('antaginfo-heretic-tasks-ascend')
+                      : t('antaginfo-heretic-tasks-personal')
                   }
                   objectives={objectives}
                   objectiveFollowup={
                     <ReplaceObjectivesButton
                       can_change_objective={can_change_objective}
-                      button_title={'Reject Ascension'}
+                      button_title={t('antaginfo-heretic-reject')}
                       button_colour={'red'}
-                      button_tooltip={
-                        'Turn your back on the Mansus to accomplish a task of your choosing. Selecting this option will prevent you from ascending!'
-                      }
+                      button_tooltip={t('antaginfo-heretic-reject-tooltip')}
                     />
                   }
                 />
@@ -159,23 +164,24 @@ const IntroductionSection = (props) => {
 };
 
 const FlavorSection = () => {
+  const t = useT();
   return (
     <Stack.Item>
       <Stack vertical textAlign="center" fontSize="14px">
         <Stack.Item>
           <i>
-            Another day at a meaningless job. You feel a&nbsp;
-            <span style={hereticBlue}>shimmer</span>
-            &nbsp;around you, as a realization of something&nbsp;
-            <span style={hereticRed}>strange</span>
-            &nbsp;in the air unfolds. You look inwards and discover something
-            that will change your life.
+            {t('antaginfo-heretic-flavor-1')}&nbsp;
+            <span style={hereticBlue}>{t('antaginfo-heretic-flavor-shimmer')}</span>
+            &nbsp;{t('antaginfo-heretic-flavor-2')}&nbsp;
+            <span style={hereticRed}>{t('antaginfo-heretic-flavor-strange')}</span>
+            &nbsp;{t('antaginfo-heretic-flavor-3')}
           </i>
         </Stack.Item>
         <Stack.Item>
           <b>
-            The <span style={hereticPurple}>Gates of Mansus</span>
-            &nbsp;open up to your mind.
+            {t('antaginfo-heretic-gates-pre')}{' '}
+            <span style={hereticPurple}>{t('antaginfo-heretic-gates-name')}</span>
+            &nbsp;{t('antaginfo-heretic-gates-post')}
           </b>
         </Stack.Item>
       </Stack>
@@ -185,53 +191,55 @@ const FlavorSection = () => {
 
 const GuideSection = () => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { points_to_aura } = data;
   return (
     <Stack.Item>
       <Stack vertical fontSize="12px">
         <Stack.Item>
-          - Find reality smashing&nbsp;
-          <span style={hereticPurple}>influences</span>
-          &nbsp;around the station invisible to the normal eye and&nbsp;
-          <b>right click</b> on them to harvest them for&nbsp;
-          <span style={hereticBlue}>knowledge points</span>. Tapping them makes
-          them visible to all after a short time. Dreaming of Mansus may help to
-          find them.
+          {t('antaginfo-heretic-guide-1-a')}&nbsp;
+          <span style={hereticPurple}>{t('antaginfo-heretic-guide-1-influences')}</span>
+          &nbsp;{t('antaginfo-heretic-guide-1-b')}&nbsp;
+          <b>{t('antaginfo-heretic-guide-1-click')}</b>{' '}
+          {t('antaginfo-heretic-guide-1-c')}&nbsp;
+          <span style={hereticBlue}>{t('antaginfo-heretic-knowledge-points')}</span>
+          . {t('antaginfo-heretic-guide-1-d')}
         </Stack.Item>
         <Stack.Item>
-          - Use your&nbsp;
-          <span style={hereticRed}>Living Heart action</span>
-          &nbsp;to track down&nbsp;
-          <span style={hereticRed}>sacrifice targets</span>, but be careful:
-          Pulsing it will produce a heartbeat sound that nearby people may hear.
-          This action is tied to your <b>heart</b> - if you lose it, you must
-          complete a ritual to regain it.
+          {t('antaginfo-heretic-guide-2-a')}&nbsp;
+          <span style={hereticRed}>{t('antaginfo-heretic-guide-2-action')}</span>
+          &nbsp;{t('antaginfo-heretic-guide-2-b')}&nbsp;
+          <span style={hereticRed}>{t('antaginfo-heretic-guide-2-targets')}</span>,{' '}
+          {t('antaginfo-heretic-guide-2-c')}{' '}
+          <b>{t('antaginfo-heretic-guide-2-heart')}</b>{' '}
+          {t('antaginfo-heretic-guide-2-d')}
         </Stack.Item>
         <Stack.Item>
-          - Draw a&nbsp;
-          <span style={hereticGreen}>transmutation rune</span> by using a
-          drawing tool (a pen or crayon) on the floor while having&nbsp;
-          <span style={hereticGreen}>Mansus Grasp</span>
-          &nbsp;active in your other hand. This rune allows you to complete
-          rituals and sacrifices.
+          {t('antaginfo-heretic-guide-3-a')}&nbsp;
+          <span style={hereticGreen}>{t('antaginfo-heretic-rune')}</span>{' '}
+          {t('antaginfo-heretic-guide-3-b')}&nbsp;
+          <span style={hereticGreen}>{t('antaginfo-heretic-guide-3-grasp')}</span>
+          &nbsp;{t('antaginfo-heretic-guide-3-c')} {t('antaginfo-heretic-guide-3-d')}
         </Stack.Item>
         <Stack.Item>
-          - Follow your <span style={hereticRed}>Living Heart</span> to find
-          your targets. Bring them back to a&nbsp;
-          <span style={hereticGreen}>transmutation rune</span> in critical or
-          worse condition to&nbsp;
-          <span style={hereticRed}>sacrifice</span> them for&nbsp;
-          <span style={hereticBlue}>knowledge points</span>. The Mansus{' '}
-          <b>ONLY</b> accepts targets pointed to by the&nbsp;
-          <span style={hereticRed}>Living Heart</span>.
+          {t('antaginfo-heretic-guide-4-a')}{' '}
+          <span style={hereticRed}>{t('antaginfo-heretic-living-heart')}</span>{' '}
+          {t('antaginfo-heretic-guide-4-b')} {t('antaginfo-heretic-guide-4-c')}&nbsp;
+          <span style={hereticGreen}>{t('antaginfo-heretic-rune')}</span>{' '}
+          {t('antaginfo-heretic-guide-4-d')}&nbsp;
+          <span style={hereticRed}>{t('antaginfo-heretic-guide-4-sacrifice')}</span>{' '}
+          {t('antaginfo-heretic-guide-4-e')}&nbsp;
+          <span style={hereticBlue}>{t('antaginfo-heretic-knowledge-points')}</span>
+          . {t('antaginfo-heretic-guide-4-f')} <b>{t('antaginfo-heretic-guide-4-only')}</b>{' '}
+          {t('antaginfo-heretic-guide-4-g')}&nbsp;
+          <span style={hereticRed}>{t('antaginfo-heretic-living-heart')}</span>.
         </Stack.Item>
         <Stack.Item>
-          - Accumulating a total of <b>{points_to_aura}</b>&nbsp;
-          <span style={hereticBlue}>knowledge points</span>
-          &nbsp;will manifest a visible aura of&nbsp;
-          <span style={hereticPurple}>Mansus energy</span> around you. This aura
-          will be visible to all those around you and will mark you as a
-          Heretic. Consider the risks before accumulating too much knowledge!
+          {t('antaginfo-heretic-guide-5-a')} <b>{points_to_aura}</b>&nbsp;
+          <span style={hereticBlue}>{t('antaginfo-heretic-guide-5-points')}</span>
+          &nbsp;{t('antaginfo-heretic-guide-5-b')}&nbsp;
+          <span style={hereticPurple}>{t('antaginfo-heretic-guide-5-energy')}</span>{' '}
+          {t('antaginfo-heretic-guide-5-c')} {t('antaginfo-heretic-guide-5-d')}
         </Stack.Item>
       </Stack>
     </Stack.Item>
@@ -240,6 +248,7 @@ const GuideSection = () => {
 
 const InformationSection = () => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { charges, total_sacrifices, ascended } = data;
   return (
     <Stack.Item>
@@ -247,10 +256,10 @@ const InformationSection = () => {
         {!!ascended && (
           <Stack.Item>
             <Stack align="center">
-              <Stack.Item>You have</Stack.Item>
+              <Stack.Item>{t('antaginfo-heretic-ascended-pre')}</Stack.Item>
               <Stack.Item fontSize="24px">
                 <Box inline color="yellow">
-                  ASCENDED
+                  {t('antaginfo-heretic-ascended')}
                 </Box>
                 !
               </Stack.Item>
@@ -258,16 +267,21 @@ const InformationSection = () => {
           </Stack.Item>
         )}
         <Stack.Item>
-          You have <b>{charges || 0}</b>&nbsp;
+          {t('antaginfo-heretic-have')} <b>{charges || 0}</b>&nbsp;
           <span style={hereticBlue}>
-            knowledge point{charges !== 1 ? 's' : ''}
+            {t('antaginfo-heretic-points', { count: charges || 0 })}
           </span>
           .
         </Stack.Item>
         <Stack.Item>
-          You have made a total of&nbsp;
+          {t('antaginfo-heretic-sacrifices-pre')}&nbsp;
           <b>{total_sacrifices || 0}</b>&nbsp;
-          <span style={hereticRed}>sacrifices</span>.
+          <span style={hereticRed}>
+            {t('antaginfo-heretic-sacrifices', {
+              count: total_sacrifices || 0,
+            })}
+          </span>
+          .
         </Stack.Item>
       </Stack>
     </Stack.Item>
@@ -276,18 +290,19 @@ const InformationSection = () => {
 
 const KnowledgeTree = () => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { knowledge_tiers } = data;
 
   const nodesToShow = knowledge_tiers.filter((tier) => tier.nodes.length > 0);
 
   return (
-    <Section title="Research Tree" fill scrollable>
+    <Section title={t('antaginfo-heretic-tree')} fill scrollable>
       <Box textAlign="center" fontSize="32px">
-        <span style={hereticYellow}>DAWN</span>
+        <span style={hereticYellow}>{t('antaginfo-heretic-dawn')}</span>
       </Box>
       <Stack vertical>
         {nodesToShow.length === 0
-          ? 'None!'
+          ? t('antaginfo-common-objectives-none')
           : nodesToShow.map((tier, i) => (
               <Stack.Item key={i}>
                 <Stack
@@ -354,6 +369,8 @@ type KnowledgeNodeProps = {
 const KnowledgeNode = (props: KnowledgeNodeProps) => {
   const { node, can_buy = true, purchaseCategory } = props;
   const { data, act } = useBackend<Info>();
+  const t = useT();
+  const text = useServerText();
   const { charges } = data;
 
   const isBuyable = can_buy && !node.done && !node.disabled;
@@ -378,25 +395,29 @@ const KnowledgeNode = (props: KnowledgeNodeProps) => {
         tooltip={
           <Stack vertical>
             <Stack.Item align="center" fontSize="16px">
-              <b>{node.name}</b>
+              <b>{text(node, 'name')}</b>
             </Stack.Item>
             <Stack.Item>
               <BlockQuote>
-                <span style={hereticPurple}>Result: </span>{' '}
+                <span style={hereticPurple}>
+                  {t('antaginfo-heretic-result')}{' '}
+                </span>{' '}
               </BlockQuote>
-              {formatTooltipText(node.desc)}
+              {formatTooltipText(text(node, 'desc'))}
             </Stack.Item>
             {!!node.notice && (
               <Stack.Item color="red">
-                {formatTooltipText(node.notice)}
+                {formatTooltipText(text(node, 'notice'))}
               </Stack.Item>
             )}
             {!!node.info && (
               <Stack.Item>
                 <BlockQuote>
-                  <span style={hereticGreen}>Recipe: </span>{' '}
+                  <span style={hereticGreen}>
+                    {t('antaginfo-heretic-recipe')}{' '}
+                  </span>{' '}
                 </BlockQuote>
-                {formatTooltipText(node.info)}
+                {formatTooltipText(text(node, 'info'))}
               </Stack.Item>
             )}
           </Stack>
@@ -444,12 +465,12 @@ const KnowledgeNode = (props: KnowledgeNodeProps) => {
           bold
           style={{ margin: '2px', borderRadius: '100%' }}
         >
-          {isBuyable && (node.cost > 0 ? node.cost : 'FREE')}
+          {isBuyable && (node.cost > 0 ? node.cost : t('antaginfo-heretic-free'))}
         </Box>
       </Button>
       {!!node.ascension && (
         <Box textAlign="center" fontSize="32px">
-          <span style={hereticPurple}>DUSK</span>
+          <span style={hereticPurple}>{t('antaginfo-heretic-dusk')}</span>
         </Box>
       )}
     </Stack.Item>
@@ -458,6 +479,7 @@ const KnowledgeNode = (props: KnowledgeNodeProps) => {
 
 const KnowledgeShop = () => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { knowledge_shop } = data;
 
   if (!knowledge_shop || knowledge_shop.length === 0) {
@@ -465,7 +487,7 @@ const KnowledgeShop = () => {
   }
 
   return (
-    <Section title="Knowledge Shop" fill scrollable>
+    <Section title={t('antaginfo-heretic-shop')} fill scrollable>
       <Stack vertical fill>
         <Knowledges />
       </Stack>
@@ -485,7 +507,7 @@ const KnowledgeShop = () => {
 
     return tiers?.map((tier, index) => (
       <Stack.Item key={`tier-${index}`}>
-        Tier {index + 1}
+        {t('antaginfo-heretic-tier', { tier: index + 1 })}
         <Stack fill scrollable wrap="wrap">
           {tier.map((knowledge) => (
             <Stack.Item key={`knowledge-${knowledge.path}`}>
@@ -504,16 +526,17 @@ const KnowledgeShop = () => {
 
 const ResearchInfo = () => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { charges, knowledge_shop } = data;
 
   return (
     <Stack vertical fill>
       <Stack.Item mb={1.5} fontSize="20px" textAlign="center">
-        You have <b>{charges || 0}</b>&nbsp;
+        {t('antaginfo-heretic-research-have')} <b>{charges || 0}</b>&nbsp;
         <span style={hereticBlue}>
-          knowledge point{charges !== 1 ? 's' : ''}
+          {t('antaginfo-heretic-points', { count: charges || 0 })}
         </span>{' '}
-        to spend.
+        {t('antaginfo-heretic-research-spend')}
       </Stack.Item>
       <Stack fill>
         <Stack.Item grow>
@@ -531,6 +554,7 @@ const ResearchInfo = () => {
 
 const PathInfo = ({ currentPath }: { currentPath?: HereticPath }) => {
   const { data } = useBackend<Info>();
+  const text = useServerText();
   const { paths } = data;
 
   const pathBoughtIndex = paths.findIndex(
@@ -553,7 +577,7 @@ const PathInfo = ({ currentPath }: { currentPath?: HereticPath }) => {
                 selected={currentTab === index}
                 onClick={() => setCurrentTab(index)}
               >
-                {path.route}
+                {text(path, 'name') || path.route}
               </Tabs.Tab>
             ))}
           </Tabs>
@@ -590,6 +614,10 @@ const PathProCons = ({
 };
 
 const PathContentUnselected = ({ path }: { path: HereticPath }) => {
+  const t = useT();
+  const text = useServerText();
+  const lines = (name: string, list: string[]) =>
+    list.map((line, index) => text(path, `${name}_${index + 1}`) || line);
   return (
     <Stack vertical>
       <Stack.Item verticalAlign="center" textAlign="center">
@@ -599,16 +627,16 @@ const PathContentUnselected = ({ path }: { path: HereticPath }) => {
         />
         <Stack.Item>
           <h3>
-            Complexity:{' '}
+            {t('antaginfo-heretic-complexity')}{' '}
             <span style={{ color: path.complexity_color }}>
-              {path.complexity}
+              {text(path, 'complexity') || path.complexity}
             </span>
           </h3>
         </Stack.Item>
       </Stack.Item>
       <Stack.Item>
         <Stack vertical>
-          {path.description.map((line, index) => (
+          {lines('description', path.description).map((line, index) => (
             <Stack.Item key={index}>{line}</Stack.Item>
           ))}
         </Stack>
@@ -618,16 +646,18 @@ const PathContentUnselected = ({ path }: { path: HereticPath }) => {
         <Stack>
           <Stack.Item style={{ justifyItems: 'center' }} width="50%">
             <Stack vertical>
-              <Stack.Item bold>Passive: {path.passive.name}</Stack.Item>
-              <Stack.Item italic>{path.passive.recharge}</Stack.Item>
+              <Stack.Item bold>
+                {t('antaginfo-heretic-passive', { name: text(path.passive, 'name') || path.passive.name })}
+              </Stack.Item>
+              <Stack.Item italic>{text(path.passive, 'recharge') || path.passive.recharge}</Stack.Item>
               <Stack.Item className="Passive" width="100%">
-                {path.passive.description[0]}
+                {text(path.passive, 'description_1') || path.passive.description[0]}
               </Stack.Item>
             </Stack>
           </Stack.Item>
           <Stack.Item width="50%">
             <Stack vertical>
-              <Stack.Item bold>Path Abilities:</Stack.Item>
+              <Stack.Item bold>{t('antaginfo-heretic-abilities')}</Stack.Item>
               <Stack.Item>
                 <Stack wrap="wrap" justify="center">
                   {path.preview_abilities.map((ability) => (
@@ -645,10 +675,16 @@ const PathContentUnselected = ({ path }: { path: HereticPath }) => {
       <Stack.Item>
         <Stack>
           <Stack.Item width="50%">
-            <PathProCons proconlist={path.pros} title="Pros" />
+            <PathProCons
+              proconlist={lines('pros', path.pros)}
+              title={t('antaginfo-heretic-pros')}
+            />
           </Stack.Item>
           <Stack.Item width="50%">
-            <PathProCons proconlist={path.cons} title="Cons" />
+            <PathProCons
+              proconlist={lines('cons', path.cons)}
+              title={t('antaginfo-heretic-cons')}
+            />
           </Stack.Item>
         </Stack>
       </Stack.Item>
@@ -663,39 +699,49 @@ const PathContentSelected = ({
   path: HereticPath;
   passive_level: number;
 }) => {
+  const t = useT();
+  const text = useServerText();
+  const lines = (name: string, list: string[]) =>
+    list.map((line, index) => text(path, `${name}_${index + 1}`) || line);
   return (
     <Stack vertical>
       <Stack.Item>
-        {path.description.map((line, index) => (
+        {lines('description', path.description).map((line, index) => (
           <div key={index}>{line}</div>
         ))}
       </Stack.Item>
       <Stack.Item>
         <Stack vertical>
           <Stack.Item bold>
-            Passive: {path.passive.name}, level: {passive_level}
+            {t('antaginfo-heretic-passive-level', {
+              name: text(path.passive, 'name') || path.passive.name,
+              level: passive_level,
+            })}
           </Stack.Item>
-          <Stack.Item italic>{path.passive.recharge}</Stack.Item>
-          {path.passive.description.map((line, index) => (
+          <Stack.Item italic>{text(path.passive, 'recharge') || path.passive.recharge}</Stack.Item>
+          {path.passive.description.map((rawLine, index) => {
+            const line = text(path.passive, `description_${index + 1}`) || rawLine;
+            return (
             <Stack.Item
               key={index}
               className={`Passive ${passive_level >= index + 1 ? 'Passive--Active' : ''}`}
               width="100%"
             >
-              Level {index + 1}
+              {t('antaginfo-heretic-level', { level: index + 1 })}
               <br />
               {line}
             </Stack.Item>
-          ))}
+            );
+          })}
         </Stack>
       </Stack.Item>
       <Stack.Item textAlign="left" mt={2} mb={1}>
         <Stack.Item bold mb={1}>
-          Tips:
+          {t('antaginfo-heretic-tips')}
         </Stack.Item>
         <Stack.Item>
           <Stack vertical>
-            {path.tips.map((tip, index) => (
+            {lines('tips', path.tips).map((tip, index) => (
               <Stack.Item key={index} textAlign="left">
                 &bull; {tip}
               </Stack.Item>
@@ -715,11 +761,12 @@ const PathContent = ({
   isPathSelected: boolean;
 }) => {
   const { data } = useBackend<Info>();
+  const text = useServerText();
   const { passive_level } = data;
 
   return (
     <Section
-      title={<h1 className="PathTitle">{path.route}</h1>}
+      title={<h1 className="PathTitle">{text(path, 'name') || path.route}</h1>}
       textAlign="center"
       fill
       scrollable
@@ -737,6 +784,7 @@ const PathContent = ({
 
 export const AntagInfoHeretic = () => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { ascended, knowledge_tiers, paths } = data;
 
   const [currentTab, setTab] = useState(1);
@@ -750,13 +798,21 @@ export const AntagInfoHeretic = () => {
   );
 
   const tabs = [
-    { label: 'Information', icon: 'info', content: <IntroductionSection /> },
     {
-      label: 'Paths',
+      label: t('antaginfo-heretic-tab-information'),
+      icon: 'info',
+      content: <IntroductionSection />,
+    },
+    {
+      label: t('antaginfo-heretic-tab-paths'),
       icon: 'info',
       content: <PathInfo currentPath={currentPath} />,
     },
-    { label: 'Research', icon: 'book', content: <ResearchInfo /> },
+    {
+      label: t('antaginfo-heretic-tab-research'),
+      icon: 'book',
+      content: <ResearchInfo />,
+    },
   ];
 
   const currentTheme = () => {

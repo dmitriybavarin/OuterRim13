@@ -139,15 +139,15 @@
 	new /obj/item/reagent_containers/cup/coffeepot(picked_turf)
 	new /obj/item/storage/box/coffeepack(picked_turf)
 
-/datum/station_trait/job/veteran_advisor
-	name = "Veteran Advisor"
-	button_desc = "Sign up to become a DISABLED but hard boiled Veteran Advisor of Nanotrasen Security Force. Advise HoS and Captain, train Officers, all while fighting your PTSD."
+/datum/station_trait/job/trader
+	name = "Trader"
+	button_desc = "Sign up to become a Trader, an independent merchant who buys and sells goods aboard the station."
 	weight = 2
-	report_message = "Veteran Security Advisor has been assigned to your station to help with Security matters."
+	report_message = "An independent Trader has been cleared to do business aboard your station."
 	show_in_report = TRUE
-	job_to_add = /datum/job/veteran_advisor
+	job_to_add = /datum/job/trader
 
-/datum/station_trait/job/veteran_advisor/get_lobby_overlay_states(mob/dead/new_player/player)
+/datum/station_trait/job/trader/get_lobby_overlay_states(mob/dead/new_player/player)
 	return list("veteran_advisor")
 
 /datum/station_trait/job/human_ai

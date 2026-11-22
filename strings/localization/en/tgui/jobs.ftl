@@ -154,13 +154,73 @@ job-station_engineer-name = Station Engineer
 
 job-station_engineer-desc = Start the Supermatter, wire the solars, repair station hull and wiring damage.
 
-job-veteran_security_advisor-name = Veteran Security Advisor
+job-trader-name = Trader
 
-job-veteran_security_advisor-desc = Advise HoS, and Captain on matters of Security. Train green Officers. Lay back in your wheelchair and say "I told you" to the HoS when all of the station collapses.
+job-trader-desc = Buy and sell goods aboard the station, haggle with the crew, and keep your own books.
 
 job-warden-name = Warden
 
 job-warden-desc = Watch over the Brig and Prison Wing, release prisoners when their time is up, issue equipment to security, be a security officer when they all eventually die.
+
+job-security_officer_medical-name = Security Officer (Medical)
+
+job-security_officer_engineering-name = Security Officer (Engineering)
+
+job-security_officer_science-name = Security Officer (Science)
+
+job-security_officer_cargo-name = Security Officer (Cargo)
+
+job-personal_ai-name = Personal AI
+
+job-chef-name = Chef
+
+job-death_commando-name = Death Commando
+
+job-emergency_response_team_commander-name = Emergency Response Team Commander
+
+job-security_response_officer-name = Security Response Officer
+
+job-engineering_response_officer-name = Engineering Response Officer
+
+job-medical_response_officer-name = Medical Response Officer
+
+job-religious_response_officer-name = Religious Response Officer
+
+job-janitorial_response_officer-name = Janitorial Response Officer
+
+job-entertainment_response_officer-name = Entertainment Response Officer
+
+job-central_command-name = Central Command
+
+job-centcom_official-name = CentCom Official
+
+job-admiral-name = Admiral
+
+job-centcom_commander-name = CentCom Commander
+
+job-vip_guest-name = VIP Guest
+
+job-centcom_bartender-name = CentCom Bartender
+
+job-custodian-name = Custodian
+
+job-thunderdome_overseer-name = Thunderdome Overseer
+
+job-medical_officer-name = Medical Officer
+
+job-research_officer-name = Research Officer
+
+job-special_ops_officer-name = Special Ops Officer
+
+job-private_security_force-name = Private Security Force
+
+job-visiting_engineer-name = Visiting Engineer
+
+job-visiting_doctor-name = Visiting Doctor
+
+job-visiting_officer-name = Visiting Officer
+
+job-visiting_scientist-name = Visiting Scientist
 
 job-department-security = Security
 
@@ -231,3 +291,19 @@ jobselection-slots-available = { $count } { $count ->
 preferences-jobs-show-characters = Show Characters
 
 preferences-jobs-drag-hint = Drag a character to a job to load that character if you are selected for that job.
+
+job-nanotrasen_representative-name = NanoTrasen Representative
+
+job-nanotrasen_representative-desc = Represent the corporation's interests aboard the station, head of the Central Command department.
+
+job-blueshield-name = Blueshield Officer
+
+job-blueshield-desc = Protect the heads of staff and the NanoTrasen representative.
+
+job-special_operations_officer-name = Special Operations Officer
+
+job-special_operations_officer-desc = An elite officer of the Special Operations Department.
+
+job-special_operations_director-name = Special Operations Director
+
+job-special_operations_director-desc = Lead the Special Operations Department.

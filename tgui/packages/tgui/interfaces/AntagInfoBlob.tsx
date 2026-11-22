@@ -8,6 +8,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import type { Objective } from './common/Objectives';
 
@@ -20,6 +21,10 @@ type Data = {
 };
 
 const BLOB_COLOR = '#556b2f';
+
+const SHORTCUTS = ['click', 'middle', 'ctrl', 'alt'];
+
+const STRUCTURES = ['strong', 'reflective', 'resource', 'factory', 'node'];
 
 export const AntagInfoBlob = (props) => {
   return (
@@ -40,17 +45,16 @@ export const AntagInfoBlob = (props) => {
 
 const Overview = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { color, description, effects, name } = data;
 
   if (!name) {
     return (
       <Stack vertical>
         <Stack.Item bold fontSize="14px" textColor={BLOB_COLOR}>
-          You haven&apos;t revealed your true form yet!
+          {t('antaginfo-blob-unrevealed-title')}
         </Stack.Item>
-        <Stack.Item>
-          You must succumb to the infection. Find somewhere safe and pop!
-        </Stack.Item>
+        <Stack.Item>{t('antaginfo-blob-unrevealed-desc')}</Stack.Item>
       </Stack>
     );
   }
@@ -58,11 +62,11 @@ const Overview = (props) => {
   return (
     <Stack vertical>
       <Stack.Item bold fontSize="24px" textColor={BLOB_COLOR}>
-        You are the Blob!
+        {t('antaginfo-blob-title')}
       </Stack.Item>
-      <Stack.Item>As the overmind, you can control the blob.</Stack.Item>
+      <Stack.Item>{t('antaginfo-blob-overmind')}</Stack.Item>
       <Stack.Item>
-        Your blob reagent is:{' '}
+        {t('antaginfo-blob-reagent-is')}{' '}
         <span
           style={{
             color,
@@ -72,7 +76,7 @@ const Overview = (props) => {
         </span>
       </Stack.Item>
       <Stack.Item>
-        The{' '}
+        {t('antaginfo-blob-reagent-pre')}{' '}
         <span
           style={{
             color,
@@ -80,11 +84,11 @@ const Overview = (props) => {
         >
           {name}
         </span>{' '}
-        reagent {description}
+        {t('antaginfo-blob-reagent-post')} {description}
       </Stack.Item>
       {effects && (
         <Stack.Item>
-          The{' '}
+          {t('antaginfo-blob-reagent-pre')}{' '}
           <span
             style={{
               color,
@@ -92,7 +96,7 @@ const Overview = (props) => {
           >
             {name}
           </span>{' '}
-          reagent {effects}
+          {t('antaginfo-blob-reagent-post')} {effects}
         </Stack.Item>
       )}
     </Stack>
@@ -100,35 +104,30 @@ const Overview = (props) => {
 };
 
 const Basics = (props) => {
+  const t = useT();
   return (
-    <Collapsible title="The Basics">
+    <Collapsible title={t('antaginfo-blob-basics')}>
       <LabeledList>
-        <LabeledList.Item label="Attacking">
-          You can expand, which will attack people, damage objects, or place a
-          Normal Blob if the tile is clear.
+        <LabeledList.Item label={t('antaginfo-blob-attacking-name')}>
+          {t('antaginfo-blob-attacking-desc')}
         </LabeledList.Item>
-        <LabeledList.Item label="Placement">
-          You will be able to manually place your blob core by pressing the
-          Place Blob Core button in the bottom right corner of the screen.{' '}
+        <LabeledList.Item label={t('antaginfo-blob-placement-name')}>
+          {t('antaginfo-blob-placement-core')} <br />
           <br />
-          <br />
-          If you are the blob infection, you can place the core where you are
-          standing by pressing the pop button on the top left corner of the
-          screen.
+          {t('antaginfo-blob-placement-infection')}
         </LabeledList.Item>
-        <LabeledList.Item label="HUD">
-          In addition to the buttons on your HUD, there are a few click
-          shortcuts to speed up expansion and defense.
+        <LabeledList.Item label={t('antaginfo-blob-hud-name')}>
+          {t('antaginfo-blob-hud-desc')}
         </LabeledList.Item>
-        <LabeledList.Item label="Shortcuts">
-          Click = Expand Blob <br />
-          Middle Mouse Click = Rally Spores <br />
-          Ctrl Click = Create Shield Blob <br />
-          Alt Click = Remove Blob <br />
+        <LabeledList.Item label={t('antaginfo-blob-shortcuts-name')}>
+          {SHORTCUTS.map((shortcut) => (
+            <span key={shortcut}>
+              {t(`antaginfo-blob-shortcut-${shortcut}`)} <br />
+            </span>
+          ))}
         </LabeledList.Item>
-        <LabeledList.Item label="Comms">
-          Attempting to talk will send a message to all other overminds,
-          allowing you to coordinate with them.
+        <LabeledList.Item label={t('antaginfo-blob-comms-name')}>
+          {t('antaginfo-blob-comms-desc')}
         </LabeledList.Item>
       </LabeledList>
     </Collapsible>
@@ -136,18 +135,15 @@ const Basics = (props) => {
 };
 
 const Minions = (props) => {
+  const t = useT();
   return (
-    <Collapsible title="Minions">
+    <Collapsible title={t('antaginfo-blob-minions')}>
       <LabeledList>
-        <LabeledList.Item label="Blobbernauts">
-          This unit can be produced from factories for a cost. They are hard to
-          kill, powerful, and moderately smart. The factory used to create one
-          will become fragile and briefly unable to produce spores.
+        <LabeledList.Item label={t('antaginfo-blob-blobbernauts-name')}>
+          {t('antaginfo-blob-blobbernauts-desc')}
         </LabeledList.Item>
-        <LabeledList.Item label="Spores">
-          Produced automatically from factories, these are weak, but can be
-          rallied to attack enemies. They will also attack enemies near the
-          factory and attempt to zombify corpses.
+        <LabeledList.Item label={t('antaginfo-blob-spores-name')}>
+          {t('antaginfo-blob-spores-desc')}
         </LabeledList.Item>
       </LabeledList>
     </Collapsible>
@@ -155,39 +151,22 @@ const Minions = (props) => {
 };
 
 const Structures = (props) => {
+  const t = useT();
   return (
-    <Collapsible title="Structures">
-      <Box>
-        Normal Blobs will expand your reach and can be upgraded into special
-        blobs that perform certain functions. Bear in mind that expanding into
-        space has an 80% chance of failing!
-      </Box>
+    <Collapsible title={t('antaginfo-blob-structures')}>
+      <Box>{t('antaginfo-blob-structures-intro')}</Box>
       <br />
-      <Box>You can upgrade normal blobs into the following types of blob:</Box>
+      <Box>{t('antaginfo-blob-structures-upgrade')}</Box>
       <Divider />
       <LabeledList>
-        <LabeledList.Item label="Strong Blobs">
-          Strong blobs are expensive but take more damage. In additon, they are
-          fireproof and can block air, use these to protect yourself from
-          station fires.
-        </LabeledList.Item>
-        <LabeledList.Item label="Reflective Blobs">
-          Upgrading strong blobs creates reflective blobs, capable of reflecting
-          most projectiles at the cost of reduced resistance to explosions.
-        </LabeledList.Item>
-        <LabeledList.Item label="Resource Blobs">
-          Blobs which produce more resources for you, build as many of these as
-          possible to consume the station. This type of blob must be placed near
-          node blobs or your core to work.
-        </LabeledList.Item>
-        <LabeledList.Item label="Factory Blobs">
-          Blobs that spawn blob spores which will attack nearby enemies. This
-          type of blob must be placed near node blobs or your core to work.
-        </LabeledList.Item>
-        <LabeledList.Item label="Node Blobs">
-          Blobs which grow, like the core. Like the core it can activate
-          resource and factory blobs.
-        </LabeledList.Item>
+        {STRUCTURES.map((structure) => (
+          <LabeledList.Item
+            key={structure}
+            label={t(`antaginfo-blob-structure-${structure}-name`)}
+          >
+            {t(`antaginfo-blob-structure-${structure}-desc`)}
+          </LabeledList.Item>
+        ))}
       </LabeledList>
     </Collapsible>
   );
@@ -195,10 +174,11 @@ const Structures = (props) => {
 
 const ObjectiveDisplay = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { color, objectives } = data;
 
   return (
-    <Collapsible title="Objectives">
+    <Collapsible title={t('antaginfo-blob-objectives')}>
       <LabeledList>
         {objectives.map(({ explanation }, index) => (
           <LabeledList.Item

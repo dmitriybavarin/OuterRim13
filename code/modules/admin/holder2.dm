@@ -164,6 +164,7 @@ GLOBAL_PROTECT(href_token)
 	owner.update_special_keybinds()
 	GLOB.admins |= client
 	client.set_stat_panel()
+	client.refresh_popup_menus()
 
 	try_give_profiling()
 
@@ -175,6 +176,7 @@ GLOBAL_PROTECT(href_token)
 		GLOB.admins -= owner
 		owner.remove_admin_verbs()
 		owner.holder = null
+		owner.refresh_popup_menus()
 		owner = null
 
 /// Returns the feedback forum thread for the admin holder's owner, as according to DB.

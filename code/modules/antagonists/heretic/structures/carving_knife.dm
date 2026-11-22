@@ -49,8 +49,8 @@
 	if(!IS_HERETIC_OR_MONSTER(user) && !isobserver(user))
 		return
 
-	. += span_notice("<b>[length(current_runes)] / [max_rune_amt]</b> total carvings have been drawn.")
-	. += span_info("The following runes can be carved:")
+	. += span_notice(loc_key("heretic-structure-carver-total", list(count = length(current_runes), max = max_rune_amt)))
+	. += span_info(LOC_KEY("heretic-structure-carver-list"))
 	for(var/obj/structure/trap/eldritch/trap as anything in subtypesof(/obj/structure/trap/eldritch))
 		var/potion_string = span_info("\tThe " + initial(trap.name) + " - " + initial(trap.carver_tip))
 		. += potion_string
@@ -69,11 +69,11 @@
  */
 /obj/item/melee/rune_carver/proc/try_carve_rune(turf/open/target_turf, mob/user)
 	if(drawing)
-		target_turf.balloon_alert(user, "already carving!")
+		target_turf.balloon_alert(user, LOC_KEY("heretic-structure-carver-already"))
 		return
 
 	if(locate(/obj/structure/trap/eldritch) in range(1, target_turf))
-		target_turf.balloon_alert(user, "to close to another carving!")
+		target_turf.balloon_alert(user, LOC_KEY("heretic-structure-carver-too-close"))
 		return
 
 	for(var/datum/weakref/rune_ref as anything in current_runes)
@@ -81,7 +81,7 @@
 			current_runes -= rune_ref
 
 	if(length(current_runes) >= max_rune_amt)
-		target_turf.balloon_alert(user, "too many carvings!")
+		target_turf.balloon_alert(user, LOC_KEY("heretic-structure-carver-too-many"))
 		return
 
 	drawing = TRUE
@@ -116,13 +116,13 @@
 	if(!ispath(to_make, /obj/structure/trap/eldritch))
 		CRASH("[type] attempted to create a rune of incorrect type! (got: [to_make])")
 
-	target_turf.balloon_alert(user, "carving [picked_choice]...")
+	target_turf.balloon_alert(user, loc_key("heretic-structure-carver-carving", list(name = picked_choice)))
 	user.playsound_local(target_turf, 'sound/items/sheath.ogg', 50, TRUE)
 	if(!do_after(user, 5 SECONDS, target = target_turf))
-		target_turf.balloon_alert(user, "interrupted!")
+		target_turf.balloon_alert(user, LOC_KEY("heretic-structure-carver-interrupted"))
 		return
 
-	target_turf.balloon_alert(user, "[picked_choice] carved")
+	target_turf.balloon_alert(user, loc_key("heretic-structure-carver-carved", list(name = picked_choice)))
 	var/obj/structure/trap/eldritch/new_rune = new to_make(target_turf, user)
 	current_runes += WEAKREF(new_rune)
 
@@ -191,7 +191,7 @@
 
 /obj/structure/trap/eldritch/item_interaction(mob/living/user, obj/item/tool, list/modifiers)
 	if(istype(tool, /obj/item/melee/rune_carver) || HAS_TRAIT(tool, TRAIT_NULLROD_ITEM))
-		loc.balloon_alert(user, "carving dispelled")
+		loc.balloon_alert(user, LOC_KEY("heretic-structure-carver-dispelled"))
 		playsound(src, 'sound/items/sheath.ogg', 50, TRUE, SHORT_RANGE_SOUND_EXTRARANGE, ignore_walls = FALSE)
 		qdel(src)
 		return ITEM_INTERACT_SUCCESS
@@ -204,12 +204,12 @@
 	alpha = 10
 	time_between_triggers = 5 SECONDS
 	sparks = FALSE
-	carver_tip = "A nearly invisible rune that, when stepped on, alerts the carver who triggered it and where."
+	carver_tip = LOC_KEY("heretic-structure-carver-tip-alert")
 
 /obj/structure/trap/eldritch/alert/trap_effect(mob/living/victim)
 	var/mob/living/real_owner = owner?.resolve()
 	if(real_owner)
-		to_chat(real_owner, span_userdanger("[victim.real_name] has stepped foot on the alert rune in [get_area(src)]!"))
+		to_chat(real_owner, span_userdanger(loc_key("heretic-structure-carver-alert", list(victim = victim.real_name, area = get_area(src)))))
 		real_owner.playsound_local(get_turf(real_owner), 'sound/effects/magic/curse.ogg', 50, TRUE)
 
 /obj/structure/trap/eldritch/tentacle
@@ -217,7 +217,7 @@
 	icon_state = "tentacle_rune"
 	time_between_triggers = 45 SECONDS
 	charges = 1
-	carver_tip = "When stepped on, causes heavy damage leg damage and stuns the victim for 5 seconds. Has 1 charge."
+	carver_tip = LOC_KEY("heretic-structure-carver-tip-tentacle")
 
 /obj/structure/trap/eldritch/tentacle/trap_effect(mob/living/victim)
 	if(!iscarbon(victim))
@@ -233,7 +233,7 @@
 	icon_state = "madness_rune"
 	time_between_triggers = 20 SECONDS
 	charges = 2
-	carver_tip = "When stepped on, causes heavy stamina damage, blindness, and a variety of ailments to the victim. Has 2 charges."
+	carver_tip = LOC_KEY("heretic-structure-carver-tip-mad")
 
 /obj/structure/trap/eldritch/mad/trap_effect(mob/living/victim)
 	if(!iscarbon(victim))

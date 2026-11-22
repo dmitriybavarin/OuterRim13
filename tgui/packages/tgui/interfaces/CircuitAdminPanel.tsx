@@ -2,6 +2,7 @@ import { Button, Stack, Table } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type CircuitAdminPanelData = {
@@ -15,9 +16,14 @@ type CircuitAdminPanelData = {
 
 export const CircuitAdminPanel = (props) => {
   const { act, data } = useBackend<CircuitAdminPanelData>();
+  const t = useT();
 
   return (
-    <Window title="Circuit Admin Panel" width={1200} height={500}>
+    <Window
+      title={t('circuitadmin-title', {}, 'Circuit Admin Panel')}
+      width={1200}
+      height={500}
+    >
       <Window.Content>
         <Stack vertical>
           <Stack.Item>
@@ -29,7 +35,11 @@ export const CircuitAdminPanel = (props) => {
                     act('disable_circuit_sound');
                   }}
                 >
-                  Disable all circuit sound emitters
+                  {t(
+                    'circuitadmin-disable-sound',
+                    {},
+                    'Disable all circuit sound emitters',
+                  )}
                 </Button>
               </Stack.Item>
             </Stack>
@@ -37,11 +47,17 @@ export const CircuitAdminPanel = (props) => {
           <Stack.Item>
             <Table>
               <Table.Row header>
-                <Table.Cell>Circuit name</Table.Cell>
+                <Table.Cell>
+                  {t('circuitadmin-col-name', {}, 'Circuit name')}
+                </Table.Cell>
 
-                <Table.Cell>Creator</Table.Cell>
+                <Table.Cell>
+                  {t('circuitadmin-col-creator', {}, 'Creator')}
+                </Table.Cell>
 
-                <Table.Cell>Actions</Table.Cell>
+                <Table.Cell>
+                  {t('circuitadmin-col-actions', {}, 'Actions')}
+                </Table.Cell>
               </Table.Row>
 
               {data.circuits.map((circuit) => {
@@ -57,22 +73,28 @@ export const CircuitAdminPanel = (props) => {
 
                     <Table.Cell>
                       <Button onClick={createAct('follow_circuit')}>
-                        Follow
+                        {t('circuitadmin-follow', {}, 'Follow')}
                       </Button>
 
-                      <Button onClick={createAct('open_circuit')}>Open</Button>
+                      <Button onClick={createAct('open_circuit')}>
+                        {t('circuitadmin-open', {}, 'Open')}
+                      </Button>
 
-                      <Button onClick={createAct('vv_circuit')}>VV</Button>
+                      <Button onClick={createAct('vv_circuit')}>
+                        {t('circuitadmin-vv', {}, 'VV')}
+                      </Button>
 
-                      <Button onClick={createAct('save_circuit')}>Save</Button>
+                      <Button onClick={createAct('save_circuit')}>
+                        {t('circuitadmin-save', {}, 'Save')}
+                      </Button>
 
                       <Button onClick={createAct('duplicate_circuit')}>
-                        Duplicate
+                        {t('circuitadmin-duplicate', {}, 'Duplicate')}
                       </Button>
 
                       {!!circuit.has_inserter && (
                         <Button onClick={createAct('open_player_panel')}>
-                          Player Panel
+                          {t('circuitadmin-player-panel', {}, 'Player Panel')}
                         </Button>
                       )}
                     </Table.Cell>

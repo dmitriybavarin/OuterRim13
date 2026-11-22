@@ -13,6 +13,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { IconDisplay } from './LootPanel/IconDisplay';
 
@@ -74,6 +75,7 @@ export const PetBuilder = (props) => {
     pet_carrier,
     pet_possible_emotes,
   } = data;
+  const t = useT();
 
   const [selectedCarrier, setSelectedCarrier] = useState(
     () => RetrieveCarrier(pet_carrier, carrier_options) || null,
@@ -124,7 +126,11 @@ export const PetBuilder = (props) => {
   };
 
   return (
-    <Window title="Create Your Pet!" width={665} height={325}>
+    <Window
+      title={t('petbuilder-title', {}, 'Create Your Pet!')}
+      width={665}
+      height={325}
+    >
       <Window.Content>
         <Flex width="50%">
           <Flex.Item>
@@ -167,7 +173,9 @@ export const PetBuilder = (props) => {
                       <Flex.Item>
                         <Icon name="paw" />
                       </Flex.Item>
-                      <Flex.Item ml={1}>Finalize Pet!</Flex.Item>
+                      <Flex.Item ml={1}>
+                        {t('petbuilder-finalize', {}, 'Finalize Pet!')}
+                      </Flex.Item>
                       <Flex.Item>
                         <Icon ml={1} name="paw" />
                       </Flex.Item>
@@ -293,12 +301,16 @@ const PetDetails = ({
   setSelectedName,
   selectedGender,
   setSelectedGender,
-}: any) => (
+}: any) => {
+  const t = useT();
+  return (
   <Stack vertical width="85%">
     <Flex style={{ borderBottom: '1px solid gray' }}>
       <Flex.Item>
         <Stack vertical>
-          <Stack.Item style={{ fontSize: '16px' }}>Pet Name</Stack.Item>
+          <Stack.Item style={{ fontSize: '16px' }}>
+            {t('petbuilder-pet-name', {}, 'Pet Name')}
+          </Stack.Item>
           <Stack.Item>
             <Input
               mb={2}
@@ -324,7 +336,9 @@ const PetDetails = ({
     </Flex>
     <Stack.Item>
       <Stack vertical>
-        <Stack.Item style={{ fontSize: '16px' }}>Pet Gender</Stack.Item>
+        <Stack.Item style={{ fontSize: '16px' }}>
+          {t('petbuilder-pet-gender', {}, 'Pet Gender')}
+        </Stack.Item>
         <Stack.Item>
           <Stack mt={0.5} style={{ borderBottom: '1px solid gray' }}>
             <Stack.Item grow ml={2} mb={2}>
@@ -353,7 +367,8 @@ const PetDetails = ({
       </Stack>
     </Stack.Item>
   </Stack>
-);
+  );
+};
 
 const TrickSequence = ({
   TrickName,
@@ -362,7 +377,9 @@ const TrickSequence = ({
   pet_possible_emotes,
   UpdateSequence,
   carrier_options,
-}: any) => (
+}: any) => {
+  const t = useT();
+  return (
   <Section
     mt={1}
     width="80%"
@@ -370,7 +387,7 @@ const TrickSequence = ({
     title={TrickName}
     buttons={
       <Button.Input
-        buttonText="Rename"
+        buttonText={t('petbuilder-rename', {}, 'Rename')}
         color="transparent"
         onCommit={setTrickName}
         value={TrickName}
@@ -380,7 +397,11 @@ const TrickSequence = ({
     <Box ml={2}>
       <LabeledList>
         {sequences.map((sequence: string, index: number) => (
-          <LabeledList.Item key={index} label={`Move ${index + 1}`}>
+          <LabeledList.Item key={index} label={t(
+              'petbuilder-move',
+              { number: index + 1 },
+              `Move ${index + 1}`,
+            )}>
             <Dropdown
               width="80%"
               selected={sequences[index]}
@@ -392,7 +413,8 @@ const TrickSequence = ({
       </LabeledList>
     </Box>
   </Section>
-);
+  );
+};
 
 const CarrierSelector = ({
   selectedCarrier,

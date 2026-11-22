@@ -14,6 +14,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { createSearch } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type FishData = {
@@ -57,6 +58,7 @@ type Data = {
 
 export const FishAnalyzer = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { fish_list = [], fish_scanned } = data;
   const [searchText, setSearchText] = useState('');
 
@@ -67,7 +69,7 @@ export const FishAnalyzer = (props) => {
 
   return (
     <Window
-      title="Fish Analyzer"
+      title={t('fishanalyzer-title', {}, 'Fish Analyzer')}
       width={fish_scanned ? 530 : 700}
       height={fish_scanned ? 270 : 460}
     >
@@ -85,7 +87,7 @@ export const FishAnalyzer = (props) => {
                   position="relative"
                   mt={0.5}
                   height="20px"
-                  placeholder="Search Fish..."
+                  placeholder={t('fishanalyzer-search', {}, 'Search Fish...')}
                   value={searchText}
                   onChange={setSearchText}
                   fluid
@@ -94,7 +96,11 @@ export const FishAnalyzer = (props) => {
             </Stack.Item>
           )}
           <Stack.Item grow>
-            <Section title="Fish" fill scrollable>
+            <Section
+              title={t('fishanalyzer-section-fish', {}, 'Fish')}
+              fill
+              scrollable
+            >
               <Stack wrap>
                 {fish_filtered.map((fish, index) => (
                   <Stack.Item
@@ -125,6 +131,7 @@ export const FishAnalyzer = (props) => {
 
 const FishItem = (props) => {
   const { fish } = props;
+  const t = useT();
 
   return (
     <Stack vertical>
@@ -142,10 +149,18 @@ const FishItem = (props) => {
                 />
               </Stack.Item>
               <Stack.Item style={{ fontSize: '10px' }}>
-                {fish.fish_weight} kiloclam
+                {t(
+                  'fishcatalog-weight-value',
+                  { weight: fish.fish_weight },
+                  `${fish.fish_weight} kiloclam`,
+                )}
               </Stack.Item>
               <Stack.Item style={{ fontSize: '10px' }}>
-                {fish.fish_size} cm
+                {t(
+                  'fishcatalog-size-value',
+                  { size: fish.fish_size },
+                  `${fish.fish_size} cm`,
+                )}
               </Stack.Item>
             </Stack>
           </Flex.Item>
@@ -167,8 +182,15 @@ const FishItem = (props) => {
               </Stack.Item>
               <Stack.Item mt={2}>
                 {fish.fish_traits.length === 0 ? (
-                  <Button color="transparent" tooltip="Fish has no traits!">
-                    None
+                  <Button
+                    color="transparent"
+                    tooltip={t(
+                      'fishanalyzer-no-traits-tooltip',
+                      {},
+                      'Fish has no traits!',
+                    )}
+                  >
+                    {t('fishanalyzer-none', {}, 'None')}
                   </Button>
                 ) : (
                   <Stack vertical>
@@ -179,7 +201,11 @@ const FishItem = (props) => {
                           tooltip={
                             <Stack vertical>
                               <Stack.Item>
-                                Inheritance: {trait.trait_inherit}%
+                                {t(
+                                  'fishanalyzer-inheritance',
+                                  { percent: trait.trait_inherit },
+                                  `Inheritance: ${trait.trait_inherit}%`,
+                                )}
                               </Stack.Item>
                               <Stack.Item>{trait.trait_desc}</Stack.Item>
                             </Stack>
@@ -197,7 +223,7 @@ const FishItem = (props) => {
           <Flex.Item grow ml={2}>
             <Stack vertical>
               <Stack.Item>
-                Health:{' '}
+                {t('fishanalyzer-health', {}, 'Health:')}{' '}
                 <ProgressBar
                   width="95%"
                   value={fish.fish_health / 100}
@@ -209,7 +235,7 @@ const FishItem = (props) => {
                 />
               </Stack.Item>
               <Stack.Item>
-                Hunger:{' '}
+                {t('fishanalyzer-hunger', {}, 'Hunger:')}{' '}
                 <ProgressBar
                   width="95%"
                   value={fish.fish_hunger}
@@ -222,7 +248,9 @@ const FishItem = (props) => {
               </Stack.Item>
               <Stack.Item mt={2}>
                 {fish.fish_evolutions.length === 0 ? (
-                  <Box mb={2}>No evolutions!</Box>
+                  <Box mb={2}>
+                    {t('fishanalyzer-no-evolutions', {}, 'No evolutions!')}
+                  </Box>
                 ) : (
                   <Stack mt={-2} vertical>
                     {fish.fish_evolutions.map((evolution, index) => (

@@ -80,6 +80,13 @@ GLOBAL_LIST_INIT(heretic_path_datums, init_heretic_path_datums())
 		"starting_knowledge" = our_heretic.get_knowledge_data(start, power_info),
 	)
 
+	var/list/text_fields = list("complexity" = "complexity")
+	for(var/list_name in list("description", "pros", "cons", "tips"))
+		var/list/entries = vars[list_name]
+		for(var/index in 1 to length(entries))
+			text_fields["[list_name]_[index]"] = "[list_name]_[index]"
+	loc_add_datum_text(data, type, text_fields)
+
 	data["preview_abilities"] = list(
 		our_heretic.get_knowledge_data(knowledge_tier1, power_info, category = category),
 		our_heretic.get_knowledge_data(knowledge_tier2, power_info, category = category),
@@ -88,11 +95,16 @@ GLOBAL_LIST_INIT(heretic_path_datums, init_heretic_path_datums())
 	)
 
 	var/datum/status_effect/heretic_passive/passive = new start.eldritch_passive()
-	data["passive"] = list(
+	var/list/passive_data = list(
 		"name" = initial(passive.name),
 		"recharge" = initial(passive.recharge_description),
 		"description" = passive.passive_descriptions.Copy(),
 	)
+	var/list/passive_fields = list("recharge" = "recharge")
+	for(var/index in 1 to length(passive.passive_descriptions))
+		passive_fields["description_[index]"] = "description_[index]"
+	loc_add_datum_text(passive_data, passive.type, passive_fields)
+	data["passive"] = passive_data
 	qdel(passive)
 
 	return data

@@ -25,8 +25,8 @@
 
 /datum/action/cooldown/spell/touch/mansus_grasp/on_antimagic_triggered(obj/item/melee/touch_attack/hand, atom/victim, mob/living/carbon/caster)
 	victim.visible_message(
-		span_danger("The spell bounces off of [victim]!"),
-		span_danger("The spell bounces off of you!"),
+		span_danger(loc_key("heretic-spell-bounce-others", list(target = victim))),
+		span_danger(LOC_KEY("heretic-spell-bounce-self")),
 	)
 
 /datum/action/cooldown/spell/touch/mansus_grasp/cast_on_hand_hit(obj/item/melee/touch_attack/hand, atom/victim, mob/living/carbon/caster)
@@ -58,9 +58,9 @@
 		carbon_hit.mob_light(range = 1.5, power = 2.5, color = COLOR_CULT_RED, duration = 0.5 SECONDS)
 		playsound(carbon_hit, 'sound/effects/magic/curse.ogg', 50, TRUE)
 
-		to_chat(caster, span_warning("An unholy force intervenes as you grasp [carbon_hit], absorbing most of the effects!"))
-		to_chat(carbon_hit, span_warning("As [caster] grasps you with eldritch forces, your blood magic absorbs most of the effects!"))
-		carbon_hit.balloon_alert_to_viewers("absorbed!")
+		to_chat(caster, span_warning(loc_key("heretic-spell-mansus_grasp-absorbed-caster", list(target = carbon_hit))))
+		to_chat(carbon_hit, span_warning(loc_key("heretic-spell-mansus_grasp-absorbed-target", list(caster = caster))))
+		carbon_hit.balloon_alert_to_viewers(LOC_KEY("heretic-spell-mansus_grasp-absorbed-balloon"))
 		return TRUE
 
 	carbon_hit.adjust_timed_status_effect(4 SECONDS, /datum/status_effect/speech/slurring/heretic)
@@ -106,11 +106,11 @@
 	remove_hand_with_no_refund(user)
 
 /obj/item/melee/touch_attack/mansus_fist/ignition_effect(atom/to_light, mob/user)
-	. = span_rose("[user] effortlessly snaps [user.p_their()] fingers near [to_light], igniting it with eldritch energies. Fucking badass!")
+	. = span_rose(loc_key("heretic-spell-mansus-grasp-light", list(user = user, their = user.p_their(), item = to_light)))
 	remove_hand_with_no_refund(user)
 
 /obj/item/melee/touch_attack/mansus_fist/suicide_act(mob/living/user)
-	user.visible_message(span_suicide("[user] covers [user.p_their()] face with [user.p_their()] sickly-looking hand! It looks like [user.p_theyre()] trying to commit suicide!"))
+	user.visible_message(span_suicide(loc_key("heretic-spell-mansus-grasp-suicide", list(user = user, their = user.p_their(), theyre = user.p_theyre()))))
 	var/mob/living/carbon/carbon_user = user //iscarbon already used in spell's parent
 	var/datum/action/cooldown/spell/touch/mansus_grasp/source = spell_which_made_us?.resolve()
 	if(QDELETED(source) || !IS_HERETIC(user))

@@ -10,6 +10,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type AdminhelpData = {
@@ -20,6 +21,7 @@ type AdminhelpData = {
 };
 
 export const Adminhelp = (props) => {
+  const t = useT();
   const { act, data } = useBackend<AdminhelpData>();
   const {
     adminCount,
@@ -33,7 +35,12 @@ export const Adminhelp = (props) => {
 
   const confirmationText = 'alert admins';
   return (
-    <Window title="Create Adminhelp" theme="admin" height={300} width={500}>
+    <Window
+      title={t('adminhelp-title', {}, 'Create Adminhelp')}
+      theme="admin"
+      height={300}
+      width={500}
+    >
       <Window.Content
         style={{
           backgroundImage: 'none',
@@ -45,7 +52,7 @@ export const Adminhelp = (props) => {
               autoFocus
               height="100%"
               fluid
-              placeholder="Admin help"
+              placeholder={t('adminhelp-placeholder', {}, 'Admin help')}
               onChange={setAhelpMessage}
             />
           </Stack.Item>
@@ -63,9 +70,17 @@ export const Adminhelp = (props) => {
                       fontStyle: 'normal',
                     }}
                   >
-                    Input &apos;{confirmationText}&apos; to proceed.
+                    {t(
+                      'adminhelp-confirm-prompt',
+                      { text: confirmationText },
+                      `Input '${confirmationText}' to proceed.`,
+                    )}
                     <Input
-                      placeholder="Confirmation Prompt"
+                      placeholder={t(
+                        'adminhelp-confirm-placeholder',
+                        {},
+                        'Confirmation Prompt',
+                      )}
                       autoFocus
                       fluid
                       onChange={(value) => {
@@ -91,13 +106,17 @@ export const Adminhelp = (props) => {
                     disabled={bannedFromUrgentAhelp}
                     tooltip={
                       bannedFromUrgentAhelp
-                        ? 'You are banned from using urgent ahelps.'
+                        ? t(
+                            'adminhelp-urgent-banned',
+                            {},
+                            'You are banned from using urgent ahelps.',
+                          )
                         : undefined
                     }
                     fluid
                     textAlign="center"
                   >
-                    Alert admins?
+                    {t('adminhelp-alert-admins', {}, 'Alert admins?')}
                   </Button>
                 )}
               </NoticeBox>
@@ -115,7 +134,7 @@ export const Adminhelp = (props) => {
                 })
               }
             >
-              Submit
+              {t('adminhelp-submit', {}, 'Submit')}
             </Button>
           </Stack.Item>
         </Stack>

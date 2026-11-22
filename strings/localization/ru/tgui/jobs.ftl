@@ -154,13 +154,73 @@ job-station_engineer-name = Инженер станции
 
 job-station_engineer-desc = Запускайте суперматерию, подключайте солнечные панели, чините корпус станции и повреждения проводки.
 
-job-veteran_security_advisor-name = Ветеран-советник по безопасности
+job-trader-name = Торговец
 
-job-veteran_security_advisor-desc = Консультируйте главу службы безопасности и капитана по вопросам безопасности. Обучайте зеленых офицеров. Откиньтесь в инвалидном кресле и скажите главе службы безопасности «я же говорил», когда вся станция развалится.
+job-trader-desc = Покупайте и продавайте товары на станции, торгуйтесь с экипажем и ведите собственные счета.
 
 job-warden-name = Смотритель
 
 job-warden-desc = Следите за бригом и тюремным крылом, освобождайте заключенных, когда срок вышел, выдавайте снаряжение службе безопасности и сами становитесь офицером, когда все они погибнут.
+
+job-security_officer_medical-name = Офицер службы безопасности (медицинский отдел)
+
+job-security_officer_engineering-name = Офицер службы безопасности (инженерный отдел)
+
+job-security_officer_science-name = Офицер службы безопасности (научный отдел)
+
+job-security_officer_cargo-name = Офицер службы безопасности (снабжение)
+
+job-personal_ai-name = Персональный ИИ
+
+job-chef-name = Шеф-повар
+
+job-death_commando-name = Коммандос смерти
+
+job-emergency_response_team_commander-name = Командир отряда быстрого реагирования
+
+job-security_response_officer-name = Офицер реагирования службы безопасности
+
+job-engineering_response_officer-name = Инженер реагирования
+
+job-medical_response_officer-name = Врач реагирования
+
+job-religious_response_officer-name = Священник реагирования
+
+job-janitorial_response_officer-name = Уборщик реагирования
+
+job-entertainment_response_officer-name = Артист реагирования
+
+job-central_command-name = Центральное командование
+
+job-centcom_official-name = Представитель ЦК
+
+job-admiral-name = Адмирал
+
+job-centcom_commander-name = Командир ЦК
+
+job-vip_guest-name = VIP-гость
+
+job-centcom_bartender-name = Бармен ЦК
+
+job-custodian-name = Смотритель
+
+job-thunderdome_overseer-name = Надзиратель Громкупола
+
+job-medical_officer-name = Медицинский офицер
+
+job-research_officer-name = Научный сотрудник
+
+job-special_ops_officer-name = Офицер специальных операций
+
+job-private_security_force-name = Частные силы безопасности
+
+job-visiting_engineer-name = Приезжий инженер
+
+job-visiting_doctor-name = Приезжий врач
+
+job-visiting_officer-name = Приезжий офицер
+
+job-visiting_scientist-name = Приезжий ученый
 
 job-department-security = Безопасность
 
@@ -233,3 +293,19 @@ jobselection-slots-available = { $count } { $count ->
 preferences-jobs-show-characters = Персонажи
 
 preferences-jobs-drag-hint = Перетащите персонажа на роль, чтобы загрузить его, если вам выпадет эта роль.
+
+job-nanotrasen_representative-name = Представитель NanoTrasen
+
+job-nanotrasen_representative-desc = Представляйте интересы корпорации на станции, глава отдела Центрального командования.
+
+job-blueshield-name = Офицер Синий Щит
+
+job-blueshield-desc = Охраняйте глав и представителя NanoTrasen.
+
+job-special_operations_officer-name = Офицер Специальных Операций
+
+job-special_operations_officer-desc = Элитный офицер Департамента Специальных Операций.
+
+job-special_operations_director-name = Директор Специальных Операций
+
+job-special_operations_director-desc = Руководите Департаментом Специальных Операций.

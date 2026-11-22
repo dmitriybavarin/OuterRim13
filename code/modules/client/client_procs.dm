@@ -1197,6 +1197,16 @@ GLOBAL_LIST_INIT(unrecommended_builds, list(
 		winset(src, SKIN_MAPWINDOW_MAP, "right-click=false")
 		winset(src, SKIN_DEFAULT_SHIFT, "is-disabled=true")
 		winset(src, SKIN_DEFAULT_SHIFTUP, "is-disabled=true")
+	refresh_popup_menus()
+
+/client/proc/refresh_popup_menus()
+	if(click_intercept)
+		show_popup_menus = FALSE
+		return
+	if(holder && !isobserver(mob) && prefs?.read_preference(/datum/preference/toggle/admin_tgui_context_menu))
+		show_popup_menus = FALSE
+		return
+	show_popup_menus = TRUE
 
 /client/proc/update_ambience_pref(value)
 	if(value)

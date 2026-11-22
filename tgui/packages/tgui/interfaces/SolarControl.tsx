@@ -13,6 +13,7 @@ import { formatPower } from 'tgui-core/format';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -48,11 +49,12 @@ export const SolarControl = (props) => {
   const supplyData = history.supply.map((value, i) => [i, value]);
   const capacityData = history.capacity.map((value, i) => [i, value]);
   const maxValue = Math.max(1, ...history.capacity, ...history.supply);
+  const t = useT();
 
   return (
     <Window width={330} height={330}>
       <Window.Content>
-        <Section title="Status">
+        <Section title={t('solar-status', {}, 'Status')}>
           <Box
             mb={1}
             position="relative"
@@ -82,7 +84,7 @@ export const SolarControl = (props) => {
           <Stack>
             <Stack.Item>
               <LabeledList>
-                <LabeledList.Item label="Power output">
+                <LabeledList.Item label={t('solar-output', {}, 'Power output')}>
                   <ProgressBar
                     value={capacity > 0 ? supply / capacity : 0}
                     minValue={0}
@@ -94,61 +96,69 @@ export const SolarControl = (props) => {
                     }}
                   >
                     {capacity > 0
-                      ? `${formatPower(supply)} of ${formatPower(
-                          capacity,
-                        )} (${Math.round((100 * supply) / capacity)}%)`
+                      ? t(
+                          'solar-output-value',
+                          {
+                            supply: formatPower(supply),
+                            capacity: formatPower(capacity),
+                            percent: Math.round((100 * supply) / capacity),
+                          },
+                          '{ $supply } of { $capacity } ({ $percent }%)',
+                        )
                       : formatPower(0)}
                   </ProgressBar>
                 </LabeledList.Item>
                 <LabeledList.Item
-                  label="Solar panels"
+                  label={t('solar-panels', {}, 'Solar panels')}
                   color={connected_panels > 0 ? 'good' : 'bad'}
                 >
                   {connected_panels}
                 </LabeledList.Item>
                 <LabeledList.Item
-                  label="Solar tracker"
+                  label={t('solar-tracker', {}, 'Solar tracker')}
                   color={connected_tracker ? 'good' : 'bad'}
                 >
-                  {connected_tracker ? 'OK' : 'N/A'}
+                  {connected_tracker
+                    ? t('solar-tracker-ok', {}, 'OK')
+                    : t('solar-tracker-na', {}, 'N/A')}
                 </LabeledList.Item>
               </LabeledList>
             </Stack.Item>
           </Stack>
         </Section>
         <Section
-          title="Controls"
+          title={t('solar-controls', {}, 'Controls')}
           buttons={
             <Button
               icon="sync"
-              content="Scan for new hardware"
+              content={t('solar-scan', {}, 'Scan for new hardware')}
               onClick={() => act('refresh')}
             />
           }
         >
           <LabeledList>
-            <LabeledList.Item label="Tracking">
+            <LabeledList.Item label={t('solar-tracking', {}, 'Tracking')}>
               <Button
                 icon="times"
-                content="Off"
+                content={t('solar-off', {}, 'Off')}
                 selected={tracking_state === 0}
                 onClick={() => act('tracking', { mode: 0 })}
               />
               <Button
                 icon="clock-o"
-                content="Timed"
+                content={t('solar-timed', {}, 'Timed')}
                 selected={tracking_state === 1}
                 onClick={() => act('tracking', { mode: 1 })}
               />
               <Button
                 icon="sync"
-                content="Auto"
+                content={t('solar-auto', {}, 'Auto')}
                 selected={tracking_state === 2}
                 disabled={!connected_tracker}
                 onClick={() => act('tracking', { mode: 2 })}
               />
             </LabeledList.Item>
-            <LabeledList.Item label="Azimuth">
+            <LabeledList.Item label={t('solar-azimuth', {}, 'Azimuth')}>
               <Icon mr={1} name="arrow-up" rotation={azimuth_current} />
               {(tracking_state === 0 || tracking_state === 1) && (
                 <NumberInput
@@ -182,7 +192,7 @@ export const SolarControl = (props) => {
               )}
               {tracking_state === 2 && (
                 <Box inline color="label" mt="3px">
-                  {`${azimuth_current} °`} (auto)
+                  {`${azimuth_current} ° ${t('solar-auto-note', {}, '(auto)')}`}
                 </Box>
               )}
             </LabeledList.Item>

@@ -75,7 +75,7 @@
 	SHOULD_CALL_PARENT(TRUE)
 
 	if(gain_text)
-		to_chat(user, span_warning("[gain_text]"))
+		to_chat(user, span_warning(loc_text("gain", gain_text)))
 	on_gain(user, our_heretic)
 	if(is_final_knowledge)
 		our_heretic.disable_blade_breaking()
@@ -132,6 +132,12 @@
  */
 /datum/heretic_knowledge/proc/recipe_snowflake_check(mob/living/user, list/atoms, list/selected_atoms, turf/loc)
 	return TRUE
+
+/datum/heretic_knowledge/proc/loc_name()
+	return LOC_BEGIN + loc_datum_key(type) + LOC_SEPARATOR + "name" + LOC_SEPARATOR + name + LOC_END
+
+/datum/heretic_knowledge/proc/loc_text(attribute, shown)
+	return LOC_BEGIN + loc_datum_key(type) + "." + attribute + LOC_SEPARATOR + "name" + LOC_SEPARATOR + shown + LOC_END
 
 /// Used in unit testing to prepare the components for the test
 /datum/heretic_knowledge/proc/prepare_atom_for_ritual_test(atom/what)
@@ -323,7 +329,7 @@
 		return NONE
 
 	if(feedback)
-		to_chat(the_spell.owner, span_mansus("You don't have enough charges to cast this spell!"))
+		to_chat(the_spell.owner, span_mansus(LOC_KEY("heretic-spell-no-charges")))
 	return SPELL_CANCEL_CAST
 
 /datum/heretic_knowledge/spell/proc/check_charges(mob/living/source, datum/action/cooldown/the_spell)
@@ -337,7 +343,7 @@
 	if(our_heretic?.ascended)
 		return NONE
 
-	to_chat(source, span_mansus("You don't have enough charges to cast this spell! [transmute_text]"))
+	to_chat(source, span_mansus(loc_key("heretic-spell-no-charges-recharge", list(recharge = loc_text("info", transmute_text)))))
 	return SPELL_CANCEL_CAST
 
 /// Checks if we have enough charges to cast the spell
@@ -424,7 +430,7 @@
 			LAZYREMOVE(created_items, ref)
 
 	if(LAZYLEN(created_items) >= limit)
-		loc.balloon_alert(user, "ritual failed, at limit!")
+		loc.balloon_alert(user, LOC_KEY("heretic-ritual-failed-limit"))
 		return FALSE
 
 	return TRUE
@@ -466,7 +472,7 @@
 		our_heretic.heretic_path = new column_path()
 	if(!our_heretic.heretic_path)
 		// If we don't have a path, we can't continue.
-		to_chat(user, span_warning("Oh shit, something broke, no path found!"))
+		to_chat(user, span_warning(LOC_KEY("heretic-knowledge-path-missing")))
 		stack_trace("failed to find valid path [our_heretic.heretic_shops[HERETIC_KNOWLEDGE_TREE][type][HKT_ROUTE]] from researching [src]")
 		return
 	SSblackbox.record_feedback("tally", "heretic_path_taken", 1, our_heretic.heretic_path.route)
@@ -631,7 +637,7 @@
 	message_admins("A [summoned.name] is being summoned by [ADMIN_LOOKUPFLW(user)] in [ADMIN_COORDJMP(summoned)].")
 	var/mob/chosen_one = SSpolling.poll_ghosts_for_target(check_jobban = ROLE_HERETIC, poll_time = 10 SECONDS, checked_target = summoned, ignore_category = poll_ignore_define, alert_pic = summoned, role_name_text = summoned.name)
 	if(isnull(chosen_one))
-		loc.balloon_alert(user, "ritual failed, no ghosts!")
+		loc.balloon_alert(user, LOC_KEY("heretic-ritual-failed-no-ghosts"))
 		animate(summoned, 0.5 SECONDS, alpha = 0)
 		QDEL_IN(summoned, 0.6 SECONDS)
 		return FALSE
@@ -722,13 +728,13 @@
 
 	var/list/requirements_string = list()
 
-	to_chat(user, span_mansus("The [name] requires the following:"))
+	to_chat(user, span_mansus(loc_key("heretic-knowledge-ritual-requires", list(ritual = loc_name()))))
 	for(var/obj/item/path as anything in required_atoms)
 		var/amount_needed = required_atoms[path]
-		to_chat(user, span_hypnophrase("[amount_needed] [initial(path.name)]\s..."))
+		to_chat(user, span_hypnophrase(loc_key("heretic-knowledge-ritual-requires-item", list(item = "[amount_needed] [initial(path.name)]\s"))))
 		requirements_string += "[amount_needed == 1 ? "":"[amount_needed] "][initial(path.name)]\s"
 
-	to_chat(user, span_mansus("Completing it will reward you [KNOWLEDGE_RITUAL_POINTS] knowledge points. You can check the knowledge in your Researched Knowledge to be reminded."))
+	to_chat(user, span_mansus(loc_key("heretic-knowledge-ritual-reward", list(points = KNOWLEDGE_RITUAL_POINTS))))
 
 	transmute_text = "Transmute [english_list(requirements_string)]."
 	desc = "Rewards you with [KNOWLEDGE_RITUAL_POINTS] bonus knowledge points."
@@ -744,7 +750,7 @@
 	our_heretic.adjust_knowledge_points(KNOWLEDGE_RITUAL_POINTS)
 	was_completed = TRUE
 
-	to_chat(user, span_boldnotice("[name] completed!"))
+	to_chat(user, span_boldnotice(loc_key("heretic-knowledge-ritual-completed", list(ritual = loc_name()))))
 	to_chat(user, span_hypnophrase(span_big("[pick_list(HERETIC_INFLUENCE_FILE, "drain_message")]")))
 	desc += " (Completed!)"
 	log_heretic_knowledge("[key_name(user)] completed a [name] at [round_timestamp()].")
@@ -833,8 +839,9 @@
 		source = user,
 		header = "A Heretic is Ascending!",
 	)
+	var/ascension_key = replacetext("[type]", "/datum/heretic_knowledge/ultimate/", "")
 	priority_announce(
-		text = replacetext(replacetext(announcement_text, "%NAME%", user.real_name), "%SPOOKY%", GLOBAL_PROC_REF(generate_heretic_text)),
+		text = loc_key("heretic-ascension-[ascension_key]", list(name = replacetext(replacetext(announcement_text, "%NAME%", user.real_name), "%SPOOKY%", GLOBAL_PROC_REF(generate_heretic_text)), player = user.real_name, spooky_start = generate_heretic_text(), spooky_end = generate_heretic_text())),
 		title = generate_heretic_text(),
 		sound = announcement_sound,
 		color_override = "pink",

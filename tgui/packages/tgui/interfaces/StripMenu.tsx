@@ -5,6 +5,7 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { resolveAsset } from '../assets';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 const ROWS = 5;
@@ -316,6 +317,7 @@ type StripMenuData = {
 
 export const StripMenu = (props) => {
   const { act, data } = useBackend<StripMenuData>();
+  const t = useT();
 
   const gridSpots = new Map<GridSpotKey, string>();
   for (const key of Object.keys(data.items)) {
@@ -325,7 +327,11 @@ export const StripMenu = (props) => {
   return (
     // (64 + 6) * 6 + 6 = 426
     // (64 + 6) * 5 + 6 + 31 (from title) =
-    <Window title={`Stripping ${data.name}`} width={426} height={387}>
+    <Window
+      title={t('stripmenu-title', { name: data.name }, `Stripping ${data.name}`)}
+      width={426}
+      height={387}
+    >
       <Window.Content>
         <Stack fill vertical>
           {range(0, ROWS).map((row) => (
@@ -349,13 +355,18 @@ export const StripMenu = (props) => {
 
                   const item = data.items[keyAtSpot];
                   const slot = SLOTS[keyAtSpot];
+                  const slotName = t(
+                    `stripmenu-slot-${keyAtSpot}`,
+                    {},
+                    slot.displayName,
+                  );
 
                   let content: React.JSX.Element | undefined;
                   let alternateActions: React.JSX.Element[] | undefined;
                   let tooltip: string | undefined;
 
                   if (item === null) {
-                    tooltip = slot.displayName;
+                    tooltip = slotName;
                   } else if ('name' in item) {
                     content = (
                       <DmIcon
@@ -394,7 +405,11 @@ export const StripMenu = (props) => {
                       />
                     );
 
-                    tooltip = `obscured ${slot.displayName}`;
+                    tooltip = t(
+                      'stripmenu-obscured',
+                      { slot: slotName },
+                      `obscured ${slotName}`,
+                    );
                   }
 
                   if (item && 'alternate' in item && item.alternate?.length) {
@@ -428,7 +443,11 @@ export const StripMenu = (props) => {
                                 alternate_action: alternateKey,
                               });
                             }}
-                            tooltip={alternateAction.text}
+                            tooltip={t(
+                              `stripmenu-action-${alternateKey}`,
+                              {},
+                              alternateAction.text,
+                            )}
                             style={alternateActionStyle}
                             disabled={
                               item.obscured === ObscuringLevel.Inaccessible

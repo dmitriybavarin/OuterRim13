@@ -1,6 +1,7 @@
 import { Box, Button, NoticeBox, Section, Table } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -14,35 +15,34 @@ type Attempts = {
   cows: number;
 };
 
-const check_attempts = (attempts_to_check: number) => {
-  return attempts_to_check === 1
-    ? 'on next failed access attempt.'
-    : `after ${attempts_to_check} failed access attempts.`;
-};
-
-const BULLS_COWS_INFO = `Codes are made of a series of non-repeating digits.
-Each wrong guess will return the number of correct digits in correct locations,
-and the number of correct digits in incorrect locations.`;
-
 export const AbandonedCrate = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { previous_attempts, attempts_left } = data;
 
   return (
     <Window width={335} height={180 + previous_attempts.length * 19}>
       <Window.Content scrollable>
         <Section
-          title="Deca-Code Lock"
+          title={t('abandonedcrate-title', {}, 'Deca-Code Lock')}
           buttons={
             <Button
-              tooltip={BULLS_COWS_INFO}
+              tooltip={t(
+                'abandonedcrate-hint',
+                {},
+                'Codes are made of a series of non-repeating digits. Each wrong guess will return the number of correct digits in correct locations, and the number of correct digits in incorrect locations.',
+              )}
               icon="info"
               tooltipPosition="top"
             />
           }
         >
           <NoticeBox color="bad">
-            Anti-Tamper Bomb will activate {check_attempts(attempts_left)}
+            {t(
+              'abandonedcrate-warning',
+              { attempts: attempts_left },
+              `Anti-Tamper Bomb will activate ${attempts_left === 1 ? 'on next failed access attempt.' : `after ${attempts_left} failed access attempts.`}`,
+            )}
           </NoticeBox>
           <Table>
             {!!previous_attempts.length && (
@@ -53,18 +53,18 @@ export const AbandonedCrate = (props) => {
                   textAlign="center"
                   pr="5px"
                 >
-                  Attempt
+                  {t('abandonedcrate-attempt', {}, 'Attempt')}
                 </Table.Cell>
                 <Table.Cell collapsing textAlign="center">
                   <Button
-                    tooltip={`Correct digits at correct positions`}
+                    tooltip={t('abandonedcrate-correct', {}, 'Correct digits at correct positions')}
                     icon="check"
                     color="green"
                   />
                 </Table.Cell>
                 <Table.Cell collapsing textAlign="center">
                   <Button
-                    tooltip={`Correct digits at incorrect positions`}
+                    tooltip={t('abandonedcrate-misplaced', {}, 'Correct digits at incorrect positions')}
                     icon="asterisk"
                     color="yellow"
                   />

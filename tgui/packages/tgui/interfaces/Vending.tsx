@@ -11,6 +11,7 @@ import {
 import { capitalizeAll, createSearch } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { getLayoutState, LAYOUT, LayoutToggle } from './common/LayoutToggle';
 
@@ -150,6 +151,7 @@ export const Vending = () => {
 export const UserDetails = () => {
   const { data } = useBackend<VendingData>();
   const { user } = data;
+  const t = useT();
 
   return (
     <NoticeBox m={0} color={user && 'blue'}>
@@ -159,8 +161,12 @@ export const UserDetails = () => {
         </Stack.Item>
         <Stack.Item>
           {user
-            ? `${user.name || 'Unknown'} | ${user.job}`
-            : 'No ID detected! Contact the Head of Personnel.'}
+            ? `${user.name || t('vending-unknown-user', {}, 'Unknown')} | ${user.job}`
+            : t(
+                'vending-no-id',
+                {},
+                'No ID detected! Contact the Head of Personnel.',
+              )}
         </Stack.Item>
       </Stack>
     </NoticeBox>
@@ -196,12 +202,13 @@ const ProductDisplay = (props: {
     displayed_currency_name,
   } = data;
   const [toggleLayout, setToggleLayout] = useState(getLayoutState(LAYOUT.Grid));
+  const t = useT();
 
   return (
     <Section
       fill
       scrollable
-      title="Products"
+      title={t('vending-products', {}, 'Products')}
       buttons={
         <Stack>
           {!all_products_free && user && (
@@ -215,7 +222,7 @@ const ProductDisplay = (props: {
             <Input
               onChange={setStockSearch}
               expensive
-              placeholder="Search..."
+              placeholder={t('vending-search', {}, 'Search...')}
               value={stockSearch}
             />
           </Stack.Item>
@@ -329,6 +336,7 @@ const ProductGrid = (props: any) => {
 const ProductList = (props: any) => {
   const { colorable, product, remaining, ...baseProps } = props;
   const { ...priceProps } = props;
+  const t = useT();
 
   return (
     <ImageButton {...baseProps} fluid imageSize={32}>
@@ -341,7 +349,7 @@ const ProductList = (props: any) => {
           fontSize={0.8}
           color={'rgba(255, 255, 255, 0.5)'}
         >
-          {remaining} left
+          {t('vending-left', { amount: remaining }, `${remaining} left`)}
         </Stack.Item>
         <Stack.Item
           width={3.5}
@@ -368,13 +376,14 @@ type ProductColorSelectProps = {
 const ProductColorSelect = (props: ProductColorSelectProps) => {
   const { act } = useBackend<VendingData>();
   const { disabled, product, fluid } = props;
+  const t = useT();
 
   return (
     <Button
       width={fluid ? '32px' : '20px'}
       icon={'palette'}
       color={'transparent'}
-      tooltip={'Change color'}
+      tooltip={t('vending-change-color', {}, 'Change color')}
       style={disabled ? { pointerEvents: 'none', opacity: 0.5 } : {}}
       onClick={() => act('select_colors', { ref: product.ref })}
     />
@@ -393,9 +402,10 @@ const ProductPrice = (props: ProductPriceProps) => {
   const { data } = useBackend<VendingData>();
   const { displayed_currency_name } = data;
   const { discount, free, product, redPrice } = props;
+  const t = useT();
   let standardPrice = `${product.price}`;
   if (free) {
-    standardPrice = 'FREE';
+    standardPrice = t('vending-free', {}, 'FREE');
   } else if (discount) {
     standardPrice = `${redPrice}`;
   }

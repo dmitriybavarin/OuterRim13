@@ -11,6 +11,7 @@ import { type BooleanLike, classes } from 'tgui-core/react';
 import { capitalizeAll } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { AirLockMainSection } from './AirlockElectronics';
 
@@ -38,21 +39,28 @@ type Design = {
 
 export const MatterItem = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { matterLeft } = data;
   return (
-    <LabeledList.Item label="Units Left">
-      &nbsp;{matterLeft} Units
+    <LabeledList.Item label={t('rapid-units-left', {}, 'Units Left')}>
+      &nbsp;
+      {t('rapid-units-count', { count: matterLeft }, `${matterLeft} Units`)}
     </LabeledList.Item>
   );
 };
 
 export const SiloItem = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { silo_enabled } = data;
   return (
-    <LabeledList.Item label="Silo Link">
+    <LabeledList.Item label={t('rapid-silo-link', {}, 'Silo Link')}>
       <Button.Checkbox
-        content={silo_enabled ? 'Silo Online' : 'Silo Offline'}
+        content={
+          silo_enabled
+            ? t('rapid-silo-online', {}, 'Silo Online')
+            : t('rapid-silo-offline', {}, 'Silo Offline')
+        }
         checked={silo_enabled}
         color="transparent"
         onClick={() => act('toggle_silo')}
@@ -63,9 +71,10 @@ export const SiloItem = (props) => {
 
 const CategoryItem = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { root_categories = [], selected_root } = data;
   return (
-    <LabeledList.Item label="Category">
+    <LabeledList.Item label={t('rapid-category', {}, 'Category')}>
       {root_categories.map((root) => (
         <Button
           key={root}

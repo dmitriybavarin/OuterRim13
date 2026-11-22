@@ -31,8 +31,8 @@
 			continue
 		if(victim.can_block_magic(antimagic_flags))
 			victim.visible_message(
-				span_danger("[victim]'s flashes in a firey glow, but repels the blaze!"),
-				span_danger("Your body begins to flash a firey glow, but you are protected!!")
+				span_danger(loc_key("heretic-spell-cleave-protected-others", list(victim = victim))),
+				span_danger(LOC_KEY("heretic-spell-cleave-protected-self"))
 			)
 			continue
 
@@ -40,8 +40,8 @@
 			continue
 
 		victim.visible_message(
-			span_danger("[victim]'s veins are shredded from within as an unholy blaze erupts from [victim.p_their()] blood!"),
-			span_danger("Your veins burst from within and unholy flame erupts from your blood!")
+			span_danger(loc_key("heretic-spell-cleave-hit-others", list(victim = victim, their = victim.p_their()))),
+			span_danger(LOC_KEY("heretic-spell-cleave-hit-self"))
 		)
 
 		var/obj/item/bodypart/bodypart = pick(victim.get_bodyparts())

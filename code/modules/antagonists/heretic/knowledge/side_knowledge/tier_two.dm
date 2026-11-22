@@ -177,7 +177,7 @@
 		)
 		return TRUE
 
-	user.balloon_alert(user, "no additional atom present!")
+	user.balloon_alert(user, LOC_KEY("heretic-side-painting-no-atom"))
 	return FALSE
 
 /datum/heretic_knowledge/hypnosis_ritual
@@ -213,7 +213,7 @@
 			has_written_text = TRUE
 
 	if(!has_written_text && has_paper)
-		loc.balloon_alert(user, "write your hypnosis on the paper!")
+		loc.balloon_alert(user, LOC_KEY("heretic-side-hypnosis-write"))
 		return FALSE
 
 	return ..()

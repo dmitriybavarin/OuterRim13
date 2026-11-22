@@ -242,7 +242,7 @@ item-borg-frame-cell-replace = Вы заменяете { ACC($old) } в { PRE($i
 
 item-borg-frame-cell-insert = Вы вставляете { ACC($cell) } в { ACC($item) }.
 
-item-borg-frame-ed209-iron = Для начала сборки ED-209 нужен один лист железа!
+item-borg-frame-ed209-iron = Для начала сборки ED-209 нужен один лист стали!
 
 item-borg-frame-arm = Вы вооружаете каркас робота.
 

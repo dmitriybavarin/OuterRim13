@@ -29,8 +29,8 @@
 /datum/action/cooldown/spell/pointed/mind_gate/cast(mob/living/carbon/human/cast_on)
 	. = ..()
 	if(cast_on.can_block_magic(antimagic_flags))
-		to_chat(cast_on, span_notice("Your mind feels closed."))
-		to_chat(owner, span_warning("Their mind doesn't swing open, but neither does yours."))
+		to_chat(cast_on, span_notice(LOC_KEY("heretic-spell-mind_gate-closed-target")))
+		to_chat(owner, span_warning(LOC_KEY("heretic-spell-mind_gate-closed-owner")))
 		return FALSE
 
 	var/mob/living/living_owner = owner
@@ -45,7 +45,7 @@
 	/// The duration of these effects are based on sanity, mainly for flavor but also to make it a weaker alpha strike
 	var/maximum_duration = 15 SECONDS
 	var/mind_gate_duration = ((SANITY_MAXIMUM - cast_on.mob_mood.sanity) / (SANITY_MAXIMUM - SANITY_INSANE)) * maximum_duration  + 1 SECONDS
-	to_chat(cast_on, span_warning("Your eyes cry out in pain, your ears bleed and your lips seal! THE MOON SMILES UPON YOU!"))
+	to_chat(cast_on, span_warning(LOC_KEY("heretic-spell-mind-gate-hit")))
 	cast_on.adjust_temp_blindness(mind_gate_duration)
 	cast_on.set_eye_blur_if_lower(mind_gate_duration + 1 SECONDS)
 

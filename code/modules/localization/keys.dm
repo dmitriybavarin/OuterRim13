@@ -434,6 +434,47 @@
 		if(description)
 			target["description_[code]"] = description
 
+/proc/loc_datum_key(type)
+	var/text = "[type]"
+	if(copytext(text, 1, 8) == "/datum/")
+		text = copytext(text, 7)
+	return "datum" + replacetext(text, "/", "-")
+
+/proc/loc_add_datum_text(list/target, type, list/fields)
+	var/key = loc_datum_key(type)
+	for(var/language in GLOB.localization_language_codes)
+		var/code = GLOB.localization_language_codes[language]
+		if(code == LOC_CODE_ENGLISH)
+			continue
+		var/list/entry = load_localization(code)["keys"][key]
+		if(!entry)
+			continue
+		target["name_[code]"] = loc_render_parts(entry["parts"], list(), code, FALSE)
+		for(var/field in fields)
+			var/value = entry["attributes"][fields[field]]
+			if(value)
+				target["[field]_[code]"] = value
+
+/proc/loc_action_name(datum/action/action, shown)
+	if(!istext(shown) || !length(shown) || shown != initial(action.name))
+		return shown
+	return LOC_BEGIN + loc_datum_key(action.type) + LOC_SEPARATOR + "name" + LOC_SEPARATOR + shown + LOC_END
+
+/proc/loc_action_desc(datum/action/action, shown)
+	if(!istext(shown) || !length(shown) || shown != initial(action.desc))
+		return shown
+	return LOC_BEGIN + loc_datum_key(action.type) + ".desc" + LOC_SEPARATOR + "name" + LOC_SEPARATOR + shown + LOC_END
+
+/proc/loc_alert_name(atom/movable/screen/alert/alert, shown)
+	if(!istext(shown) || !length(shown) || shown != initial(alert.name))
+		return shown
+	return LOC_BEGIN + loc_datum_key(alert.type) + LOC_SEPARATOR + "name" + LOC_SEPARATOR + shown + LOC_END
+
+/proc/loc_alert_desc(atom/movable/screen/alert/alert, shown)
+	if(!istext(shown) || !length(shown) || shown != initial(alert.desc))
+		return shown
+	return LOC_BEGIN + loc_datum_key(alert.type) + ".desc" + LOC_SEPARATOR + "name" + LOC_SEPARATOR + shown + LOC_END
+
 /proc/loc_material_name(datum/material/material)
 	var/static/regex/non_alphanumeric = regex(@"[^a-z0-9]+", "g")
 	var/static/regex/edge_dashes = regex(@"^-+|-+$", "g")

@@ -8,6 +8,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -27,17 +28,22 @@ instructions on how to resolve this issue.`;
 export const NtnetRelay = (props) => {
   const { act, data } = useBackend<Data>();
   const { enabled, dos_capacity, dos_overload, dos_crashed } = data;
+  const t = useT();
 
   return (
-    <Window title="NtNet Quantum Relay" width={400} height={300}>
+    <Window title={t('ntnetrelay-title', {}, 'NtNet Quantum Relay')} width={400} height={300}>
       <Window.Content>
         <Section
-          title="Network Buffer"
+          title={t('ntnetrelay-buffer', {}, 'Network Buffer')}
           buttons={
             <Button
               icon="power-off"
               selected={enabled}
-              content={enabled ? 'ENABLED' : 'DISABLED'}
+              content={
+                enabled
+                  ? t('ntnetrelay-enabled', {}, 'ENABLED')
+                  : t('ntnetrelay-disabled', {}, 'DISABLED')
+              }
               onClick={() => act('toggle')}
             />
           }
@@ -48,24 +54,28 @@ export const NtnetRelay = (props) => {
               minValue={0}
               maxValue={dos_capacity}
             >
-              <AnimatedNumber value={dos_overload} /> GQ
+              <AnimatedNumber value={dos_overload} /> {t('ntnetrelay-gq', {}, 'GQ')}
               {' / '}
-              {dos_capacity} GQ
+              {dos_capacity} {t('ntnetrelay-gq', {}, 'GQ')}
             </ProgressBar>
           ) : (
             <Box fontFamily="monospace">
-              <Box fontSize="20px">NETWORK BUFFER OVERFLOW</Box>
-              <Box fontSize="16px">OVERLOAD RECOVERY MODE</Box>
-              <Box>{OUTAGE_WARNING}</Box>
+              <Box fontSize="20px">
+                {t('ntnetrelay-overflow', {}, 'NETWORK BUFFER OVERFLOW')}
+              </Box>
+              <Box fontSize="16px">
+                {t('ntnetrelay-recovery', {}, 'OVERLOAD RECOVERY MODE')}
+              </Box>
+              <Box>{t('ntnetrelay-warning', {}, OUTAGE_WARNING)}</Box>
               <Box fontSize="20px" color="bad">
-                ADMINISTRATOR OVERRIDE
+                {t('ntnetrelay-override', {}, 'ADMINISTRATOR OVERRIDE')}
               </Box>
               <Box fontSize="16px" color="bad">
-                CAUTION - DATA LOSS MAY OCCUR
+                {t('ntnetrelay-caution', {}, 'CAUTION - DATA LOSS MAY OCCUR')}
               </Box>
               <Button
                 icon="signal"
-                content="PURGE BUFFER"
+                content={t('ntnetrelay-purge', {}, 'PURGE BUFFER')}
                 mt={1}
                 color="bad"
                 onClick={() => act('restart')}

@@ -16,6 +16,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { capitalize } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { NtosWindow } from '../layouts';
 
 type Data = {
@@ -86,6 +87,7 @@ enum PetGender {
 
 export const NtosVirtualPet = (props) => {
   const [tab, setTab] = useState(Tab.Stats);
+  const t = useT();
 
   return (
     <NtosWindow width={390} height={570}>
@@ -95,25 +97,25 @@ export const NtosVirtualPet = (props) => {
             selected={tab === Tab.Stats}
             onClick={() => setTab(Tab.Stats)}
           >
-            Stats
+            {t('ntosvirtualpet-tab-stats', {}, 'Stats')}
           </Tabs.Tab>
           <Tabs.Tab
             selected={tab === Tab.Customization}
             onClick={() => setTab(Tab.Customization)}
           >
-            Customization
+            {t('ntosvirtualpet-tab-customization', {}, 'Customization')}
           </Tabs.Tab>
           <Tabs.Tab
             selected={tab === Tab.Updates}
             onClick={() => setTab(Tab.Updates)}
           >
-            Pet Updates
+            {t('ntosvirtualpet-tab-updates', {}, 'Pet Updates')}
           </Tabs.Tab>
           <Tabs.Tab
             selected={tab === Tab.Tricks}
             onClick={() => setTab(Tab.Tricks)}
           >
-            Tricks
+            {t('ntosvirtualpet-tab-tricks', {}, 'Tricks')}
           </Tabs.Tab>
         </Tabs>
         {tab === Tab.Stats && <Stats />}
@@ -144,18 +146,25 @@ const Stats = (props) => {
     can_summon,
     in_dropzone,
   } = data;
+  const t = useT();
   return (
     <>
-      <Section title="Pet Stats">
+      <Section title={t('ntosvirtualpet-stats', {}, 'Pet Stats')}>
         <Flex>
           <Flex.Item>
             <PetIcon our_pet_state={pet_state} />
           </Flex.Item>
           <Flex.Item>
             <Stack vertical position="absolute" right={1}>
-              <Stack.Item>Current Level: {level}</Stack.Item>
+              <Stack.Item>
+                {t(
+                  'ntosvirtualpet-level',
+                  { level },
+                  `Current Level: ${level}`,
+                )}
+              </Stack.Item>
               <Stack.Item mt={3}>
-                Happiness:
+                {t('ntosvirtualpet-happiness', {}, 'Happiness:')}
                 <ProgressBar
                   value={happiness}
                   maxValue={maximum_happiness}
@@ -163,7 +172,7 @@ const Stats = (props) => {
                 />
               </Stack.Item>
               <Stack.Item>
-                Exp Progress:
+                {t('ntosvirtualpet-exp', {}, 'Exp Progress:')}
                 <ProgressBar
                   value={current_exp}
                   maxValue={required_exp}
@@ -171,7 +180,7 @@ const Stats = (props) => {
                 />
               </Stack.Item>
               <Stack.Item>
-                Hunger:
+                {t('ntosvirtualpet-hunger', {}, 'Hunger:')}
                 <ProgressBar
                   value={hunger}
                   maxValue={maximum_hunger}
@@ -182,7 +191,10 @@ const Stats = (props) => {
           </Flex.Item>
         </Flex>
       </Section>
-      <Section title="Pet Location" style={{ padding: '5px' }}>
+      <Section
+        title={t('ntosvirtualpet-location', {}, 'Pet Location')}
+        style={{ padding: '5px' }}
+      >
         <Stack>
           <Stack.Item grow>{pet_area}</Stack.Item>
           <Stack.Item>
@@ -191,14 +203,16 @@ const Stats = (props) => {
               style={{ padding: '3px' }}
               onClick={() => act('summon_pet')}
             >
-              {currently_summoned ? 'Recall' : 'Release'}
+              {currently_summoned
+                ? t('ntosvirtualpet-recall', {}, 'Recall')
+                : t('ntosvirtualpet-release', {}, 'Release')}
             </Button>
           </Stack.Item>
         </Stack>
       </Section>
       <Stack fill>
         <Stack.Item grow>
-          <Section title="Pet Feed Dropzone">
+          <Section title={t('ntosvirtualpet-dropzone', {}, 'Pet Feed Dropzone')}>
             <Stack>
               <Stack.Item grow>{selected_area}</Stack.Item>
               <Stack.Item>
@@ -207,7 +221,7 @@ const Stats = (props) => {
                     style={{ padding: '3px' }}
                     onClick={() => act('drop_feed')}
                   >
-                    Get Food
+                    {t('ntosvirtualpet-get-food', {}, 'Get Food')}
                   </Button>
                 )) || (
                   <Button
@@ -216,8 +230,8 @@ const Stats = (props) => {
                     onClick={() => act('get_feed_location')}
                   >
                     {selected_area === 'No location set'
-                      ? 'Generate'
-                      : 'Reroll'}
+                      ? t('ntosvirtualpet-generate', {}, 'Generate')
+                      : t('ntosvirtualpet-reroll', {}, 'Reroll')}
                   </Button>
                 )}
               </Stack.Item>
@@ -231,7 +245,11 @@ const Stats = (props) => {
             style={{ padding: '20px' }}
           >
             {' '}
-            Steps: {steps_counter}
+            {t(
+              'ntosvirtualpet-steps',
+              { count: steps_counter },
+              `Steps: ${steps_counter}`,
+            )}
           </Section>
         </Stack.Item>
       </Stack>
@@ -242,6 +260,7 @@ const Stats = (props) => {
 const PetTricks = (props) => {
   const { act, data } = useBackend<Data>();
   const { possible_emotes } = data;
+  const t = useT();
   const [sequences, setSequences] = useState(['none', 'none', 'none', 'none']);
   const [TrickName, setTrickName] = useState('Trick');
 
@@ -256,7 +275,7 @@ const PetTricks = (props) => {
       title={capitalize(TrickName)}
       buttons={
         <Button.Input
-          buttonText="Rename Trick"
+          buttonText={t('ntosvirtualpet-rename-trick', {}, 'Rename Trick')}
           color="transparent"
           onCommit={setTrickName}
         />
@@ -264,7 +283,11 @@ const PetTricks = (props) => {
     >
       <LabeledList>
         {sequences.map((sequence, index) => (
-          <LabeledList.Item key={index} label={`Sequence ${index + 1}`}>
+          <LabeledList.Item key={index} label={t(
+              'ntosvirtualpet-sequence',
+              { number: index + 1 },
+              `Sequence ${index + 1}`,
+            )}>
             <Dropdown
               width="50%"
               selected={sequences[index]}
@@ -287,7 +310,7 @@ const PetTricks = (props) => {
           })
         }
       >
-        Teach
+        {t('ntosvirtualpet-teach', {}, 'Teach')}
       </Button>
     </Section>
   );
@@ -305,6 +328,7 @@ const Customization = (props) => {
     pet_gender,
     can_alter_appearance,
   } = data;
+  const t = useT();
 
   const hatSelectionList = {};
   for (const index in hat_selections) {
@@ -326,7 +350,10 @@ const Customization = (props) => {
   );
   return (
     <>
-      <Section title="Pet Preview" textAlign="center">
+      <Section
+        title={t('ntosvirtualpet-preview', {}, 'Pet Preview')}
+        textAlign="center"
+      >
         <Image
           m={1}
           src={`data:image/jpeg;base64,${preview_icon}`}
@@ -341,7 +368,7 @@ const Customization = (props) => {
       </Section>
       <Stack>
         <Stack.Item width="50%">
-          <Section title="Pet Name">
+          <Section title={t('ntosvirtualpet-name', {}, 'Pet Name')}>
             <Input
               fluid
               maxLength={30}
@@ -351,7 +378,7 @@ const Customization = (props) => {
           </Section>
         </Stack.Item>
         <Stack.Item width="50%">
-          <Section title="Pet Hat">
+          <Section title={t('ntosvirtualpet-hat', {}, 'Pet Hat')}>
             <Dropdown
               selected={selectedHat?.hat_name}
               options={hat_selections.map((selected_hat) => {
@@ -366,7 +393,7 @@ const Customization = (props) => {
       </Stack>
       <Stack mt={0.5}>
         <Stack.Item width="50%">
-          <Section title="Pet Color">
+          <Section title={t('ntosvirtualpet-color', {}, 'Pet Color')}>
             <Dropdown
               selected={selectedColor?.color_name}
               options={possible_colors.map((possible_color) => {
@@ -379,7 +406,7 @@ const Customization = (props) => {
           </Section>
         </Stack.Item>
         <Stack.Item width="50%">
-          <Section title="Pet Gender">
+          <Section title={t('ntosvirtualpet-gender', {}, 'Pet Gender')}>
             <Stack>
               <Stack.Item grow>
                 <Button
@@ -420,7 +447,7 @@ const Customization = (props) => {
             })
           }
         >
-          Apply
+          {t('ntosvirtualpet-apply', {}, 'Apply')}
         </Button>
       </Section>
     </>
@@ -430,9 +457,10 @@ const Customization = (props) => {
 const AllPetUpdates = (props) => {
   const { act, data } = useBackend<Data>();
   const { pet_updates } = data;
+  const t = useT();
 
   return (
-    <Section title="Pet Updates" fill>
+    <Section title={t('ntosvirtualpet-tab-updates', {}, 'Pet Updates')} fill>
       <Stack vertical>
         {pet_updates.map((update) => (
           <Stack.Item key={update.update_id} mt={3}>

@@ -11,6 +11,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 enum Screen {
@@ -52,6 +53,7 @@ type Message = {
 
 const RequestLogsScreen = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { requests = [] } = data;
   return (
     <Stack fill vertical>
@@ -59,10 +61,10 @@ const RequestLogsScreen = (props) => {
         <Section
           fill
           scrollable
-          title="Requests"
+          title={t('messagemonitor-requests', {}, 'Requests')}
           buttons={
             <Button
-              content="Main Menu"
+              content={t('messagemonitor-main-menu', {}, 'Main Menu')}
               icon="home"
               onClick={() => act('return_home')}
             />
@@ -70,11 +72,13 @@ const RequestLogsScreen = (props) => {
         >
           <Table>
             <Table.Row header>
-              <Table.Cell>Delete</Table.Cell>
-              <Table.Cell>Message</Table.Cell>
-              <Table.Cell>Stamp</Table.Cell>
-              <Table.Cell>Department</Table.Cell>
-              <Table.Cell>Authentication</Table.Cell>
+              <Table.Cell>{t('messagemonitor-delete', {}, 'Delete')}</Table.Cell>
+              <Table.Cell>{t('messagemonitor-message', {}, 'Message')}</Table.Cell>
+              <Table.Cell>{t('messagemonitor-stamp', {}, 'Stamp')}</Table.Cell>
+              <Table.Cell>{t('messagemonitor-department', {}, 'Department')}</Table.Cell>
+              <Table.Cell>
+                {t('messagemonitor-authentication', {}, 'Authentication')}
+              </Table.Cell>
             </Table.Row>
             {requests?.map((request) => (
               <Table.Row key={request.ref} className="candystripe">
@@ -100,6 +104,7 @@ const RequestLogsScreen = (props) => {
 
 const MessageLogsScreen = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { messages = [] } = data;
   return (
     <Stack fill vertical>
@@ -107,10 +112,10 @@ const MessageLogsScreen = (props) => {
         <Section
           fill
           scrollable
-          title="Stored Messages"
+          title={t('messagemonitor-stored', {}, 'Stored Messages')}
           buttons={
             <Button
-              content="Main Menu"
+              content={t('messagemonitor-main-menu', {}, 'Main Menu')}
               icon="home"
               onClick={() => act('return_home')}
             />
@@ -118,10 +123,10 @@ const MessageLogsScreen = (props) => {
         >
           <Table>
             <Table.Row header>
-              <Table.Cell>Delete</Table.Cell>
-              <Table.Cell>Sender</Table.Cell>
-              <Table.Cell>Recipient</Table.Cell>
-              <Table.Cell>Message</Table.Cell>
+              <Table.Cell>{t('messagemonitor-delete', {}, 'Delete')}</Table.Cell>
+              <Table.Cell>{t('messagemonitor-sender', {}, 'Sender')}</Table.Cell>
+              <Table.Cell>{t('messagemonitor-recipient', {}, 'Recipient')}</Table.Cell>
+              <Table.Cell>{t('messagemonitor-message', {}, 'Message')}</Table.Cell>
             </Table.Row>
             {messages?.map((message) => (
               <Table.Row key={message.ref} className="candystripe">
@@ -168,6 +173,7 @@ const HackedScreen = (props) => {
 };
 
 const MainScreenAuth = (props: AuthScreenProps) => {
+  const t = useT();
   const { auth_password, setPassword } = props;
 
   const { act, data } = useBackend<Data>();
@@ -180,22 +186,26 @@ const MainScreenAuth = (props: AuthScreenProps) => {
           <Input
             value={auth_password}
             onChange={setPassword}
-            placeholder="Password"
+            placeholder={t('messagemonitor-password', {}, 'Password')}
           />
           <Button
-            content={'Logout'}
+            content={t('messagemonitor-logout', {}, 'Logout')}
             onClick={() => act('auth', { auth_password: auth_password })}
           />
           <Button
             icon={status ? 'power-off' : 'times'}
-            content={status ? 'ON' : 'OFF'}
+            content={
+              status
+                ? t('messagemonitor-on', {}, 'ON')
+                : t('messagemonitor-off', {}, 'OFF')
+            }
             color={status ? 'green' : 'red'}
             onClick={() => act('turn_server')}
           />
           {is_malf === 1 && (
             <Button
               icon="terminal"
-              content="Hack"
+              content={t('messagemonitor-hack', {}, 'Hack')}
               color="red"
               disabled
               onClick={() => act('hack')}
@@ -205,66 +215,102 @@ const MainScreenAuth = (props: AuthScreenProps) => {
       </Stack.Item>
       <Table>
         <Table.Row header>
-          <Table.Cell>Option</Table.Cell>
-          <Table.Cell>Description</Table.Cell>
+          <Table.Cell>{t('messagemonitor-option', {}, 'Option')}</Table.Cell>
+          <Table.Cell>
+            {t('messagemonitor-description', {}, 'Description')}
+          </Table.Cell>
         </Table.Row>
         <Table.Row>
           <Table.Cell>
             <Button
-              content={'View Message Logs'}
+              content={t('messagemonitor-view-messages', {}, 'View Message Logs')}
               onClick={() => act('view_message_logs')}
             />
           </Table.Cell>
-          <Table.Cell>Shows all messages that have been sent</Table.Cell>
+          <Table.Cell>
+            {t(
+              'messagemonitor-view-messages-desc',
+              {},
+              'Shows all messages that have been sent',
+            )}
+          </Table.Cell>
         </Table.Row>
         <Table.Row>
           <Table.Cell>
             <Button
-              content={'View Request Console Logs'}
+              content={t(
+                'messagemonitor-view-requests',
+                {},
+                'View Request Console Logs',
+              )}
               onClick={() => act('view_request_logs')}
             />
           </Table.Cell>
           <Table.Cell>
-            Shows all orders that were made in the cargo department
+            {t(
+              'messagemonitor-view-requests-desc',
+              {},
+              'Shows all orders that were made in the cargo department',
+            )}
           </Table.Cell>
         </Table.Row>
         <Table.Row>
           <Table.Cell>
             <Button.Confirm
-              content={'Clear Message Logs'}
+              content={t('messagemonitor-clear-messages', {}, 'Clear Message Logs')}
               onClick={() => act('clear_message_logs')}
             />
           </Table.Cell>
-          <Table.Cell>Clears message logs</Table.Cell>
+          <Table.Cell>
+            {t('messagemonitor-clear-messages-desc', {}, 'Clears message logs')}
+          </Table.Cell>
         </Table.Row>
         <Table.Row>
           <Table.Cell>
             <Button.Confirm
-              content={'Clear Request Console Logs'}
+              content={t(
+                'messagemonitor-clear-requests',
+                {},
+                'Clear Request Console Logs',
+              )}
               onClick={() => act('clear_request_logs')}
             />
           </Table.Cell>
-          <Table.Cell>Clears request console logs</Table.Cell>
+          <Table.Cell>
+            {t(
+              'messagemonitor-clear-requests-desc',
+              {},
+              'Clears request console logs',
+            )}
+          </Table.Cell>
         </Table.Row>
         {!!is_on_station && (
           <Table.Row>
             <Table.Cell>
               <Button
-                content={'Set Custom Key'}
+                content={t('messagemonitor-set-key', {}, 'Set Custom Key')}
                 onClick={() => act('set_key')}
               />
             </Table.Cell>
-            <Table.Cell>Changes decryption key</Table.Cell>
+            <Table.Cell>
+              {t('messagemonitor-set-key-desc', {}, 'Changes decryption key')}
+            </Table.Cell>
           </Table.Row>
         )}
         <Table.Row>
           <Table.Cell>
             <Button
-              content={'Send Admin Message'}
+              content={t('messagemonitor-send-admin', {}, 'Send Admin Message')}
               onClick={() => act('send_fake_message')}
             />
           </Table.Cell>
-          <Table.Cell>Sends a custom message to the user&apos;s PDA</Table.Cell>
+          <Table.Cell>
+            {t(
+              'messagemonitor-send-admin-desc',
+              {},
+              "Sends a custom message to the user's PDA",
+            )}
+          </Table.Cell>
         </Table.Row>
       </Table>
     </>
@@ -277,6 +323,7 @@ type AuthScreenProps = {
 };
 
 const MainScreenNotAuth = (props: AuthScreenProps) => {
+  const t = useT();
   const { auth_password, setPassword } = props;
   const { act, data } = useBackend<Data>();
   const { status, is_malf } = data;
@@ -288,10 +335,10 @@ const MainScreenNotAuth = (props: AuthScreenProps) => {
           <Input
             value={auth_password}
             onChange={setPassword}
-            placeholder="Password"
+            placeholder={t('messagemonitor-password', {}, 'Password')}
           />
           <Button onClick={() => act('auth', { auth_password: auth_password })}>
-            Auth
+            {t('messagemonitor-auth', {}, 'Auth')}
           </Button>
           <Button
             icon={status ? 'power-off' : 'times'}
@@ -299,30 +346,36 @@ const MainScreenNotAuth = (props: AuthScreenProps) => {
             disabled
             onClick={() => act('turn_server')}
           >
-            {status ? 'ON' : 'OFF'}
+            {status
+              ? t('messagemonitor-on', {}, 'ON')
+              : t('messagemonitor-off', {}, 'OFF')}
           </Button>
           {!!is_malf && (
             <Button color="red" onClick={() => act('hack')}>
-              Hack
+              {t('messagemonitor-hack', {}, 'Hack')}
             </Button>
           )}
         </Section>
       </Stack.Item>
       <Stack.Item grow>
-        <Section fill scrollable title="Choose Option">
+        <Section fill scrollable title={t('messagemonitor-choose', {}, 'Choose Option')}>
           <Table>
             <Table.Row header>
-              <Table.Cell>Option</Table.Cell>
-              <Table.Cell>Description</Table.Cell>
+              <Table.Cell>{t('messagemonitor-option', {}, 'Option')}</Table.Cell>
+              <Table.Cell>
+            {t('messagemonitor-description', {}, 'Description')}
+          </Table.Cell>
             </Table.Row>
             <Table.Row>
               <Table.Cell>
                 <Button
-                  content={'Link Server'}
+                  content={t('messagemonitor-link', {}, 'Link Server')}
                   onClick={() => act('link_server')}
                 />
               </Table.Cell>
-              <Table.Cell>Connects to the server</Table.Cell>
+              <Table.Cell>
+                {t('messagemonitor-link-desc', {}, 'Connects to the server')}
+              </Table.Cell>
             </Table.Row>
           </Table>
         </Section>
@@ -356,6 +409,7 @@ const MainScreen = (props) => {
 
 export const MessageMonitor = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     screen,
     error_message,
@@ -391,20 +445,27 @@ export const MessageMonitor = (props) => {
                 )}
               </Stack.Item>
               <label>
-                Reg. #514 forbids sending messages to a Head of Staff containing
-                Erotic Rendering Properties.
+                {t(
+                  'messagemonitor-regulation',
+                  {},
+                  'Reg. #514 forbids sending messages to a Head of Staff containing Erotic Rendering Properties.',
+                )}
               </label>
             </>
           ) : (
             <>
               <Stack.Item>
                 <NoticeBox color="red">
-                  Server not found, click button to scan the network
+                  {t(
+                    'messagemonitor-no-server',
+                    {},
+                    'Server not found, click button to scan the network',
+                  )}
                 </NoticeBox>
               </Stack.Item>
               <Stack.Item>
                 <Button
-                  content="Connect to server"
+                  content={t('messagemonitor-connect', {}, 'Connect to server')}
                   onClick={() => act('connect_server')}
                 />
               </Stack.Item>

@@ -80,6 +80,9 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen) // I hate this place
 /atom/movable/screen/orbit()
 	return
 
+/atom/movable/screen/get_screentip_name()
+	return loc_lookup("hud-element", name, ..())
+
 /atom/movable/screen/proc/component_click(atom/movable/screen/component_button/component, params)
 	return
 

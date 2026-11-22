@@ -30,26 +30,6 @@ function FeatureTTSDropdownInput(
           height="100%"
         />
       </Stack.Item>
-      <Stack.Item>
-        <Button
-          onClick={() => {
-            act('play_voice_robot');
-          }}
-          icon="robot"
-          width="100%"
-          height="100%"
-        />
-      </Stack.Item>
-      <Stack.Item>
-        <Button
-          onClick={() => {
-            act('play_blips');
-          }}
-          icon="leaf"
-          width="100%"
-          height="100%"
-        />
-      </Stack.Item>
     </Stack>
   );
 }

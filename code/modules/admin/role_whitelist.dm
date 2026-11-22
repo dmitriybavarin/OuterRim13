@@ -197,7 +197,7 @@ GLOBAL_DATUM_INIT(role_whitelist, /datum/role_whitelist, new)
 	return result
 
 ADMIN_VERB(role_whitelist_panel, R_ROLEWHITELISTMENU|R_ROLEWHITELISTALL, "Role Whitelist", "Manage the role whitelist.", ADMIN_CATEGORY_MAIN)
-	var/datum/role_whitelist_panel/panel = new
+	var/static/datum/role_whitelist_panel/panel = new
 	panel.ui_interact(user.mob)
 
 /datum/role_whitelist_panel
@@ -216,7 +216,7 @@ ADMIN_VERB(role_whitelist_panel, R_ROLEWHITELISTMENU|R_ROLEWHITELISTALL, "Role W
 	var/datum/job_department/department_type = job?.department_for_prefs || job?.departments_list?[1]
 	return department_type ? initial(department_type.department_name) : null
 
-/datum/role_whitelist_panel/ui_data(mob/user)
+/datum/role_whitelist_panel/ui_static_data(mob/user)
 	var/list/data = list()
 	var/datum/role_whitelist/whitelist = GLOB.role_whitelist
 	data["can_edit_all"] = check_rights_for(user.client, R_ROLEWHITELISTALL)
@@ -274,12 +274,15 @@ ADMIN_VERB(role_whitelist_panel, R_ROLEWHITELISTMENU|R_ROLEWHITELISTALL, "Role W
 				var/shown = length(category) ? "[whitelist.category_display(category)][whitelist.is_department_category(category) ? " (department)" : ""]" : ROLE_WHITELIST_CATEGORY_OTHER
 				log_admin("[key_name(user)] set whitelist role [params["name"]] (category: [shown], restricted: [!!params["restricted"]], hidden: [!!params["hidden"]]).")
 				GLOB.latejoin_menu.update_static_data_for_all_viewers()
+				update_static_data_for_all_viewers()
 			return TRUE
 		if("grant")
 			if(whitelist.grant(params["ckey"], params["role"]))
 				log_admin("[key_name(user)] granted whitelist role [params["role"]] to [params["ckey"]].")
+				update_static_data_for_all_viewers()
 			return TRUE
 		if("revoke")
 			if(whitelist.revoke(params["ckey"], params["role"]))
 				log_admin("[key_name(user)] revoked whitelist role [params["role"]] from [params["ckey"]].")
+				update_static_data_for_all_viewers()
 			return TRUE

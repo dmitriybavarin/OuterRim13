@@ -9,6 +9,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type GeneratorStats = {
@@ -27,12 +28,15 @@ type Data = {
 
 export const ModularShieldConsole = () => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { generators } = data;
   return (
-    <Window title="Modular Shield Console" width={450} height={275}>
+    <Window title={t('modularshield-title', {}, 'Modular Shield Console')} width={450} height={275}>
       <Window.Content scrollable>
         {generators.length === 0 ? (
-          <NoticeBox>No Generators Connected</NoticeBox>
+          <NoticeBox>
+            {t('modularshield-no-generators', {}, 'No Generators Connected')}
+          </NoticeBox>
         ) : (
           <Section minHeight="200px">
             <GeneratorTable />
@@ -45,16 +49,17 @@ export const ModularShieldConsole = () => {
 
 const GeneratorTable = () => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { generators } = data;
   return (
     <Table>
       <Table.Row>
-        <Table.Cell bold>Name</Table.Cell>
+        <Table.Cell bold>{t('modularshield-name', {}, 'Name')}</Table.Cell>
         <Table.Cell bold collapsing textAlign="center">
-          Status
+          {t('modularshield-status', {}, 'Status')}
         </Table.Cell>
         <Table.Cell bold textAlign="center">
-          Toggle
+          {t('modularshield-toggle', {}, 'Toggle')}
         </Table.Cell>
       </Table.Row>
       {generators.map((stat) => (
@@ -70,6 +75,7 @@ type GeneratorTableEntryProps = {
 
 const GeneratorTableEntry = (props: GeneratorTableEntryProps) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { GeneratorData } = props;
   const {
     name,
@@ -118,7 +124,11 @@ const GeneratorTableEntry = (props: GeneratorTableEntryProps) => {
           bold
           disabled={recovering}
           selected={active}
-          content={active ? 'On' : 'Off'}
+          content={
+            active
+              ? t('modularshield-on', {}, 'On')
+              : t('modularshield-off', {}, 'Off')
+          }
           icon="power-off"
           onClick={() => act('toggle_shields', { id })}
         />

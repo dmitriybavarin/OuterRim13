@@ -13,6 +13,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type AASConfigEntry = {
@@ -32,6 +33,7 @@ type Data = {
 
 export const AutomatedAnnouncement = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { config_entries = [], max_announcement_len } = data;
 
   const [search, setSearch] = useState('');
@@ -57,21 +59,21 @@ export const AutomatedAnnouncement = (props) => {
   };
 
   const errorMessage = !config_entries.length
-    ? 'No configurable options detected! Please report this to Nanotrasen.'
-    : 'No match. Refine your search.';
+    ? t('aas-no-options', {}, 'No configurable options detected! Please report this to Nanotrasen.')
+    : t('aas-no-match', {}, 'No match. Refine your search.');
 
   const sorted = sortBy(
     filter(config_entries, (entry) => isEntryMatch(entry, search)),
     [(entry) => entry.name],
   );
   return (
-    <Window title="Automated Announcement System" width={500} height={280}>
+    <Window title={t('aas-title', {}, 'Automated Announcement System')} width={500} height={280}>
       <Window.Content>
         <Stack fill vertical>
           <Stack.Item>
             <LabeledList>
-              <LabeledList.Item label="Search">
-                <Input fluid placeholder="Name/Line/Var" onChange={setSearch} />
+              <LabeledList.Item label={t('aas-search', {}, 'Search')}>
+                <Input fluid placeholder={t('aas-placeholder', {}, 'Name/Line/Var')} onChange={setSearch} />
               </LabeledList.Item>
             </LabeledList>
           </Stack.Item>
@@ -107,14 +109,16 @@ export const AutomatedAnnouncement = (props) => {
                           disabled={!entry.modifiable}
                           tooltip={
                             !entry.modifiable
-                              ? 'Editing disabled by CentCom!'
+                              ? t('aas-locked', {}, 'Editing disabled by CentCom!')
                               : undefined
                           }
                           onClick={() =>
                             act('Toggle', { entryRef: entry.entryRef })
                           }
                         >
-                          {entry.enabled ? 'On' : 'Off'}
+                          {entry.enabled
+                            ? t('aas-on', {}, 'On')
+                            : t('aas-off', {}, 'Off')}
                         </Button>
                       </>
                     }

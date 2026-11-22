@@ -11,6 +11,7 @@ import { type BooleanLike, classes } from 'tgui-core/react';
 import { capitalizeAll } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { MatterItem, SiloItem } from './RapidConstructionDevice';
 import { ColorItem } from './RapidPipeDispenser';
@@ -89,9 +90,10 @@ const PlumbingTypeSection = (props) => {
 
 export const LayerSelect = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { piping_layer } = data;
   return (
-    <LabeledList.Item label="Layer">
+    <LabeledList.Item label={t('rapid-layer', {}, 'Layer')}>
       {[1, 2, 3, 4, 5].map((layer) => (
         <Button.Checkbox
           key={layer}

@@ -60,7 +60,7 @@
 #define JOB_CHIEF_ENGINEER "Chief Engineer"
 #define JOB_CHIEF_MEDICAL_OFFICER "Chief Medical Officer"
 #define JOB_BRIDGE_ASSISTANT "Bridge Assistant"
-#define JOB_VETERAN_ADVISOR "Veteran Security Advisor"
+#define JOB_TRADER "Trader"
 //Silicon
 #define JOB_AI "AI"
 #define JOB_CYBORG "Cyborg"
@@ -155,7 +155,7 @@
 #define JOB_DISPLAY_ORDER_BRIDGE_ASSISTANT 2
 // Security
 #define JOB_DISPLAY_ORDER_HEAD_OF_SECURITY 1
-#define JOB_DISPLAY_ORDER_VETERAN_ADVISOR 2
+#define JOB_DISPLAY_ORDER_TRADER 6
 #define JOB_DISPLAY_ORDER_WARDEN 3
 #define JOB_DISPLAY_ORDER_DETECTIVE 4
 #define JOB_DISPLAY_ORDER_SECURITY_OFFICER 5

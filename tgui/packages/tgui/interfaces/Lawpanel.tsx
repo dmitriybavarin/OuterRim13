@@ -14,6 +14,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 const lawtype_to_color = {
@@ -52,6 +53,7 @@ type Data = {
 };
 
 const SyncedBorgDimmer = (props: { master: string }) => {
+  const t = useT();
   return (
     <Dimmer>
       <Stack textAlign="center" vertical>
@@ -59,15 +61,22 @@ const SyncedBorgDimmer = (props: { master: string }) => {
           <Icon color="green" name="wifi" size={10} />
         </Stack.Item>
         <Stack.Item fontSize="18px">
-          This cyborg is linked to &quot;{props.master}&quot;.
+          {t(
+            'lawpanel-synced-borg',
+            { master: props.master },
+            `This cyborg is linked to "${props.master}".`,
+          )}
         </Stack.Item>
-        <Stack.Item fontSize="14px">Modify their laws instead.</Stack.Item>
+        <Stack.Item fontSize="14px">
+          {t('lawpanel-synced-hint', {}, 'Modify their laws instead.')}
+        </Stack.Item>
       </Stack>
     </Dimmer>
   );
 };
 
 export const LawPrintout = (props: { cyborg_ref: string; lawset: Law[] }) => {
+  const t = useT();
   const { act } = useBackend<Law>();
   const { cyborg_ref, lawset } = props;
 
@@ -111,7 +120,7 @@ export const LawPrintout = (props: { cyborg_ref: string; lawset: Law[] }) => {
                       })
                     }
                   >
-                    Edit
+                    {t('lawpanel-edit', {}, 'Edit')}
                   </Button>
                 </Stack.Item>
                 {law.lawtype === 'inherent' && (
@@ -162,7 +171,7 @@ export const LawPrintout = (props: { cyborg_ref: string; lawset: Law[] }) => {
         <Button
           icon="plus"
           color={'green'}
-          content={'Add Law'}
+          content={t('lawpanel-add-law', {}, 'Add Law')}
           onClick={() => act('add_law', { ref: cyborg_ref })}
         />
       </LabeledList.Item>
@@ -172,6 +181,7 @@ export const LawPrintout = (props: { cyborg_ref: string; lawset: Law[] }) => {
 };
 
 export const SiliconReadout = (props: { cyborg: Silicon }) => {
+  const t = useT();
   const { data, act } = useBackend<Silicon>();
   const { cyborg } = props;
 
@@ -190,9 +200,11 @@ export const SiliconReadout = (props: { cyborg: Silicon }) => {
                     fluid
                     textAlign="center"
                     color="danger"
-                    content={`This silicon has a null law datum. This isn't
-                      supposed to ever happen! Issue report
-                      and then click this this give them one.`}
+                    content={t(
+                      'lawpanel-null-datum',
+                      {},
+                      "This silicon has a null law datum. This isn't supposed to ever happen! Issue report and then click this this give them one.",
+                    )}
                     onClick={() => act('give_law_datum', { ref: cyborg.ref })}
                   />
                 ) : (
@@ -204,9 +216,12 @@ export const SiliconReadout = (props: { cyborg: Silicon }) => {
                   <Stack.Item>
                     <Button
                       icon="bullhorn"
-                      content={'Force State Laws'}
-                      tooltip={`Forces the silicon to state laws.
-                        Only states inherent / core laws.`}
+                      content={t('lawpanel-force-state', {}, 'Force State Laws')}
+                      tooltip={t(
+                        'lawpanel-force-state-tooltip',
+                        {},
+                        'Forces the silicon to state laws. Only states inherent / core laws.',
+                      )}
                       onClick={() =>
                         act('force_state_laws', { ref: cyborg.ref })
                       }
@@ -215,10 +230,16 @@ export const SiliconReadout = (props: { cyborg: Silicon }) => {
                   <Stack.Item>
                     <Button
                       icon="message"
-                      content={'Privately Announce Laws'}
-                      tooltip={`Displays all of the silicon's laws
-                        in their chat box. Also shows to all
-                        linked cyborgs for AIs.`}
+                      content={t(
+                        'lawpanel-announce',
+                        {},
+                        'Privately Announce Laws',
+                      )}
+                      tooltip={t(
+                        'lawpanel-announce-tooltip',
+                        {},
+                        "Displays all of the silicon's laws in their chat box. Also shows to all linked cyborgs for AIs.",
+                      )}
                       onClick={() =>
                         act('announce_law_changes', { ref: cyborg.ref })
                       }
@@ -227,10 +248,16 @@ export const SiliconReadout = (props: { cyborg: Silicon }) => {
                   <Stack.Item>
                     <Button
                       icon="bell"
-                      content={'"Laws Updated" Alert'}
-                      tooltip={`Throws a screen alert to the silicon that their
-                        laws have been updated. Also displays the laws in chat
-                        and alerts deadchat.`}
+                      content={t(
+                        'lawpanel-updated-alert',
+                        {},
+                        '"Laws Updated" Alert',
+                      )}
+                      tooltip={t(
+                        'lawpanel-updated-alert-tooltip',
+                        {},
+                        'Throws a screen alert to the silicon that their laws have been updated. Also displays the laws in chat and alerts deadchat.',
+                      )}
                       onClick={() =>
                         act('laws_updated_alert', { ref: cyborg.ref })
                       }
@@ -247,20 +274,26 @@ export const SiliconReadout = (props: { cyborg: Silicon }) => {
 };
 
 export const Lawpanel = (props) => {
+  const t = useT();
   const { data, act } = useBackend<Data>();
   const { all_silicons } = data;
 
   return (
-    <Window title="Law Panel" theme="admin" width={800} height={600}>
+    <Window
+      title={t('lawpanel-title', {}, 'Law Panel')}
+      theme="admin"
+      width={800}
+      height={600}
+    >
       <Window.Content>
         <Section
           fill
-          title="All Silicon Laws"
+          title={t('lawpanel-section-all', {}, 'All Silicon Laws')}
           scrollable
           buttons={
             <Button
               icon="robot"
-              content="Logs"
+              content={t('lawpanel-logs', {}, 'Logs')}
               onClick={() => act('lawchange_logs')}
             />
           }
@@ -274,7 +307,13 @@ export const Lawpanel = (props) => {
               ))
             ) : (
               <Stack.Item>
-                <NoticeBox>There are no silicons in existence.</NoticeBox>
+                <NoticeBox>
+                  {t(
+                    'lawpanel-no-silicons',
+                    {},
+                    'There are no silicons in existence.',
+                  )}
+                </NoticeBox>
               </Stack.Item>
             )}
           </Stack>

@@ -44,7 +44,7 @@
 /obj/item/organ/eyes/corrupt/penlight_examine(mob/living/viewer, obj/item/examtool)
 	viewer.playsound_local(src, 'sound/effects/magic/magic_block_mind.ogg', 75, FALSE)
 	if(!viewer.is_blind() && !IS_HERETIC_OR_MONSTER(viewer))
-		to_chat(viewer, span_danger("Your eyes sizzle in their sockets as eldritch energies assault them!"))
+		to_chat(viewer, span_danger(LOC_KEY("heretic-item-corrupt-eyes-sizzle")))
 		viewer.emote("scream")
 		viewer.add_mood_event("gates_of_mansus", /datum/mood_event/gates_of_mansus)
 		viewer.adjust_timed_status_effect(15 SECONDS, /datum/status_effect/speech/slurring/heretic)
@@ -115,7 +115,7 @@
 	extra_reagents.add_reagent(pick(extra_ingredients), amount_added)
 	extra_reagents.trans_to(human, amount_added, transferred_by = src, methods = INJECT)
 	if (prob(20))
-		to_chat(human, span_warning("As you take a sip, you feel something bubbling in your stomach..."))
+		to_chat(human, span_warning(LOC_KEY("heretic-item-corrupt-liver-sip")))
 
 
 /// Rapidly become hungry if you are not digesting blood
@@ -154,7 +154,7 @@
 		return
 
 	if (!thirst_satiated)
-		to_chat(source, span_cult_italic("The thirst is satisfied... for now."))
+		to_chat(source, span_cult_italic(LOC_KEY("heretic-item-corrupt-stomach-satisfied")))
 	thirst_satiated = TRUE
 	deltimer(thirst_timer)
 	thirst_timer = addtimer(VARSET_CALLBACK(src, thirst_satiated, FALSE), 3 MINUTES, TIMER_STOPPABLE | TIMER_DELETE_ME)
@@ -170,14 +170,14 @@
 	COOLDOWN_START(src, message_cooldown, 30 SECONDS)
 
 	var/static/list/blood_messages = list(
-		"Blood...",
-		"Everyone suddenly looks so tasty.",
-		"The blood...",
-		"There's an emptiness in you that only blood can fill.",
-		"You could really go for some blood right now.",
-		"You feel the blood rushing through your veins.",
-		"You think about biting someone's throat.",
-		"Your stomach growls and you feel a metallic taste in your mouth.",
+		LOC_KEY("heretic-item-stomach-blood-1"),
+		LOC_KEY("heretic-item-stomach-blood-2"),
+		LOC_KEY("heretic-item-stomach-blood-3"),
+		LOC_KEY("heretic-item-stomach-blood-4"),
+		LOC_KEY("heretic-item-stomach-blood-5"),
+		LOC_KEY("heretic-item-stomach-blood-6"),
+		LOC_KEY("heretic-item-stomach-blood-7"),
+		LOC_KEY("heretic-item-stomach-blood-8"),
 	)
 	to_chat(human, span_cult_italic(pick(blood_messages)))
 

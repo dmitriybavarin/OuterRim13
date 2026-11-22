@@ -11,6 +11,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend, useSharedState } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type byondRef = string;
@@ -45,6 +46,7 @@ type Data = {
 
 const ImplantDisplay = (props: { implant: ImplantInfo }) => {
   const { act } = useBackend<ImplantInfo>();
+  const t = useT();
   const { info, buttons, ref } = props.implant;
 
   return (
@@ -57,7 +59,7 @@ const ImplantDisplay = (props: { implant: ImplantInfo }) => {
             </LabeledList.Item>
           ))}
           {buttons.length !== 0 && (
-            <LabeledList.Item label={'Options'}>
+            <LabeledList.Item label={t('prisoners-options', {}, 'Options')}>
               {buttons.map((button) => (
                 <Button
                   key={button.action_key}
@@ -106,6 +108,7 @@ const formatCategory = (category: string) => {
 };
 
 const AllImplantDisplay = (props: { implants: ImplantInfo[] }) => {
+  const t = useT();
   const implantsByCategory: Record<string, ImplantInfo[]> = sortImplants(
     props.implants,
   );
@@ -136,7 +139,7 @@ const AllImplantDisplay = (props: { implants: ImplantInfo[] }) => {
             <ImplantDisplay key={implant.ref} implant={implant} />
           ))
         ) : (
-          <NoticeBox>No implants detected.</NoticeBox>
+          <NoticeBox>{t('prisoners-no-implants', {}, 'No implants detected.')}</NoticeBox>
         )}
       </Stack.Item>
     </Stack>
@@ -145,6 +148,7 @@ const AllImplantDisplay = (props: { implants: ImplantInfo[] }) => {
 
 const IdShowcase = (props: { id: IDInfo | null }) => {
   const { act } = useBackend<IDInfo>();
+  const t = useT();
   const { id } = props;
 
   return (
@@ -153,11 +157,11 @@ const IdShowcase = (props: { id: IDInfo | null }) => {
         <LabeledList>
           {id ? (
             <>
-              <LabeledList.Item label="ID">
+              <LabeledList.Item label={t('prisoners-id', {}, 'ID')}>
                 <Button onClick={() => act('eject_id')} icon="eject" mr={1} />
                 {id.name}
               </LabeledList.Item>
-              <LabeledList.Item label="Points">
+              <LabeledList.Item label={t('prisoners-points', {}, 'Points')}>
                 <Button
                   onClick={() => act('reset_id')}
                   icon="times"
@@ -166,7 +170,7 @@ const IdShowcase = (props: { id: IDInfo | null }) => {
                 />
                 {id.points}
               </LabeledList.Item>
-              <LabeledList.Item label="Goal">
+              <LabeledList.Item label={t('prisoners-goal', {}, 'Goal')}>
                 <Button
                   onClick={() => act('set_id_goal')}
                   icon="check"
@@ -176,8 +180,8 @@ const IdShowcase = (props: { id: IDInfo | null }) => {
               </LabeledList.Item>
             </>
           ) : (
-            <LabeledList.Item label="ID">
-              <Button onClick={() => act('insert_id')}>No ID Inserted</Button>
+            <LabeledList.Item label={t('prisoners-id', {}, 'ID')}>
+              <Button onClick={() => act('insert_id')}>{t('prisoners-no-id', {}, 'No ID Inserted')}</Button>
             </LabeledList.Item>
           )}
         </LabeledList>
@@ -185,8 +189,7 @@ const IdShowcase = (props: { id: IDInfo | null }) => {
       {!!id && (
         <Stack.Item>
           <NoticeBox>
-            Space Law recommends quotas of 100 points per minute they would
-            normally serve in the brig.
+            {t('prisoners-quota-hint', {}, 'Space Law recommends quotas of 100 points per minute they would normally serve in the brig.')}
           </NoticeBox>
         </Stack.Item>
       )}
@@ -196,22 +199,23 @@ const IdShowcase = (props: { id: IDInfo | null }) => {
 
 const ManagementConsole = () => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
 
   return (
     <Stack fill vertical>
       <Stack.Item>
-        <Section title="ID Management">
+        <Section title={t('prisoners-id-management', {}, 'ID Management')}>
           <IdShowcase id={data.inserted_id} />
         </Section>
       </Stack.Item>
       <Stack.Item grow>
-        <Section title="Security Implants" scrollable fill>
+        <Section title={t('prisoners-implants', {}, 'Security Implants')} scrollable fill>
           <AllImplantDisplay implants={data.implants} />
         </Section>
       </Stack.Item>
       <Stack.Item>
         <NoticeBox align="right" info>
-          Secure Your Workspace.
+          {t('prisoners-secure', {}, 'Secure Your Workspace.')}
           <Button
             align="right"
             icon="lock"
@@ -219,7 +223,7 @@ const ManagementConsole = () => {
             ml={2}
             onClick={() => act('logout')}
           >
-            Log Out
+            {t('prisoners-logout', {}, 'Log Out')}
           </Button>
         </NoticeBox>
       </Stack.Item>
@@ -231,6 +235,7 @@ const ManagementConsole = () => {
 // should probably make this a generic component
 const LogIn = () => {
   const { act } = useBackend<Data>();
+  const t = useT();
 
   return (
     <Section fill>
@@ -241,14 +246,14 @@ const LogIn = () => {
         </Stack.Item>
         <Stack.Item align="center" grow>
           <Box color="red" fontSize="18px" bold mt={5}>
-            Nanotrasen SecurityHUB
+            {t('prisoners-hub', {}, 'Nanotrasen SecurityHUB')}
           </Box>
         </Stack.Item>
         <Stack.Item>
           <NoticeBox align="right">
-            You are not logged in.
+            {t('prisoners-not-logged-in', {}, 'You are not logged in.')}
             <Button ml={2} icon="lock-open" onClick={() => act('login')}>
-              Login
+              {t('prisoners-login', {}, 'Login')}
             </Button>
           </NoticeBox>
         </Stack.Item>
@@ -259,9 +264,10 @@ const LogIn = () => {
 
 export const PrisonerManagement = () => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { authorized } = data;
   return (
-    <Window width={465} height={565} title="Prisoner Management">
+    <Window width={465} height={565} title={t('prisoners-title', {}, 'Prisoner Management')}>
       <Window.Content>
         {authorized ? <ManagementConsole /> : <LogIn />}
       </Window.Content>

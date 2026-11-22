@@ -12,7 +12,7 @@ lathe-material-plastitanium_glass = пластитановое стекло
 
 lathe-material-alien_alloy = чужеродный сплав
 
-lathe-material-iron = железо
+lathe-material-iron = сталь
 
 lathe-material-glass = стекло
 

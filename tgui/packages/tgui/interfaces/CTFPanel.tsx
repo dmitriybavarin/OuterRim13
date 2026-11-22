@@ -2,6 +2,7 @@ import { Box, Button, Flex, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { slugify, useT } from '../i18n';
 import { Window } from '../layouts';
 
 type CTFPanelData =
@@ -22,33 +23,52 @@ type CTFPanelData =
 
 export const CTFPanel = (props) => {
   const { act, data } = useBackend<CTFPanelData>();
+  const t = useT();
 
   return (
-    <Window title="CTF Panel" width={700} height={600}>
+    <Window title={t('ctf-title', {}, 'CTF Panel')} width={700} height={600}>
       <Window.Content scrollable>
         {'teams' in data ? (
           <Flex align="center" wrap="wrap" textAlign="center" m={-0.5}>
             {data.teams.map((team) => (
               <Flex.Item key={team.name} width="49%" m={0.5} mb={8}>
-                <Section key={team.name} title={`${team.color} Team`}>
+                <Section key={team.name} title={t(
+                    'ctf-team',
+                    {
+                      color: t(
+                        `ctf-color-${slugify(team.color)}`,
+                        {},
+                        team.color,
+                      ),
+                    },
+                    `${team.color} Team`,
+                  )}>
                   <Stack fill mb={1}>
                     <Stack.Item grow>
                       <Box>
-                        <b>{team.team_size}</b> member
-                        {team.team_size === 1 ? '' : 's'}
+                        <b>{team.team_size}</b>{' '}
+                        {t(
+                          'ctf-members',
+                          { count: team.team_size },
+                          team.team_size === 1 ? 'member' : 'members',
+                        )}
                       </Box>
                     </Stack.Item>
 
                     <Stack.Item grow>
                       <Box>
-                        <b>{team.score}</b> point
-                        {team.score === 1 ? '' : 's'}
+                        <b>{team.score}</b>{' '}
+                        {t(
+                          'ctf-points',
+                          { count: team.score },
+                          team.score === 1 ? 'point' : 'points',
+                        )}
                       </Box>
                     </Stack.Item>
                   </Stack>
 
                   <Button
-                    content="Jump"
+                    content={t('ctf-jump', {}, 'Jump')}
                     fontSize="18px"
                     fluid
                     color={team.color.toLowerCase()}
@@ -60,7 +80,7 @@ export const CTFPanel = (props) => {
                   />
 
                   <Button
-                    content="Join"
+                    content={t('ctf-join', {}, 'Join')}
                     fontSize="18px"
                     fluid
                     color={team.color.toLowerCase()}
@@ -82,7 +102,7 @@ export const CTFPanel = (props) => {
               </Box>
               <br />
               <Box fontSize="30px" textAlign="center">
-                CTF voters
+                {t('ctf-voters', {}, 'CTF voters')}
               </Box>
             </Stack.Item>
 
@@ -98,7 +118,9 @@ export const CTFPanel = (props) => {
                   }
                 }}
               >
-                {data.voted ? 'Unvote for CTF' : 'Vote for CTF'}
+                {data.voted
+                  ? t('ctf-unvote', {}, 'Unvote for CTF')
+                  : t('ctf-vote', {}, 'Vote for CTF')}
               </Button>
             </Stack.Item>
           </Stack>

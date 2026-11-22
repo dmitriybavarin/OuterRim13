@@ -27,8 +27,10 @@ import {
 
 import { resolveAsset } from '../assets';
 import { useBackend } from '../backend';
+import { adminVerbCategoryKey, adminVerbKey, useT } from '../i18n';
 import { Window } from '../layouts';
 
+const NONE_OPTION = '\0none';
 const STORAGE_FAVOURITES = 'adminverbpanel-favourites';
 const STORAGE_USER_CATEGORIES = 'adminverbpanel-user-categories';
 const STORAGE_SELECTED_CATEGORY = 'adminverbpanel-selected-category';
@@ -73,6 +75,10 @@ function isPrimitiveArg(arg: VerbArgument): boolean {
 export function AdminVerbPanel() {
   const { act, data } = useBackend<Data>();
   const { verbs = [], categories = [], targets = [] } = data;
+  const t = useT();
+  const verbLabel = (name: string) => t(adminVerbKey(name), {}, name);
+  const categoryLabel = (name: string) =>
+    t(adminVerbCategoryKey(name), {}, name);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === '`') {
@@ -157,15 +163,18 @@ export function AdminVerbPanel() {
   };
 
   const filteredVerbs = searchText
-    ? verbs.filter((verb) =>
-        verb.name.toLowerCase().includes(searchText.toLowerCase()),
+    ? verbs.filter(
+        (verb) =>
+          verb.name.toLowerCase().includes(searchText.toLowerCase()) ||
+          verbLabel(verb.name).toLowerCase().includes(searchText.toLowerCase()),
       )
     : verbs;
 
-  const filteredTargets = targets.filter((t) =>
+  const filteredTargets = targets.filter((target) =>
     targetSearch
-      ? t.name.toLowerCase().includes(targetSearch.toLowerCase()) ||
-        (t.ckey?.toLowerCase().includes(targetSearch.toLowerCase()) ?? false)
+      ? target.name.toLowerCase().includes(targetSearch.toLowerCase()) ||
+        (target.ckey?.toLowerCase().includes(targetSearch.toLowerCase()) ??
+          false)
       : true,
   );
 
@@ -261,11 +270,16 @@ export function AdminVerbPanel() {
   const visibleVerbs = getVisibleVerbs();
 
   return (
-    <Window title="Admin Verb Panel" width={800} height={520} theme="admin">
+    <Window
+      title={t('adminverb-title', {}, 'Admin Verb Panel')}
+      width={800}
+      height={520}
+      theme="admin"
+    >
       <Window.Content>
         <Stack fill>
           <Stack.Item basis="140px">
-            <Section fill scrollable title="Categories">
+            <Section fill scrollable title={t('adminverb-categories', {}, 'Categories')}>
               {userCategories.map((cat) => (
                 <Stack key={cat} align="center">
                   <Stack.Item grow>
@@ -303,7 +317,7 @@ export function AdminVerbPanel() {
                     setSelectedTarget(null);
                   }}
                 >
-                  Favourites
+                  {t('adminverb-favourites', {}, 'Favourites')}
                 </Button>
               )}
               {(hasFavourites || userCategories.length > 0) && (
@@ -329,7 +343,7 @@ export function AdminVerbPanel() {
                     setSelectedTarget(null);
                   }}
                 >
-                  {cat}
+                  {categoryLabel(cat)}
                 </Button>
               ))}
               <Box mt={1}>
@@ -337,7 +351,7 @@ export function AdminVerbPanel() {
                   <Stack.Item grow>
                     <Input
                       fluid
-                      placeholder="New category..."
+                      placeholder={t('adminverb-new-category', {}, 'New category...')}
                       value={newCategoryName}
                       onChange={setNewCategoryName}
                       onEnter={addUserCategory}
@@ -360,7 +374,7 @@ export function AdminVerbPanel() {
               <Stack.Item>
                 <Input
                   fluid
-                  placeholder="Search..."
+                  placeholder={t('adminverb-search', {}, 'Search...')}
                   value={searchText}
                   onChange={(val: string) => {
                     setSearchText(val);
@@ -384,7 +398,7 @@ export function AdminVerbPanel() {
                         onClick={() => selectVerb(verb)}
                         style={{ flex: '1 1 0', minWidth: 0 }}
                       >
-                        {verb.name}
+                        {verbLabel(verb.name)}
                       </Button>
                       <Button
                         icon="star"
@@ -411,10 +425,10 @@ export function AdminVerbPanel() {
                   <Section
                     fill
                     scrollable
-                    title="Target"
+                    title={t('adminverb-target', {}, 'Target')}
                     buttons={
                       <Input
-                        placeholder="Filter..."
+                        placeholder={t('adminverb-filter', {}, 'Filter...')}
                         value={targetSearch}
                         onChange={setTargetSearch}
                         width="120px"
@@ -423,31 +437,37 @@ export function AdminVerbPanel() {
                   >
                     <Table>
                       <Table.Row header>
-                        <Table.Cell>Name</Table.Cell>
-                        {isMobList && <Table.Cell>Job</Table.Cell>}
-                        {isMobList && <Table.Cell>CKey</Table.Cell>}
+                        <Table.Cell>{t('adminverb-col-name', {}, 'Name')}</Table.Cell>
+                        {isMobList && (
+                          <Table.Cell>{t('adminverb-col-job', {}, 'Job')}</Table.Cell>
+                        )}
+                        {isMobList && (
+                          <Table.Cell>
+                            {t('adminverb-col-ckey', {}, 'CKey')}
+                          </Table.Cell>
+                        )}
                       </Table.Row>
-                      {filteredTargets.map((t) => (
+                      {filteredTargets.map((target) => (
                         <Table.Row
-                          key={t.ref}
+                          key={target.ref}
                           className={
-                            selectedTarget === t.ref ? 'candystripe' : undefined
+                            selectedTarget === target.ref ? 'candystripe' : undefined
                           }
-                          onClick={() => setSelectedTarget(t.ref)}
+                          onClick={() => setSelectedTarget(target.ref)}
                         >
                           <Table.Cell>
                             <Box
-                              bold={selectedTarget === t.ref}
+                              bold={selectedTarget === target.ref}
                               color={
-                                selectedTarget === t.ref ? 'good' : undefined
+                                selectedTarget === target.ref ? 'good' : undefined
                               }
                             >
-                              {t.name}
+                              {target.name}
                             </Box>
                           </Table.Cell>
-                          {isMobList && <Table.Cell>{t.job}</Table.Cell>}
+                          {isMobList && <Table.Cell>{target.job}</Table.Cell>}
                           {isMobList && (
-                            <Table.Cell color="label">{t.ckey}</Table.Cell>
+                            <Table.Cell color="label">{target.ckey}</Table.Cell>
                           )}
                         </Table.Row>
                       ))}
@@ -460,7 +480,7 @@ export function AdminVerbPanel() {
                   <Section
                     fill
                     scrollable={false}
-                    title={selectedVerb.name}
+                    title={verbLabel(selectedVerb.name)}
                     buttons={
                       <>
                         {selectedVerb.type in favourites &&
@@ -472,14 +492,14 @@ export function AdminVerbPanel() {
                               }}
                             >
                               <Dropdown
-                                options={['None', ...userCategories]}
+                                options={[NONE_OPTION, ...userCategories]}
                                 selected={
-                                  favourites[selectedVerb.type] || 'None'
+                                  favourites[selectedVerb.type] || NONE_OPTION
                                 }
                                 onSelected={(val: string) =>
                                   assignVerbCategory(
                                     selectedVerb.type,
-                                    val === 'None' ? '' : val,
+                                    val === NONE_OPTION ? '' : val,
                                   )
                                 }
                                 width="100px"
@@ -526,7 +546,9 @@ export function AdminVerbPanel() {
                   </Section>
                 ) : (
                   <Section fill>
-                    <Box color="label">Select a verb from the list.</Box>
+                    <Box color="label">
+                      {t('adminverb-select', {}, 'Select a verb from the list.')}
+                    </Box>
                   </Section>
                 )}
               </Stack.Item>
@@ -546,6 +568,7 @@ type ArgInputProps = {
 
 function ArgInput(props: ArgInputProps) {
   const { arg, value, onChange } = props;
+  const t = useT();
 
   if (arg.arg_type & ARG_TYPE_NUM) {
     return (
@@ -615,14 +638,14 @@ function ArgInput(props: ArgInputProps) {
     return (
       <Stack align="center">
         <Stack.Item basis="100px">{arg.name}</Stack.Item>
-        <Stack.Item color="label">Sound input not yet supported</Stack.Item>
+        <Stack.Item color="label">{t('adminverb-sound-unsupported', {}, 'Sound input not yet supported')}</Stack.Item>
       </Stack>
     );
   }
   return (
     <Stack align="center">
       <Stack.Item basis="100px">{arg.name}</Stack.Item>
-      <Stack.Item color="label">Unknown arg type</Stack.Item>
+      <Stack.Item color="label">{t('adminverb-unknown-arg', {}, 'Unknown arg type')}</Stack.Item>
     </Stack>
   );
 }

@@ -19,6 +19,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { capitalize } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import type { Beaker, BeakerReagent } from './common/BeakerDisplay';
 
@@ -96,6 +97,7 @@ const ChemMasterContent = (props: {
   analyze: (chemical: AnalyzableReagent) => void;
 }) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     isPrinting,
     customTransferAmount,
@@ -121,13 +123,17 @@ const ChemMasterContent = (props: {
   return (
     <Box>
       <Section
-        title="Beaker"
+        title={t('chemmaster-beaker', {}, 'Beaker')}
         buttons={
           beaker ? (
             <Box>
               <Box inline color="label" mr={2}>
                 <AnimatedNumber value={beaker.currentVolume} initial={0} />
-                {` / ${beaker.maxVolume} units`}
+                {` / ${t(
+                  'chemmaster-units',
+                  { count: beaker.maxVolume },
+                  `${beaker.maxVolume} units`,
+                )}`}
               </Box>
               <Box inline color="label" mr={2}>
                 <NumberInput
@@ -146,7 +152,7 @@ const ChemMasterContent = (props: {
                 />
               </Box>
               <Button icon="eject" onClick={() => act('eject')}>
-                Eject
+                {t('chemmaster-eject', {}, 'Eject')}
               </Button>
             </Box>
           ) : (
@@ -157,22 +163,27 @@ const ChemMasterContent = (props: {
                 opacity: hasBeakerInHand ? 1 : 0.5,
               }}
               tooltip={
-                !hasBeakerInHand && 'You need to hold a container in your hand'
+                !hasBeakerInHand &&
+                t(
+                  'chemmaster-hold-container',
+                  {},
+                  'You need to hold a container in your hand',
+                )
               }
               tooltipPosition="bottom-start"
             >
-              Insert
+              {t('chemmaster-insert', {}, 'Insert')}
             </Button>
           )
         }
       >
         {!beaker ? (
           <Box color="label" my={'4px'}>
-            No beaker loaded.
+            {t('chemmaster-no-beaker', {}, 'No beaker loaded.')}
           </Box>
         ) : beaker.currentVolume === 0 ? (
           <Box color="label" my={'4px'}>
-            Beaker is empty.
+            {t('chemmaster-beaker-empty', {}, 'Beaker is empty.')}
           </Box>
         ) : (
           <Table>
@@ -188,26 +199,32 @@ const ChemMasterContent = (props: {
         )}
       </Section>
       <Section
-        title="Buffer"
+        title={t('chemmaster-buffer', {}, 'Buffer')}
         buttons={
           <>
             <Box inline color="label" mr={1}>
               <AnimatedNumber value={buffer.currentVolume} initial={0} />
-              {` / ${buffer.maxVolume} units`}
+              {` / ${t(
+                'chemmaster-units',
+                { count: buffer.maxVolume },
+                `${buffer.maxVolume} units`,
+              )}`}
             </Box>
             <Button
               color={isTransfering ? 'good' : 'bad'}
               icon={isTransfering ? 'exchange-alt' : 'trash'}
               onClick={() => act('toggleTransferMode')}
             >
-              {isTransfering ? 'Moving reagents' : 'Destroying reagents'}
+              {isTransfering
+                ? t('chemmaster-moving', {}, 'Moving reagents')
+                : t('chemmaster-destroying', {}, 'Destroying reagents')}
             </Button>
           </>
         }
       >
         {buffer_contents.length === 0 ? (
           <Box color="label" my={'4px'}>
-            Buffer is empty.
+            {t('chemmaster-buffer-empty', {}, 'Buffer is empty.')}
           </Box>
         ) : (
           <Table>
@@ -224,7 +241,7 @@ const ChemMasterContent = (props: {
       </Section>
       {!isPrinting && (
         <Section
-          title="Packaging"
+          title={t('chemmaster-packaging', {}, 'Packaging')}
           buttons={
             buffer_contents.length !== 0 && (
               <Box>
@@ -234,10 +251,10 @@ const ChemMasterContent = (props: {
                     setShowPreferredContainer((currentValue) => !currentValue)
                   }
                 >
-                  Suggest
+                  {t('chemmaster-suggest', {}, 'Suggest')}
                 </Button.Checkbox>
                 <NumberInput
-                  unit={'items'}
+                  unit={t('chemmaster-unit-items', {}, 'items')}
                   step={1}
                   value={itemCount}
                   minValue={1}
@@ -261,14 +278,26 @@ const ChemMasterContent = (props: {
                   />
                 )}
                 <Box inline mx={1}>
-                  {`${
-                    Math.round(
-                      Math.min(
-                        selectedContainerVolume,
-                        buffer.currentVolume / itemCount,
-                      ) * 100,
-                    ) / 100
-                  } u. each`}
+                  {t(
+                    'chemmaster-each',
+                    {
+                      amount:
+                        Math.round(
+                          Math.min(
+                            selectedContainerVolume,
+                            buffer.currentVolume / itemCount,
+                          ) * 100,
+                        ) / 100,
+                    },
+                    `${
+                      Math.round(
+                        Math.min(
+                          selectedContainerVolume,
+                          buffer.currentVolume / itemCount,
+                        ) * 100,
+                      ) / 100
+                    } u. each`,
+                  )}
                 </Box>
                 <Button
                   icon="flask"
@@ -278,7 +307,7 @@ const ChemMasterContent = (props: {
                     })
                   }
                 >
-                  Print
+                  {t('chemmaster-print', {}, 'Print')}
                 </Button>
               </Box>
             )
@@ -301,14 +330,14 @@ const ChemMasterContent = (props: {
       )}
       {!!isPrinting && (
         <Section
-          title="Printing"
+          title={t('chemmaster-printing', {}, 'Printing')}
           buttons={
             <Button
               color="bad"
               icon="times"
               onClick={() => act('stopPrinting')}
             >
-              Stop
+              {t('chemmaster-stop', {}, 'Stop')}
             </Button>
           }
         >
@@ -324,7 +353,11 @@ const ChemMasterContent = (props: {
                 textShadow: '1px 1px 0 black',
               }}
             >
-              {`Printing ${printingProgress} out of ${printingTotal}`}
+              {t(
+                'chemmaster-printing-progress',
+                { current: printingProgress, total: printingTotal },
+                `Printing ${printingProgress} out of ${printingTotal}`,
+              )}
             </Box>
           </ProgressBar>
         </Section>
@@ -341,6 +374,7 @@ type ReagentProps = {
 
 const ReagentEntry = (props: ReagentProps) => {
   const { data, act } = useBackend<Data>();
+  const t = useT();
   const { chemical, transferTo, analyze } = props;
   const { isPrinting, customTransferAmount } = data;
   return (
@@ -409,11 +443,11 @@ const ReagentEntry = (props: ReagentProps) => {
             })
           }
         >
-          All
+          {t('chemmaster-all', {}, 'All')}
         </Button>
         <Button
           icon="ellipsis-h"
-          tooltip="Custom amount"
+          tooltip={t('chemmaster-custom-amount', {}, 'Custom amount')}
           disabled={isPrinting}
           onClick={() =>
             act('transfer', {
@@ -425,7 +459,7 @@ const ReagentEntry = (props: ReagentProps) => {
         />
         <Button
           icon="question"
-          tooltip="Analyze"
+          tooltip={t('chemmaster-analyze', {}, 'Analyze')}
           onClick={() => analyze(chemical)}
         />
       </Table.Cell>
@@ -482,6 +516,7 @@ const AnalysisResults = (props: {
   analysisData: AnalyzableReagent;
   onExit: () => void;
 }) => {
+  const t = useT();
   const {
     name,
     pH,
@@ -498,39 +533,57 @@ const AnalysisResults = (props: {
 
   return (
     <Section
-      title="Analysis Results"
+      title={t('chemmaster-analysis-results', {}, 'Analysis Results')}
       buttons={
         <Button icon="arrow-left" onClick={() => props.onExit()}>
-          Back
+          {t('chemmaster-back', {}, 'Back')}
         </Button>
       }
     >
       <LabeledList>
-        <LabeledList.Item label="Name">{name}</LabeledList.Item>
-        <LabeledList.Item label="Purity">
+        <LabeledList.Item label={t('chemmaster-name', {}, 'Name')}>{name}</LabeledList.Item>
+        <LabeledList.Item label={t('chemmaster-purity', {}, 'Purity')}>
           <Box
             style={{
               textTransform: 'capitalize',
             }}
             color={purityLevel}
           >
-            {purityLevel}
+            {t(`chemmaster-purity-${purityLevel}`, {}, purityLevel)}
           </Box>
         </LabeledList.Item>
         <LabeledList.Item label="pH">{pH}</LabeledList.Item>
-        <LabeledList.Item label="Color">
+        <LabeledList.Item label={t('chemmaster-color', {}, 'Color')}>
           <ColorBox color={color} mr={1} />
           {color}
         </LabeledList.Item>
-        <LabeledList.Item label="Description">{description}</LabeledList.Item>
-        <LabeledList.Item label="Metabolization Rate">
-          {metaRate} units/second
+        <LabeledList.Item
+          label={t('chemmaster-description', {}, 'Description')}
+        >
+          {description}
         </LabeledList.Item>
-        <LabeledList.Item label="Overdose Threshold">
-          {overdose > 0 ? `${overdose} units` : 'N/A'}
+        <LabeledList.Item
+          label={t('chemmaster-metabolization-rate', {}, 'Metabolization Rate')}
+        >
+          {t(
+            'chemmaster-units-per-second',
+            { count: metaRate },
+            `${metaRate} units/second`,
+          )}
         </LabeledList.Item>
-        <LabeledList.Item label="Addiction Types">
-          {addictionTypes.length ? addictionTypes.toString() : 'N/A'}
+        <LabeledList.Item
+          label={t('chemmaster-overdose-threshold', {}, 'Overdose Threshold')}
+        >
+          {overdose > 0
+            ? t('chemmaster-units', { count: overdose }, `${overdose} units`)
+            : t('chemmaster-not-applicable', {}, 'N/A')}
+        </LabeledList.Item>
+        <LabeledList.Item
+          label={t('chemmaster-addiction-types', {}, 'Addiction Types')}
+        >
+          {addictionTypes.length
+            ? addictionTypes.toString()
+            : t('chemmaster-not-applicable', {}, 'N/A')}
         </LabeledList.Item>
       </LabeledList>
     </Section>

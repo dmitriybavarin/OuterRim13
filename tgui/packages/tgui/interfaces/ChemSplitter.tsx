@@ -2,6 +2,7 @@ import { LabeledList, NumberInput, Section } from 'tgui-core/components';
 import { toFixed } from 'tgui-core/math';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -13,6 +14,7 @@ type Data = {
 
 export const ChemSplitter = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { straight, left, right, max_transfer } = data;
 
   return (
@@ -20,7 +22,7 @@ export const ChemSplitter = (props) => {
       <Window.Content>
         <Section>
           <LabeledList>
-            <LabeledList.Item label="Straight">
+            <LabeledList.Item label={t('chemsplitter-straight', {}, 'Straight')}>
               <NumberInput
                 value={straight}
                 unit="u"
@@ -38,7 +40,7 @@ export const ChemSplitter = (props) => {
                 }
               />
             </LabeledList.Item>
-            <LabeledList.Item label="Left">
+            <LabeledList.Item label={t('chemsplitter-left', {}, 'Left')}>
               <NumberInput
                 value={left}
                 unit="u"
@@ -56,7 +58,7 @@ export const ChemSplitter = (props) => {
                 }
               />
             </LabeledList.Item>
-            <LabeledList.Item label="Right">
+            <LabeledList.Item label={t('chemsplitter-right', {}, 'Right')}>
               <NumberInput
                 value={right}
                 unit="u"

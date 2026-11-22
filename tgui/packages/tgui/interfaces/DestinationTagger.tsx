@@ -3,6 +3,7 @@ import { map } from 'es-toolkit/compat';
 import { Button, Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type DestinationTaggerData = {
@@ -41,9 +42,10 @@ const sortDestinations = (locations: string[]): DestinationInfo[] => {
 export const DestinationTagger = (props) => {
   const { act, data } = useBackend<DestinationTaggerData>();
   const { locations, currentTag } = data;
+  const t = useT();
 
   return (
-    <Window theme="retro" title="TagMaster 2.4" width={420} height={500}>
+    <Window theme="retro" title={t('destinationtagger-title', {}, 'TagMaster 2.4')} width={420} height={500}>
       <Window.Content>
         <Stack fill vertical>
           <Stack.Item grow>
@@ -52,8 +54,12 @@ export const DestinationTagger = (props) => {
               scrollable
               title={
                 !currentTag
-                  ? 'Please Select A Location'
-                  : `Current Destination: ${locations[currentTag - 1]}`
+                  ? t('destinationtagger-select', {}, 'Please Select A Location')
+                  : t(
+                      'destinationtagger-current',
+                      { destination: locations[currentTag - 1] },
+                      'Current Destination: { $destination }',
+                    )
               }
             >
               {sortDestinations(locations).map((location) => {

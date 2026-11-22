@@ -1,6 +1,7 @@
 import { Box, Button, Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -13,11 +14,12 @@ type Data = {
 
 export const Folder = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { theme, bg_color, folder_name, contents, contents_ref } = data;
 
   return (
     <Window
-      title={folder_name || 'Folder'}
+      title={folder_name || t('folder-title', {}, 'Folder')}
       theme={theme}
       width={400}
       height={500}
@@ -26,7 +28,7 @@ export const Folder = (props) => {
         {!contents.length && (
           <Section>
             <Box color="lightgrey" align="center">
-              This folder is empty!
+              {t('folder-empty', {}, 'This folder is empty!')}
             </Box>
           </Section>
         )}

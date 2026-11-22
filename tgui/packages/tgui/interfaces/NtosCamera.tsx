@@ -10,6 +10,7 @@ import {
 } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { NtosWindow } from '../layouts';
 
 type NtosCameraCommonData = {
@@ -66,6 +67,7 @@ export const NtosCameraContent = (props) => {
     caption,
     storedPaper,
   } = data;
+  const t = useT();
 
   return (
     <Stack fill vertical width="100%">
@@ -83,7 +85,7 @@ export const NtosCameraContent = (props) => {
           </Stack.Item>
           <Stack.Item>
             <Box bold textColor="label">
-              Name:
+              {t('ntoscamera-name', {}, 'Name:')}
             </Box>
             <Input
               fluid
@@ -99,7 +101,7 @@ export const NtosCameraContent = (props) => {
           </Stack.Item>
           <Stack.Item>
             <Box bold textColor="label">
-              Description:
+              {t('ntoscamera-description', {}, 'Description:')}
             </Box>
             <Input
               fluid
@@ -115,7 +117,7 @@ export const NtosCameraContent = (props) => {
           </Stack.Item>
           <Stack.Item>
             <Box bold textColor="label">
-              Caption:
+              {t('ntoscamera-caption', {}, 'Caption:')}
             </Box>
             <TextArea
               height="6rem"
@@ -131,33 +133,42 @@ export const NtosCameraContent = (props) => {
             />
           </Stack.Item>
           <Stack.Item align="center">
-            <Button onClick={() => act('savePhoto')}>Save Photo</Button>
+            <Button onClick={() => act('savePhoto')}>
+              {t('ntoscamera-save', {}, 'Save Photo')}
+            </Button>
           </Stack.Item>
           <Stack.Item align="center">
             <Button
               disabled={storedPaper! < printCost}
               tooltip={
                 !storedPaper &&
-                `You need at least ${printCost} sheet${printCost === 1 ? '' : 's'} of paper to print a photo.`
+                t(
+                  'ntoscamera-print-need-paper',
+                  { count: printCost },
+                  `You need at least ${printCost} sheet${printCost === 1 ? '' : 's'} of paper to print a photo.`,
+                )
               }
               onClick={() => act('printPhoto')}
             >
-              Print Photo
+              {t('ntoscamera-print', {}, 'Print Photo')}
             </Button>
           </Stack.Item>
         </>
       ) : (
         <Stack.Item>
           <NoticeBox>
-            Phototrasen Images - Tap (right-click) with your tablet to snap a
-            photo!
+            {t(
+              'ntoscamera-hint',
+              {},
+              'Phototrasen Images - Tap (right-click) with your tablet to snap a photo!',
+            )}
           </NoticeBox>
         </Stack.Item>
       )}
       <Stack.Item align="center">{size}</Stack.Item>
       <Stack.Item align="center">
         <Box bold inline textColor="label" mr="0.5rem">
-          Half Width Aperture:
+          {t('ntoscamera-half-width', {}, 'Half Width Aperture:')}
         </Box>
         <Slider
           inline
@@ -174,7 +185,7 @@ export const NtosCameraContent = (props) => {
       </Stack.Item>
       <Stack.Item align="center">
         <Box bold inline textColor="label" mr="0.5rem">
-          Half Height Aperture:
+          {t('ntoscamera-half-height', {}, 'Half Height Aperture:')}
         </Box>
         <Slider
           inline

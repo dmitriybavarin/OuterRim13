@@ -2,6 +2,7 @@ import { Box, Button, Divider, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -50,12 +51,13 @@ export const Blueprints = () => {
 
 const WireList = () => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { wire_devices = [] } = data;
 
   return (
     <Section>
       <Button fluid icon="chevron-left" onClick={() => act('exit_legend')}>
-        Back
+        {t('blueprints-back', {}, 'Back')}
       </Button>
       <Stack fill wrap g={0.5} mt={1}>
         {wire_devices.map((wire) => (
@@ -80,14 +82,21 @@ const WireList = () => {
 
 const WireArea = () => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { wires_name, wire_data = [] } = data;
 
   return (
     <Section>
       <Button fluid icon="chevron-left" onClick={() => act('view_legend')}>
-        Back
+        {t('blueprints-back', {}, 'Back')}
       </Button>
-      <Box bold>{wires_name} wires:</Box>
+      <Box bold>
+        {t(
+          'blueprints-wires',
+          { name: wires_name },
+          `${wires_name} wires:`,
+        )}
+      </Box>
       {wire_data.map((wire) => (
         <Box ml={1} m={1} key={wire.message}>
           <span style={{ color: wire.color }}>{wire.color}</span>:{' '}
@@ -100,6 +109,7 @@ const WireArea = () => {
 
 const MainMenu = () => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     area_notice,
     area_name,
@@ -116,7 +126,13 @@ const MainMenu = () => {
   };
 
   return (
-    <Section title={`${station_name} blueprints`}>
+    <Section
+      title={t(
+        'blueprints-title',
+        { station: station_name },
+        `${station_name} blueprints`,
+      )}
+    >
       <Box italic fontSize={0.9}>
         {fluff_notice}
       </Box>
@@ -131,12 +147,12 @@ const MainMenu = () => {
             icon="pencil"
             onClick={() => act('create_area')}
           >
-            Create or modify an existing area
+            {t('blueprints-create', {}, 'Create or modify an existing area')}
           </Button>
         </Stack.Item>
         <Stack.Item>
           <Button {...buttonProps} icon="font" onClick={() => act('edit_area')}>
-            Change area name
+            {t('blueprints-rename', {}, 'Change area name')}
           </Button>
         </Stack.Item>
         <Stack.Item>
@@ -146,7 +162,7 @@ const MainMenu = () => {
             iconPosition="right"
             onClick={() => act('toggle_allow_shuttle_docking')}
           >
-            Allow shuttle docking
+            {t('blueprints-docking', {}, 'Allow shuttle docking')}
           </Button>
         </Stack.Item>
         <Stack.Item>
@@ -155,7 +171,7 @@ const MainMenu = () => {
             icon="chevron-right"
             onClick={() => act('view_legend')}
           >
-            View wire color legend
+            {t('blueprints-legend', {}, 'View wire color legend')}
           </Button>
         </Stack.Item>
         <Stack.Item>
@@ -169,7 +185,9 @@ const MainMenu = () => {
                   act(viewing ? 'hide_blueprints' : 'view_blueprints')
                 }
               >
-                {viewing ? 'Hide' : 'View'} structural data
+                {viewing
+                  ? t('blueprints-hide-structural', {}, 'Hide structural data')
+                  : t('blueprints-view-structural', {}, 'View structural data')}
               </Button>
             </Stack.Item>
             {!!viewing && (
@@ -178,7 +196,11 @@ const MainMenu = () => {
                   {...buttonProps}
                   p={0.75}
                   icon="refresh"
-                  tooltip="Refresh structural data"
+                  tooltip={t(
+                    'blueprints-refresh',
+                    {},
+                    'Refresh structural data',
+                  )}
                   onClick={() => act('refresh')}
                 />
               </Stack.Item>

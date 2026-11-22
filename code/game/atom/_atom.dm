@@ -893,7 +893,7 @@
 	var/shift_lmb_ctrl_shift_lmb_line = ""
 	var/extra_lines = 0
 	var/extra_context = ""
-	var/used_name = loc_entity(src, name)
+	var/used_name = get_screentip_name()
 
 	if(isliving(user) || isovermind(user) || iscameramob(user) || (ghost_screentips && isobserver(user)))
 		var/obj/item/held_item = user.get_active_held_item()
@@ -966,6 +966,8 @@
 					extra_context = "<br><span class='subcontext'>[lmb_rmb_line][ctrl_lmb_ctrl_rmb_line][alt_lmb_alt_rmb_line][shift_lmb_ctrl_shift_lmb_line]</span>"
 
 	used_name = localize_for(client, used_name)
+	if(extra_context != "")
+		extra_context = localize_for(client, extra_context)
 
 	var/new_maptext
 	if (screentips_enabled == SCREENTIP_PREFERENCE_CONTEXT_ONLY && extra_context == "")
@@ -980,6 +982,9 @@
 
 	active_hud.screentip_text.maptext = new_maptext
 	active_hud.screentip_text.maptext_y = 10 - (extra_lines > 0 ? 11 + 9 * (extra_lines - 1): 0)
+
+/atom/proc/get_screentip_name()
+	return loc_entity(src, name)
 
 /atom/proc/set_hover_maptext(client/client, datum/hud/active_hud, new_maptext)
 	usr = null // we are sticking `usr = null` on anything with MeasureText now.

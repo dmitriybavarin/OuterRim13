@@ -57,18 +57,18 @@
 	if(wearer.stat == STABLE)
 		save_count += 1
 		if(prob(25 * save_count))
-			to_chat(wearer, span_mansus("[src] withers away."))
+			to_chat(wearer, span_mansus(loc_key("heretic-item-poppy-withers", list(item = src))))
 			burn()
 
 	else if(SPT_PROB(33, seconds_per_tick))
 		new /obj/effect/temp_visual/heal(get_turf(src), pick(COLOR_PINK, COLOR_YELLOW))
 		if(prob(20))
-			wearer.visible_message(span_mansus("The petals of [wearer]'s [name] glow faintly."))
+			wearer.visible_message(span_mansus(loc_key("heretic-item-poppy-glow-worn", list(wearer = wearer, name = loc_entity(src, name)))))
 
 /obj/item/food/grown/flower/poppy/blessed/proc/heal_limb(seconds_per_tick)
 	var/obj/item/bodypart/limb = loc
 	if(!length(limb.wounds))
-		to_chat(limb.owner, span_mansus("[src] withers away."))
+		to_chat(limb.owner, span_mansus(loc_key("heretic-item-poppy-withers", list(item = src))))
 		burn()
 		return
 
@@ -94,7 +94,7 @@
 	if(healed && SPT_PROB(33, seconds_per_tick))
 		new /obj/effect/temp_visual/heal(get_turf(src), pick(COLOR_PINK, COLOR_YELLOW))
 		if(prob(20))
-			limb.owner.visible_message(span_mansus("The petals of [src] on [limb.owner]'s [limb.plaintext_zone] glow faintly."))
+			limb.owner.visible_message(span_mansus(loc_key("heretic-item-poppy-glow-limb", list(item = src, owner = limb.owner, zone = loc_zone(limb.plaintext_zone)))))
 
 #define LIMB_CATEGORY_POPPY "poppy"
 
@@ -105,20 +105,22 @@
 	var/mob/living/carbon/carbon_target = interacting_with
 	var/obj/item/bodypart/target_limb = carbon_target.get_bodypart(user.zone_selected)
 	if(isnull(target_limb))
-		carbon_target.balloon_alert(user, "no limb there!")
+		carbon_target.balloon_alert(user, LOC_KEY("heretic-item-poppy-no-limb"))
 		return ITEM_INTERACT_BLOCKING
 
 	if(!length(target_limb.wounds))
-		carbon_target.balloon_alert(user, "no wounds to heal!")
+		carbon_target.balloon_alert(user, LOC_KEY("heretic-item-poppy-no-wounds"))
 		return ITEM_INTERACT_BLOCKING
 
 	if(LAZYACCESS(target_limb.applied_items, LIMB_CATEGORY_POPPY))
-		carbon_target.balloon_alert(user, "already healing!")
+		carbon_target.balloon_alert(user, LOC_KEY("heretic-item-poppy-already-healing"))
 		return ITEM_INTERACT_BLOCKING
 
+	var/list/lay_args = list(user = user, item = src, target = carbon_target, their = user.p_their(), zone = loc_zone(target_limb.plaintext_zone))
+	var/lay_self = carbon_target == user
 	user.visible_message(
-		span_notice("[user] lays [src] over [carbon_target == user ? "[user.p_their()] own" : "[carbon_target]'s"] [target_limb.plaintext_zone]."),
-		span_notice("You lay [src] over [carbon_target == user ? "your" : "[carbon_target]'s"] [target_limb.plaintext_zone]."),
+		span_notice(lay_self ? loc_key("heretic-item-poppy-seen-own", lay_args) : loc_key("heretic-item-poppy-seen-target", lay_args)),
+		span_notice(lay_self ? loc_key("heretic-item-poppy-self-own", lay_args) : loc_key("heretic-item-poppy-self-target", lay_args)),
 		visible_message_flags = ALWAYS_SHOW_SELF_MESSAGE,
 		vision_distance = 5,
 	)
@@ -126,8 +128,8 @@
 		return ITEM_INTERACT_BLOCKING
 
 	user.visible_message(
-		span_mansus("[user] lays [src] over [carbon_target == user ? "[user.p_their()] own" : "[carbon_target]'s"] [target_limb.plaintext_zone]. The petals begin to glow, as vines begin to wrap the limb."),
-		span_mansus("You lay [src] over [carbon_target == user ? "your" : "[carbon_target]'s"] [target_limb.plaintext_zone]. The petals begin to glow, as vines begin to wrap the limb."),
+		span_mansus(lay_self ? loc_key("heretic-item-poppy-glowseen-own", lay_args) : loc_key("heretic-item-poppy-glowseen-target", lay_args)),
+		span_mansus(lay_self ? loc_key("heretic-item-poppy-glowself-own", lay_args) : loc_key("heretic-item-poppy-glowself-target", lay_args)),
 		visible_message_flags = ALWAYS_SHOW_SELF_MESSAGE,
 		vision_distance = 5,
 	)

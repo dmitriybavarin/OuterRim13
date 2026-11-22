@@ -1,6 +1,7 @@
 import { Button, NumberInput, Section } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { type Beaker, BeakerDisplay } from './common/BeakerDisplay';
 
@@ -13,13 +14,14 @@ type Data = {
 
 export const ChemDebugSynthesizer = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { amount, temp, purity, beaker } = data;
 
   return (
     <Window width={390} height={330}>
       <Window.Content scrollable>
         <Section
-          title="Recipient"
+          title={t('chemdebug-recipient', {}, 'Recipient')}
           buttons={
             beaker ? (
               <>
@@ -64,14 +66,14 @@ export const ChemDebugSynthesizer = (props) => {
                 />
                 <Button
                   icon="plus"
-                  content="Input"
+                  content={t('chemdebug-input', {}, 'Input')}
                   onClick={() => act('input')}
                 />
               </>
             ) : (
               <Button
                 icon="plus"
-                content="Create Beaker"
+                content={t('chemdebug-create-beaker', {}, 'Create Beaker')}
                 onClick={() => act('makecup')}
               />
             )

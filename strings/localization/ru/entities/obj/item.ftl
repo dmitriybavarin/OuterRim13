@@ -3576,7 +3576,7 @@ ent-obj-item-construction = не для использования в игре
     .dat = не для использованиям в игре
     .ins = не для использованиями в игре
     .pre = не для использованиях в игре
-    .desc = Устройство для быстрого строительства и демонтажа. Перезаряжается железом, пласталью, стеклом или картриджами сжатой материи.
+    .desc = Устройство для быстрого строительства и демонтажа. Перезаряжается сталью, пласталью, стеклом или картриджами сжатой материи.
 
 # name: plumbing constructor
 # desc: An expertly modified RCD outfitted to construct plumbing machinery.
@@ -3663,7 +3663,7 @@ ent-obj-item-construction-rld = устройство быстрого освещ
     .dat = устройству быстрого освещения (РЛУ)
     .ins = устройством быстрого освещения (РЛУ)
     .pre = устройстве быстрого освещения (РЛУ)
-    .desc = Устройство для быстрого обеспечения области источниками света. Перезаряжается железом, пласталью, стеклом или картриджами сжатой материи.
+    .desc = Устройство для быстрого обеспечения области источниками света. Перезаряжается сталью, пласталью, стеклом или картриджами сжатой материи.
 
 # name: mini rapid lighting device (MRLD)
 # desc: A device used to rapidly provide lighting sources to an area. Reload with iron, plasteel, glass or compressed matter cartridges.
@@ -3672,7 +3672,7 @@ ent-obj-item-construction-rld-mini = мини-устройство быстро�
     .dat = мини-устройству быстрого освещения (МРЛУ)
     .ins = мини-устройством быстрого освещения (МРЛУ)
     .pre = мини-устройстве быстрого освещения (МРЛУ)
-    .desc = Устройство для быстрого обеспечения области источниками света. Перезаряжается железом, пласталью, стеклом или картриджами сжатой материи.
+    .desc = Устройство для быстрого обеспечения области источниками света. Перезаряжается сталью, пласталью, стеклом или картриджами сжатой материи.
 
 # name: rapid tiling device (RTD)
 # desc: Used for fast placement & destruction of floor tiles.
@@ -10016,8 +10016,8 @@ ent-obj-item-modular_computer-pda-syndicate_contract_uplink = планшет к�
     .ins = планшетом контрактника
     .pre = планшете контрактника
 
-# name: security advisor PDA
-ent-obj-item-modular_computer-pda-veteran_advisor = КПК советника по безопасности
+# name: trader PDA
+ent-obj-item-modular_computer-pda-trader = КПК торговца
 
 # name: processing unit
 # desc: An advanced computer.
@@ -11156,7 +11156,7 @@ ent-obj-item-pinpointer-material_sniffer = нюхач материалов
     .acc = нюхача материалов
     .ins = нюхачом материалов
     .pre = нюхаче материалов
-    .desc = Ручное устройство слежения, находящее листы стекла и железа.
+    .desc = Ручное устройство слежения, находящее листы стекла и стали.
 
 # name: syndicate pinpointer
 # desc: A handheld tracking device that locks onto certain signals. It's configured to switch tracking modes once it detects the activation signal of a nuclear device.
@@ -11316,7 +11316,7 @@ ent-obj-item-plate-iron = металлическая тарелка
     .acc = металлическую тарелку
     .ins = металлической тарелкой
     .pre = металлической тарелке
-    .desc = Вмещает еду, мощно. Хорошо для морального духа, когда вы не едите спагетти прямо со стола. Сделана из более прочного железа вместо хрупкой керамики.
+    .desc = Вмещает еду, мощно. Хорошо для морального духа, когда вы не едите спагетти прямо со стола. Сделана из более прочного стали вместо хрупкой керамики.
 
 # name: buffet plate
 # desc: A large plate made for the professional catering industry but also apppreciated by mukbangers and other persons of considerable size and heft.
@@ -12515,7 +12515,7 @@ ent-obj-item-scooter_frame = каркас скутера
     .dat = каркасу скутера
     .ins = каркасом скутера
     .pre = каркасе скутера
-    .desc = Металлический каркас для сборки скутера. Похоже, понадобится добавить железа, чтобы сделать колеса.
+    .desc = Металлический каркас для сборки скутера. Похоже, понадобится добавить стали, чтобы сделать колеса.
 
 # name: screwdriver
 # desc: You can be totally screwy with this.
@@ -12908,7 +12908,7 @@ ent-obj-item-shield-improvised = самодельный щит
     .dat = самодельному щиту
     .ins = самодельным щитом
     .pre = самодельном щите
-    .desc = Грубый щит из нескольких листов железа, скрепленных изолентой. Не слишком прочный.
+    .desc = Грубый щит из нескольких листов стали, скрепленных изолентой. Не слишком прочный.
 
 # name: kite shield
 # desc: Protect your internal organs with this almond shaped shield.

@@ -9,6 +9,7 @@ import {
   Stack,
 } from 'tgui-core/components';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type CoreDisplayOption = {
@@ -29,8 +30,10 @@ type Data = {
 };
 
 export const AiCoreDisplayPicker = () => {
+  const t = useT();
+
   return (
-    <Window width={500} height={600} title="AI Core Display Options">
+    <Window width={500} height={600} title={t('aicore-title', {}, 'AI Core Display Options')}>
       <Window.Content scrollable>
         <AiCoreDisplayPickerContent />
       </Window.Content>
@@ -40,6 +43,7 @@ export const AiCoreDisplayPicker = () => {
 
 const AiCoreDisplayPickerContent = () => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { current_display, current_icon, options = [] } = data;
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -53,7 +57,7 @@ const AiCoreDisplayPickerContent = () => {
   return (
     <Stack fill vertical>
       <Stack.Item>
-        <Section title="Current AI Core Display">
+        <Section title={t('aicore-current', {}, 'Current AI Core Display')}>
           <Flex align="center" justify="center" direction="column">
             {current_icon && (
               <Flex.Item mb={2}>
@@ -85,7 +89,7 @@ const AiCoreDisplayPickerContent = () => {
 
       <Stack.Item>
         <Input
-          placeholder="Search display options..."
+          placeholder={t('aicore-search', {}, 'Search display options...')}
           value={searchTerm}
           onChange={(value) => setSearchTerm(value)}
           fluid
@@ -95,7 +99,7 @@ const AiCoreDisplayPickerContent = () => {
       <Stack.Item grow>
         <Stack fill vertical>
           <Stack.Item>
-            <Section title="AI Core Display Options">
+            <Section title={t('aicore-title', {}, 'AI Core Display Options')}>
               <OptionsList options={filteredOptions} />
             </Section>
           </Stack.Item>
@@ -103,7 +107,11 @@ const AiCoreDisplayPickerContent = () => {
           {filteredOptions.length === 0 && (
             <Stack.Item>
               <Box textAlign="center" color="average" mt={4}>
-                No options found matching "{searchTerm}"
+                {t(
+                  'aicore-none-found',
+                  { term: searchTerm },
+                  `No options found matching "${searchTerm}"`,
+                )}
               </Box>
             </Stack.Item>
           )}

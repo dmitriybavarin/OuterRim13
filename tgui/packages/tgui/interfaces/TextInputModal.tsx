@@ -4,6 +4,7 @@ import { isEscape } from 'tgui-core/keys';
 import { KEY } from 'tgui-core/keys';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { InputButtons } from './common/InputButtons';
 import { Loader } from './common/Loader';
@@ -28,6 +29,7 @@ export const removeAllSkiplines = (toSanitize: string) => {
 
 export const TextInputModal = (props) => {
   const { act, data } = useBackend<TextInputData>();
+  const t = useT();
   const {
     large_buttons,
     max_length,
@@ -89,7 +91,7 @@ export const TextInputModal = (props) => {
                 maxLength={max_length}
                 onEscape={() => act('cancel')}
                 onChange={onType}
-                placeholder="Type something..."
+                placeholder={t('inputmodal-text-placeholder', {}, 'Type something...')}
                 value={input}
               />
             </Stack.Item>

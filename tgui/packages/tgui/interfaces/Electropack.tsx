@@ -7,6 +7,7 @@ import {
 import { toFixed } from 'tgui-core/math';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type ElectropackData = {
@@ -19,23 +20,24 @@ type ElectropackData = {
 
 export const Electropack = (props) => {
   const { act, data } = useBackend<ElectropackData>();
+  const t = useT();
   const { power, code, frequency, minFrequency, maxFrequency } = data;
   return (
     <Window width={260} height={137}>
       <Window.Content>
         <Section>
           <LabeledList>
-            <LabeledList.Item label="Power">
+            <LabeledList.Item label={t('electropack-power', {}, 'Power')}>
               <Button
                 icon={power ? 'power-off' : 'times'}
                 selected={power}
                 onClick={() => act('power')}
               >
-                {power ? 'On' : 'Off'}
+                {power ? t('electropack-on', {}, 'On') : t('electropack-off', {}, 'Off')}
               </Button>
             </LabeledList.Item>
             <LabeledList.Item
-              label="Frequency"
+              label={t('electropack-frequency', {}, 'Frequency')}
               buttons={
                 <Button
                   icon="sync"
@@ -45,14 +47,14 @@ export const Electropack = (props) => {
                     })
                   }
                 >
-                  Reset
+                  {t('electropack-reset', {}, 'Reset')}
                 </Button>
               }
             >
               <NumberInput
                 animated
                 tickWhileDragging
-                unit="kHz"
+                unit={t('electropack-khz', {}, 'kHz')}
                 step={0.2}
                 stepPixelSize={6}
                 minValue={minFrequency / 10}
@@ -68,7 +70,7 @@ export const Electropack = (props) => {
               />
             </LabeledList.Item>
             <LabeledList.Item
-              label="Code"
+              label={t('electropack-code', {}, 'Code')}
               buttons={
                 <Button
                   icon="sync"
@@ -78,7 +80,7 @@ export const Electropack = (props) => {
                     })
                   }
                 >
-                  Reset
+                  {t('electropack-reset', {}, 'Reset')}
                 </Button>
               }
             >

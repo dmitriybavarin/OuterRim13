@@ -11,6 +11,7 @@ import {
 import { classes } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 enum Direction {
@@ -47,6 +48,7 @@ type Data = {
 
 export function LightSpawn(props) {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { templates = [], default_id, default_category, category_ids } = data;
 
   const [currentTemplate, setCurrentTemplate] = useState(default_id);
@@ -55,7 +57,7 @@ export function LightSpawn(props) {
   const category_keys = category_ids ? Object.keys(category_ids) : [];
 
   return (
-    <Window title={'Light Spawn'} width={600} height={400}>
+    <Window title={t('lightspawn-title', {}, 'Light Spawn')} width={600} height={400}>
       <Window.Content scrollable>
         <Stack vertical>
           <Stack.Item>
@@ -112,6 +114,7 @@ type LightInfoProps = {
 };
 
 function LightInfo(props: LightInfoProps) {
+  const t = useT();
   const { light } = props;
   const { light_info } = light;
 
@@ -124,12 +127,14 @@ function LightInfo(props: LightInfoProps) {
         <Stack.Item>
           <Stack>
             <Stack.Item>
-              <Section title="Direction" textAlign="center" fontSize="11px">
+              <Section
+                title={t('lightspawn-direction', {}, 'Direction')} textAlign="center" fontSize="11px">
                 <DirectionSelect />
               </Section>
             </Stack.Item>
             <Stack.Item>
-              <Section title="Angle" textAlign="center" fontSize="11px">
+              <Section
+                title={t('lightspawn-angle', {}, 'Angle')} textAlign="center" fontSize="11px">
                 <AngleSelect angle={light_info.angle} />
               </Section>
             </Stack.Item>
@@ -139,7 +144,11 @@ function LightInfo(props: LightInfoProps) {
           <Stack justify="space-between">
             <Stack.Item>
               <Box fontSize="16px" mt={0.5}>
-                Template: {light_info.name}
+                {t(
+                  'lightspawn-template',
+                  { name: light_info.name },
+                  `Template: ${light_info.name}`,
+                )}
               </Box>
               <Box fontSize="12px" ml={1} color="#aaaaaa">
                 {light.description}
@@ -152,7 +161,7 @@ function LightInfo(props: LightInfoProps) {
               <Button
                 fontSize="16px"
                 icon="wrench"
-                tooltip="Spawn template"
+                tooltip={t('lightspawn-spawn', {}, 'Spawn template')}
                 onClick={() =>
                   act('spawn_template', {
                     id: light.id,
@@ -165,7 +174,7 @@ function LightInfo(props: LightInfoProps) {
         </Stack.Item>
         <Stack.Item align="end">
           <Slider
-            unit="tiles"
+            unit={t('lightspawn-tiles', {}, 'tiles')}
             value={light_info.range}
             color="blue"
             minValue={0}
@@ -173,7 +182,7 @@ function LightInfo(props: LightInfoProps) {
             step={0}
           />
           <Slider
-            unit="intensity"
+            unit={t('lightspawn-intensity', {}, 'intensity')}
             value={light_info.power}
             color="olive"
             minValue={-1}

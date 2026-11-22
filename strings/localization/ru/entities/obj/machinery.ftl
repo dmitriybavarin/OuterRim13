@@ -380,7 +380,7 @@ ent-obj-machinery-autolathe = автолат
     .dat = автолате
     .ins = автолатой
     .pre = автолате
-    .desc = Производит предметы из железа, стекла, пластика и, возможно, чего-то еще.
+    .desc = Производит предметы из стали, стекла, пластика и, возможно, чего-то еще.
 
 # name: bar sign
 # desc: A bar sign which has not been initialized, somehow. Complain at a coder!
@@ -1257,7 +1257,7 @@ ent-obj-machinery-drone_dispenser = раздатчик оболочек дрон
     .acc = раздатчика оболочек дронов
     .ins = раздатчиком оболочек дронов
     .pre = раздатчике оболочек дронов
-    .desc = Увесистая машина, которая при подаче железа и стекла периодически создает оболочку дрона. Ручное управление не требуется.
+    .desc = Увесистая машина, которая при подаче стали и стекла периодически создает оболочку дрона. Ручное управление не требуется.
 
 # name: binoculars fabricator
 # desc: A hefty machine that periodically creates a pair of binoculars. Really, Nanotrasen? We're getting this lazy?
@@ -1276,7 +1276,7 @@ ent-obj-machinery-drone_dispenser-classic = раздатчик оболочек 
     .acc = раздатчика оболочек классических дронов
     .ins = раздатчиком оболочек классических дронов
     .pre = раздатчике оболочек классических дронов
-    .desc = Увесистая машина, которая при подаче железа и стекла периодически создает оболочку классического дрона. Ручное управление не требуется.
+    .desc = Увесистая машина, которая при подаче стали и стекла периодически создает оболочку классического дрона. Ручное управление не требуется.
 
 # name: derelict drone shell dispenser
 # desc: A rusty machine that, when supplied with iron and glass, will periodically create a derelict drone shell. Does not need to be manually operated.
@@ -1286,7 +1286,7 @@ ent-obj-machinery-drone_dispenser-derelict = раздатчик оболочек
     .acc = раздатчика оболочек брошенных дронов
     .ins = раздатчиком оболочек брошенных дронов
     .pre = раздатчике оболочек брошенных дронов
-    .desc = Ржавая машина, которая при подаче железа и стекла периодически создает оболочку брошенного дрона. Ручное управление не требуется.
+    .desc = Ржавая машина, которая при подаче стали и стекла периодически создает оболочку брошенного дрона. Ручное управление не требуется.
 
 # name: hivebot fabricator
 # desc: A large, bulky machine that whirs with activity, steam hissing from vents in its sides.
@@ -1305,7 +1305,7 @@ ent-obj-machinery-drone_dispenser-snowflake = раздатчик оболоче�
     .acc = раздатчика оболочек дронов-снежинок
     .ins = раздатчиком оболочек дронов-снежинок
     .pre = раздатчике оболочек дронов-снежинок
-    .desc = Увесистая машина, которая при подаче железа и стекла периодически создает оболочку дрона-снежинки. Ручное управление не требуется.
+    .desc = Увесистая машина, которая при подаче стали и стекла периодически создает оболочку дрона-снежинки. Ручное управление не требуется.
 
 # name: syndrone shell dispenser
 # desc: A suspicious machine that will create Syndicate exterminator drones when supplied with iron and glass. Disgusting.
@@ -1315,7 +1315,7 @@ ent-obj-machinery-drone_dispenser-syndrone = раздатчик оболочек
     .acc = раздатчика оболочек синдронов
     .ins = раздатчиком оболочек синдронов
     .pre = раздатчике оболочек синдронов
-    .desc = Подозрительная машина, создающая дронов-истребителей Синдиката при подаче железа и стекла. Мерзость.
+    .desc = Подозрительная машина, создающая дронов-истребителей Синдиката при подаче стали и стекла. Мерзость.
 
 # name: badass syndrone shell dispenser
 # desc: A suspicious machine that will create Syndicate exterminator drones when supplied with iron and glass. Disgusting. This one seems ominous.
@@ -1325,7 +1325,7 @@ ent-obj-machinery-drone_dispenser-syndrone-badass = раздатчик обол�
     .acc = раздатчика оболочек крутых синдронов
     .ins = раздатчиком оболочек крутых синдронов
     .pre = раздатчике оболочек крутых синдронов
-    .desc = Подозрительная машина, создающая дронов-истребителей Синдиката при подаче железа и стекла. Мерзость. Эта выглядит зловеще.
+    .desc = Подозрительная машина, создающая дронов-истребителей Синдиката при подаче стали и стекла. Мерзость. Эта выглядит зловеще.
 
 # name: fluid duct
 ent-obj-machinery-duct = жидкостный канал
@@ -1572,7 +1572,7 @@ ent-obj-machinery-flatpacker = флэтпакер
     .dat = флэтпакеру
     .ins = флэтпакером
     .pre = флэтпакере
-    .desc = Производит предметы из железа, стекла, пластика и, возможно, чего-то еще.
+    .desc = Производит предметы из стали, стекла, пластика и, возможно, чего-то еще.
 
 # name: food cart
 # desc: A compact unpackable mobile cooking stand. Wow! When unpacked, it reminds you of those greasy gamer setups some people on NTNet have.

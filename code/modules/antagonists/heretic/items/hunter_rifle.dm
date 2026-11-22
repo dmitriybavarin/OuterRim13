@@ -50,7 +50,7 @@
 		return TRUE
 
 	if(currently_aiming)
-		user.balloon_alert(user, "already aiming!")
+		user.balloon_alert(user, LOC_KEY("heretic-item-rifle-already-aiming"))
 		return FALSE
 
 	var/distance = get_dist(user, target)
@@ -62,7 +62,7 @@
 	if(distance <= min_distance || !isliving(target))
 		return TRUE
 
-	user.balloon_alert(user, "taking aim...")
+	user.balloon_alert(user, LOC_KEY("heretic-item-rifle-aiming"))
 	user.playsound_local(get_turf(user), 'sound/items/weapons/gun/general/chunkyrack.ogg', 100, TRUE)
 
 	var/image/reticle = image(
@@ -93,7 +93,7 @@
 		viewer.client?.images -= reticle
 
 	if(!.)
-		user.balloon_alert(user, "interrupted!")
+		user.balloon_alert(user, LOC_KEY("heretic-item-rifle-interrupted"))
 
 	return .
 

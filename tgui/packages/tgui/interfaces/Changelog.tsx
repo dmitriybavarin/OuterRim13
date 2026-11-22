@@ -15,6 +15,7 @@ import { classes } from 'tgui-core/react';
 import { resolveAsset } from '../assets';
 import { useBackend } from '../backend';
 import { sendAct as act } from '../events/act';
+import { translate } from '../i18n';
 import { Window } from '../layouts';
 
 const icons = {
@@ -45,6 +46,18 @@ const icons = {
   wip: { icon: 'hammer', color: 'orange' },
 };
 
+const tr = (
+  key: string,
+  args: Record<string, string | number> = {},
+  fallback?: string,
+) =>
+  translate(
+    useBackend<Record<string, never>>().config?.language,
+    key,
+    args,
+    fallback,
+  );
+
 type Change = Record<string, string>;
 type AuthorChanges = Record<string, Change[]>;
 type ChangelogYaml = Record<string, AuthorChanges>;
@@ -66,7 +79,7 @@ export class ChangelogContent extends Component<any, ChangelogState> {
     super(props);
     this.dateChoices = [];
     this.state = {
-      loaded_text: 'Loading changelog data...',
+      loaded_text: tr('changelog-loading', {}, 'Loading changelog data...'),
       selectedDate: '',
       selectedIndex: 0,
     };
@@ -88,7 +101,13 @@ export class ChangelogContent extends Component<any, ChangelogState> {
     const maxAttempts = 6;
 
     if (attemptNumber > maxAttempts) {
-      return this.setData(`Failed to load data after ${maxAttempts} attempts`);
+      return this.setData(
+        tr(
+          'changelog-failed-data',
+          { attempts: maxAttempts },
+          'Failed to load data after { $attempts } attempts',
+        ),
+      );
     }
 
     act('get_month', { date });
@@ -96,12 +115,20 @@ export class ChangelogContent extends Component<any, ChangelogState> {
     fetch(resolveAsset(`${date}.yml`)).then(async (changelogData) => {
       if (!changelogData.ok) {
         if (attemptNumber >= maxAttempts) {
-          this.setData(`Failed to load after ${maxAttempts} attempts`);
+          this.setData(
+            tr(
+              'changelog-failed',
+              { attempts: maxAttempts },
+              'Failed to load after { $attempts } attempts',
+            ),
+          );
           return;
         }
 
         const timeout = 50 + attemptNumber * 50;
-        this.setData(`Loading changelog data${'.'.repeat(attemptNumber + 3)}`);
+        this.setData(
+          `${tr('changelog-loading-base', {}, 'Loading changelog data')}${'.'.repeat(attemptNumber + 3)}`,
+        );
         setTimeout(() => {
           this.getData(date, attemptNumber + 1);
         }, timeout);
@@ -145,7 +172,9 @@ export class ChangelogContent extends Component<any, ChangelogState> {
             onClick={() => {
               const index = selectedIndex - 1;
 
-              this.setData('Loading changelog data...');
+              this.setData(
+                tr('changelog-loading', {}, 'Loading changelog data...'),
+              );
               this.setSelectedIndex(index);
               this.setSelectedDate(dateChoices[index]);
               window.scrollTo(
@@ -164,7 +193,9 @@ export class ChangelogContent extends Component<any, ChangelogState> {
             onSelected={(value) => {
               const index = dateChoices.indexOf(value);
 
-              this.setData('Loading changelog data...');
+              this.setData(
+                tr('changelog-loading', {}, 'Loading changelog data...'),
+              );
               this.setSelectedIndex(index);
               this.setSelectedDate(value);
               window.scrollTo(
@@ -186,7 +217,9 @@ export class ChangelogContent extends Component<any, ChangelogState> {
             onClick={() => {
               const index = selectedIndex + 1;
 
-              this.setData('Loading changelog data...');
+              this.setData(
+                tr('changelog-loading', {}, 'Loading changelog data...'),
+              );
               this.setSelectedIndex(index);
               this.setSelectedDate(dateChoices[index]);
               window.scrollTo(
@@ -325,7 +358,9 @@ export class ChangelogContent extends Component<any, ChangelogState> {
             <Box ml={3}>
               {Object.entries(authors).map(([name, changes]) => (
                 <Fragment key={name}>
-                  <h4>{name} changed:</h4>
+                  <h4>
+                    {tr('changelog-changed', { name }, '{ $name } changed:')}
+                  </h4>
                   <Box ml={3}>
                     <Table>
                       {changes.map((change) => {
@@ -378,7 +413,11 @@ export class ChangelogContent extends Component<any, ChangelogState> {
 
 export const Changelog = () => {
   return (
-    <Window title="Changelog" width={675} height={650}>
+    <Window
+      title={tr('changelog-title', {}, 'Changelog')}
+      width={675}
+      height={650}
+    >
       <Window.Content scrollable>
         <ChangelogContent />
       </Window.Content>

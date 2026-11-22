@@ -5,6 +5,7 @@ import { classes } from 'tgui-core/react';
 import { capitalize } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type FishingTips = {
@@ -37,6 +38,7 @@ type FishCatalogData = {
 
 export const FishCatalog = (props) => {
   const { act, data } = useBackend<FishCatalogData>();
+  const t = useT();
   const { fish_info, sponsored_by } = data;
   const fish_by_name = sortBy(fish_info || [], [(fish: FishInfo) => fish.name]);
   const [currentFish, setCurrentFish] = useState<FishInfo | null>(null);
@@ -68,52 +70,68 @@ export const FishCatalog = (props) => {
               title={
                 currentFish
                   ? capitalize(currentFish.name)
-                  : `${sponsored_by} Fish Index`
+                  : t(
+                      'fishcatalog-index-title',
+                      { sponsor: sponsored_by },
+                      `${sponsored_by} Fish Index`,
+                    )
               }
             >
               {currentFish && (
                 <LabeledList>
-                  <LabeledList.Item label="Description">
+                  <LabeledList.Item label={t('fishcatalog-description', {}, 'Description')}>
                     {currentFish.desc}
                   </LabeledList.Item>
-                  <LabeledList.Item label="Water type">
+                  <LabeledList.Item label={t('fishcatalog-water-type', {}, 'Water type')}>
                     {currentFish.fluid}
                   </LabeledList.Item>
-                  <LabeledList.Item label="Temperature">
-                    {currentFish.temp_min} to {currentFish.temp_max}
+                  <LabeledList.Item label={t('fishcatalog-temperature', {}, 'Temperature')}>
+                    {t(
+                      'fishcatalog-temperature-range',
+                      { min: currentFish.temp_min, max: currentFish.temp_max },
+                      `${currentFish.temp_min} to ${currentFish.temp_max}`,
+                    )}
                   </LabeledList.Item>
-                  <LabeledList.Item label="Feeding">
+                  <LabeledList.Item label={t('fishcatalog-feeding', {}, 'Feeding')}>
                     {currentFish.feed}
                   </LabeledList.Item>
-                  <LabeledList.Item label="Acquisition">
+                  <LabeledList.Item label={t('fishcatalog-acquisition', {}, 'Acquisition')}>
                     {currentFish.source}
                   </LabeledList.Item>
-                  <LabeledList.Item label="Average size">
-                    {currentFish.size} cm
+                  <LabeledList.Item label={t('fishcatalog-average-size', {}, 'Average size')}>
+                    {t(
+                      'fishcatalog-size-value',
+                      { size: currentFish.size },
+                      `${currentFish.size} cm`,
+                    )}
                   </LabeledList.Item>
-                  <LabeledList.Item label="Average weight">
-                    {currentFish.weight} kiloclam
+                  <LabeledList.Item label={t('fishcatalog-average-weight', {}, 'Average weight')}>
+                    {t(
+                      'fishcatalog-weight-value',
+                      { weight: currentFish.weight },
+                      `${currentFish.weight} kiloclam`,
+                    )}
                   </LabeledList.Item>
-                  <LabeledList.Item label="Aquarium Beauty Score">
+                  <LabeledList.Item label={t('fishcatalog-beauty', {}, 'Aquarium Beauty Score')}>
                     {currentFish.beauty}
                   </LabeledList.Item>
-                  <LabeledList.Item label="Fishing and Aquarium tips">
+                  <LabeledList.Item label={t('fishcatalog-tips', {}, 'Fishing and Aquarium tips')}>
                     <LabeledList>
-                      <LabeledList.Item label="Fishing locations">
+                      <LabeledList.Item label={t('fishcatalog-fishing-locations', {}, 'Fishing locations')}>
                         {currentFish.fishing_tips.spots}
                       </LabeledList.Item>
-                      <LabeledList.Item label="Favourite bait">
+                      <LabeledList.Item label={t('fishcatalog-favorite-bait', {}, 'Favourite bait')}>
                         {currentFish.fishing_tips.favorite_bait}
                       </LabeledList.Item>
-                      <LabeledList.Item label="Disliked bait">
+                      <LabeledList.Item label={t('fishcatalog-disliked-bait', {}, 'Disliked bait')}>
                         {currentFish.fishing_tips.disliked_bait}
                       </LabeledList.Item>
-                      <LabeledList.Item label="Behavior">
+                      <LabeledList.Item label={t('fishcatalog-behavior', {}, 'Behavior')}>
                         {currentFish.fishing_tips.traits}
                       </LabeledList.Item>
                     </LabeledList>
                   </LabeledList.Item>
-                  <LabeledList.Item label="Illustration">
+                  <LabeledList.Item label={t('fishcatalog-illustration', {}, 'Illustration')}>
                     <Box className={classes(['fish32x32', currentFish.icon])} />
                   </LabeledList.Item>
                 </LabeledList>

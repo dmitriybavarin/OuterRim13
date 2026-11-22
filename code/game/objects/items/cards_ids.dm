@@ -877,6 +877,21 @@
 			honorific_title = "[registered_name][chosen_honorific]"
 	return honorific_title
 
+/obj/item/card/id/get_screentip_name()
+	if(!registered_name || !assignment)
+		return ..()
+	var/owner_name = (trim && (honorific_position & ~HONORIFIC_POSITION_NONE)) ? update_honorific() : registered_name
+	var/alt_name = trim?.intern_alt_name
+	var/english_assignment = is_intern ? (alt_name || "Intern [assignment]") : assignment
+	if(name != "[owner_name]'s ID Card ([english_assignment])")
+		return ..()
+	var/assignment_text
+	if(is_intern && !alt_name)
+		assignment_text = loc_key("item-id-intern", list(job = loc_lookup("job-title", assignment)))
+	else
+		assignment_text = loc_lookup("job-title", english_assignment)
+	return loc_key("item-id-label", list(owner = owner_name, assignment = assignment_text))
+
 /// Returns the trim assignment name.
 /obj/item/card/id/proc/get_trim_assignment()
 	return trim?.assignment || assignment
@@ -1282,7 +1297,7 @@
 	trim = /datum/id_trim/centcom
 	wildcard_slots = WILDCARD_LIMIT_CENTCOM
 
-/obj/item/card/id/advanced/centcom_black
+/obj/item/card/id/advanced/centcom/black
 	name = "\improper black CentCom ID"
 	desc = "An special ID from Central Command to symbolize high trust."
 	icon_state = "card_centcom_black"

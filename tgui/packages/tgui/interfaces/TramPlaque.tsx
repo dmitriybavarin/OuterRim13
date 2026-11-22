@@ -1,6 +1,7 @@
 import { LabeledList, NoticeBox, Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -17,49 +18,57 @@ type Tram = {
 
 export const TramPlaque = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { currentTram = [], previousTrams = [] } = data;
 
   return (
     <Window
-      title="Tram Information Plaque"
+      title={t('tramplaque-title', {}, 'Tram Information Plaque')}
       width={600}
       height={360}
       theme="dark"
     >
       <Window.Content>
-        <NoticeBox info>SkyyTram Mk VI by Nakamura Engineering</NoticeBox>
+        <NoticeBox info>{t('tramplaque-brand', {}, 'SkyyTram Mk VI by Nakamura Engineering')}</NoticeBox>
         <Section
-          title={
-            currentTram.map((serialNumber) => serialNumber.serialNumber) +
-            ' - Constructed ' +
-            currentTram.map((serialNumber) => serialNumber.mfgDate)
-          }
+          title={t(
+            'tramplaque-constructed',
+            {
+              serial: String(
+                currentTram.map((serialNumber) => serialNumber.serialNumber),
+              ),
+              date: String(
+                currentTram.map((serialNumber) => serialNumber.mfgDate),
+              ),
+            },
+            'Constructed',
+          )}
         >
           <LabeledList>
-            <LabeledList.Item label="Distance Travelled">
+            <LabeledList.Item label={t('tramplaque-distance-travelled', {}, 'Distance Travelled')}>
               {currentTram.map(
                 (serialNumber) => serialNumber.distanceTravelled / 1000,
               )}{' '}
-              km
+              {t('tramplaque-km', {}, 'km')}
             </LabeledList.Item>
-            <LabeledList.Item label="Collisions">
+            <LabeledList.Item label={t('tramplaque-collisions', {}, 'Collisions')}>
               {currentTram.map((serialNumber) => serialNumber.tramCollisions)}
             </LabeledList.Item>
           </LabeledList>
         </Section>
-        <Section title="Tram History">
+        <Section title={t('tramplaque-history', {}, 'Tram History')}>
           <Stack fill g={0}>
             <Stack.Item m={1} grow>
-              <b>Serial</b>
+              <b>{t('tramplaque-serial', {}, 'Serial')}</b>
             </Stack.Item>
             <Stack.Item m={1} grow>
-              <b>Constructed</b>
+              <b>{t('tramplaque-constructed-col', {}, 'Constructed')}</b>
             </Stack.Item>
             <Stack.Item m={1} grow>
-              <b>Distance</b>
+              <b>{t('tramplaque-distance', {}, 'Distance')}</b>
             </Stack.Item>
             <Stack.Item m={1} grow>
-              <b>Collisions</b>
+              <b>{t('tramplaque-collisions', {}, 'Collisions')}</b>
             </Stack.Item>
           </Stack>
           <Stack vertical fill>
@@ -73,7 +82,7 @@ export const TramPlaque = (props) => {
                     {tram_entry.mfgDate}
                   </Stack.Item>
                   <Stack.Item m={1} grow>
-                    {tram_entry.distanceTravelled / 1000} km
+                    {tram_entry.distanceTravelled / 1000} {t('tramplaque-km', {}, 'km')}
                   </Stack.Item>
                   <Stack.Item m={1} grow>
                     {tram_entry.tramCollisions}

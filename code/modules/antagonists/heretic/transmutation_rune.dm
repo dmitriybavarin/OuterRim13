@@ -24,8 +24,8 @@
 	if(!IS_HERETIC(user))
 		return
 
-	. += span_notice("Allows you to transmute objects by invoking the rune after collecting the prerequisites overhead.")
-	. += span_notice("You can use your <i>Mansus Grasp</i> on the rune to remove it.")
+	. += span_notice(LOC_KEY("heretic-rune-examine-use"))
+	. += span_notice(LOC_KEY("heretic-rune-examine-remove"))
 
 /obj/effect/heretic_rune/attack_paw(mob/living/user, list/modifiers)
 	return attack_hand(user, modifiers)
@@ -55,7 +55,7 @@
 	var/datum/antagonist/heretic/heretic_datum = GET_HERETIC(user)
 	var/list/rituals = heretic_datum.get_rituals()
 	if(!length(rituals))
-		loc.balloon_alert(user, "no rituals available!")
+		loc.balloon_alert(user, LOC_KEY("heretic-ritual-none-available"))
 		is_in_use = FALSE
 		return
 
@@ -198,9 +198,9 @@
 
 	if(length(what_are_we_missing))
 		// Let them know it screwed up
-		loc.balloon_alert(user, "ritual failed, missing components!")
+		loc.balloon_alert(user, LOC_KEY("heretic-ritual-failed-missing"))
 		// Then let them know what they're missing
-		to_chat(user, span_mansus("You are missing [english_list(what_are_we_missing)] in order to complete the ritual \"[ritual.name]\"."))
+		to_chat(user, span_mansus(loc_key("heretic-ritual-missing-components", list(missing = english_list(what_are_we_missing), ritual = ritual.loc_name()))))
 		return FALSE
 
 	//Everything's good, proceed and collect from the available stacks what's needed if needed.
@@ -254,7 +254,7 @@
 	// No feedback is given on failure here -
 	// the ritual itself should handle it (providing specifics as to why it failed)
 	if(ritual_result)
-		loc.balloon_alert(user, "ritual complete")
+		loc.balloon_alert(user, LOC_KEY("heretic-ritual-complete"))
 
 	return ritual_result
 

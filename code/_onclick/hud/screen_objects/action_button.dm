@@ -99,16 +99,19 @@
 /atom/movable/screen/movable/action_button/MouseEntered(location, control, params)
 	. = ..()
 	if(!QDELETED(src))
-		openToolTip(usr, src, params, title = name, content = desc, theme = actiontooltipstyle)
+		openToolTip(usr, src, params, title = linked_action ? loc_action_name(linked_action, name) : name, content = linked_action ? loc_action_desc(linked_action, desc) : desc, theme = actiontooltipstyle)
 
 /atom/movable/screen/movable/action_button/MouseExited(location, control, params)
 	closeToolTip(usr)
 	return ..()
 
+/atom/movable/screen/movable/action_button/get_screentip_name()
+	return linked_action ? loc_action_name(linked_action, name) : ..()
+
 /atom/movable/screen/movable/action_button/proc/update_tooltip(mob/user)
 	if(user?.client?.tooltips?.last_target != src)
 		return
-	updateToolTip(user, title = name, content = desc)
+	updateToolTip(user, title = linked_action ? loc_action_name(linked_action, name) : name, content = linked_action ? loc_action_desc(linked_action, desc) : desc)
 
 /atom/movable/screen/movable/action_button/mouse_drop_dragged(atom/over_object, mob/user, src_location, over_location, params)
 	last_hovored_ref = null

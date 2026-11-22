@@ -558,15 +558,20 @@
 		return
 	var/list/combined_msg = list()
 
-	visible_message(span_notice("[src] examines [p_them()]self."))
+	visible_message(span_notice(loc_key("mob-human_defense-examines_self", list(user = src, reflexive = "[p_them()]self"))))
 
 	combined_msg += span_notice(LOC_KEY("mob-human_defense-b_you_check_yourself_for_injuries"))
 
 
-	for(var/part_zone, body_part_untyped in get_bodyparts_by_zones())
+	var/list/zoned_parts = get_bodyparts_by_zones()
+	if(BODY_ZONE_HEAD in zoned_parts)
+		var/head_entry = zoned_parts[BODY_ZONE_HEAD]
+		zoned_parts -= BODY_ZONE_HEAD
+		zoned_parts = list(BODY_ZONE_HEAD = head_entry) + zoned_parts
+	for(var/part_zone, body_part_untyped in zoned_parts)
 		var/obj/item/bodypart/body_part = body_part_untyped
 		if(isnull(body_part) || IS_STUMP(body_part))
-			combined_msg += span_boldannounce("&rdsh; Your [parse_zone(body_part?.body_zone || part_zone)] is missing!")
+			combined_msg += span_boldannounce("&rdsh; [loc_key("mob-human_defense-limb_missing", list(zone = loc_zone(parse_zone(body_part?.body_zone || part_zone))))]")
 			continue
 		if(body_part.bodypart_flags & BODYPART_PSEUDOPART) //don't show injury text for fake bodyparts; ie chainsaw arms or synthetic armblades
 			continue

@@ -12,6 +12,7 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
 import { RADIO_CHANNELS } from '../constants';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type RadioData = {
@@ -30,6 +31,7 @@ type RadioData = {
 
 export const Radio = (props) => {
   const { act, data } = useBackend<RadioData>();
+  const t = useT();
   const {
     freqlock,
     frequency,
@@ -61,7 +63,7 @@ export const Radio = (props) => {
       <Window.Content>
         <Section>
           <LabeledList>
-            <LabeledList.Item label="Frequency">
+            <LabeledList.Item label={t('radio-frequency', {}, 'Frequency')}>
               {(freqlock && (
                 <Box inline color="light-gray">
                   {`${toFixed(frequency / 10, 1)} kHz`}
@@ -90,7 +92,7 @@ export const Radio = (props) => {
                 </Box>
               )}
             </LabeledList.Item>
-            <LabeledList.Item label="Audio">
+            <LabeledList.Item label={t('radio-audio', {}, 'Audio')}>
               <Button
                 textAlign="center"
                 width="37px"
@@ -110,7 +112,11 @@ export const Radio = (props) => {
                   ml={1}
                   icon="bullhorn"
                   selected={useCommand}
-                  content={`High volume ${useCommand ? 'ON' : 'OFF'}`}
+                  content={
+                    useCommand
+                      ? t('radio-high-volume-on', {}, 'High volume ON')
+                      : t('radio-high-volume-off', {}, 'High volume OFF')
+                  }
                   onClick={() => act('command')}
                 />
               )}
@@ -119,16 +125,20 @@ export const Radio = (props) => {
                   ml={1}
                   icon="bullhorn"
                   selected={subspace}
-                  content={`Subspace Tx ${subspace ? 'ON' : 'OFF'}`}
+                  content={
+                    subspace
+                      ? t('radio-subspace-on', {}, 'Subspace Tx ON')
+                      : t('radio-subspace-off', {}, 'Subspace Tx OFF')
+                  }
                   onClick={() => act('subspace')}
                 />
               )}
             </LabeledList.Item>
             {(!!subspace || channels.length > 0) && (
-              <LabeledList.Item label="Channels">
+              <LabeledList.Item label={t('radio-channels', {}, 'Channels')}>
                 {channels.length === 0 && (
                   <Box inline color="bad">
-                    No encryption keys installed.
+                    {t('radio-no-keys', {}, 'No encryption keys installed.')}
                   </Box>
                 )}
                 <Stack vertical>
@@ -158,7 +168,7 @@ export const Radio = (props) => {
                             })
                           }
                         >
-                          Tune
+                          {t('radio-tune', {}, 'Tune')}
                         </Button>
                       )}
                     </Box>

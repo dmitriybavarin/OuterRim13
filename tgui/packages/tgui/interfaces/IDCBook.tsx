@@ -1,4 +1,5 @@
 import { useBackend } from 'tgui/backend';
+import { useT } from 'tgui/i18n';
 import { Box, Section, Stack } from 'tgui-core/components';
 import { type BookEntry, BookUI, type TOCEntry } from './common/PaginatedBook';
 import '../styles/interfaces/DeForestLogo.scss';
@@ -40,14 +41,16 @@ function formToColor(form: string) {
   }
 }
 
-function formatSpreadBy(spread_by: string) {
+type Translate = ReturnType<typeof useT>;
+
+function formatSpreadBy(spread_by: string, t: Translate) {
   switch (spread_by.toLowerCase()) {
     case 'airborne':
       return (
         <Stack align="end">
-          <Stack.Item>Airborne</Stack.Item>
+          <Stack.Item>{t('idcbook-spread-airborne', {}, 'Airborne')}</Stack.Item>
           <Stack.Item fontSize="10px" pb={0.2}>
-            (e.g. coughing, sneezing)
+            {t('idcbook-spread-airborne-hint', {}, '(e.g. coughing, sneezing)')}
           </Stack.Item>
         </Stack>
       );
@@ -55,36 +58,48 @@ function formatSpreadBy(spread_by: string) {
     case 'contact':
       return (
         <Stack align="end">
-          <Stack.Item>Contact</Stack.Item>
+          <Stack.Item>{t('idcbook-spread-contact', {}, 'Contact')}</Stack.Item>
           <Stack.Item fontSize="10px" pb={0.2}>
-            (e.g. touching infected persons)
+            {t(
+              'idcbook-spread-contact-hint',
+              {},
+              '(e.g. touching infected persons)',
+            )}
           </Stack.Item>
         </Stack>
       );
     case 'fluid contact':
       return (
         <Stack align="end">
-          <Stack.Item>Liquids</Stack.Item>
+          <Stack.Item>{t('idcbook-spread-liquids', {}, 'Liquids')}</Stack.Item>
           <Stack.Item fontSize="10px" pb={0.2}>
-            (e.g. touching contaminated fluids)
+            {t(
+              'idcbook-spread-liquids-hint',
+              {},
+              '(e.g. touching contaminated fluids)',
+            )}
           </Stack.Item>
         </Stack>
       );
     case 'blood':
       return (
         <Stack align="end">
-          <Stack.Item>Blood</Stack.Item>
+          <Stack.Item>{t('idcbook-spread-blood', {}, 'Blood')}</Stack.Item>
           <Stack.Item fontSize="10px" pb={0.2}>
-            (e.g. tranfusion of infected blood)
+            {t(
+              'idcbook-spread-blood-hint',
+              {},
+              '(e.g. tranfusion of infected blood)',
+            )}
           </Stack.Item>
         </Stack>
       );
     case 'none':
       return (
         <Stack align="end">
-          <Stack.Item>None</Stack.Item>
+          <Stack.Item>{t('idcbook-spread-none', {}, 'None')}</Stack.Item>
           <Stack.Item fontSize="10px" pb={0.2}>
-            (non-contagious)
+            {t('idcbook-spread-none-hint', {}, '(non-contagious)')}
           </Stack.Item>
         </Stack>
       );
@@ -127,7 +142,7 @@ function estimateHeight(entry: BookEntry<Disease>) {
   );
 }
 
-function renderDSMEntry(entry: BookEntry<Disease>) {
+function renderDSMEntry(entry: BookEntry<Disease>, t: Translate) {
   return (
     <Section
       width="100%"
@@ -148,20 +163,24 @@ function renderDSMEntry(entry: BookEntry<Disease>) {
           <>
             <Stack.Item>
               <Box inline color="label">
-                Description:
+                {t('idcbook-description', {}, 'Description:')}
               </Box>{' '}
               {entry.desc}
             </Stack.Item>
             <Stack.Item>
               <Box inline color="label">
-                Level:
+                {t('idcbook-level', {}, 'Level:')}
               </Box>{' '}
               {entry.level}
             </Stack.Item>
             {entry.illness !== 'Unidentified' && (
               <Stack.Item>
                 <Box inline color="label">
-                  Common associated illness:
+                  {t(
+                    'idcbook-common-illness',
+                    {},
+                    'Common associated illness:',
+                  )}
                 </Box>{' '}
                 "{entry.illness}"
               </Stack.Item>
@@ -169,7 +188,7 @@ function renderDSMEntry(entry: BookEntry<Disease>) {
             {!!entry.cured_by && (
               <Stack.Item>
                 <Box inline color="label">
-                  Common cures:
+                  {t('idcbook-common-cures', {}, 'Common cures:')}
                 </Box>{' '}
                 {entry.cured_by}
               </Stack.Item>
@@ -179,25 +198,25 @@ function renderDSMEntry(entry: BookEntry<Disease>) {
           <>
             <Stack.Item>
               <Box inline color="label">
-                Agent:
+                {t('idcbook-agent', {}, 'Agent:')}
               </Box>{' '}
               {entry.agent}
             </Stack.Item>
             <Stack.Item>
               <Box inline color="label">
-                Description:
+                {t('idcbook-description', {}, 'Description:')}
               </Box>{' '}
               {entry.desc}
             </Stack.Item>
             <Stack.Item>
               <Box inline color="label">
-                Spread By:
+                {t('idcbook-spread-by', {}, 'Spread By:')}
               </Box>{' '}
-              <Box inline>{formatSpreadBy(entry.spread_by)}</Box>
+              <Box inline>{formatSpreadBy(entry.spread_by, t)}</Box>
             </Stack.Item>
             <Stack.Item>
               <Box inline color="label">
-                Cured By:
+                {t('idcbook-cured-by', {}, 'Cured By:')}
               </Box>{' '}
               {entry.cured_by}
             </Stack.Item>
@@ -236,6 +255,7 @@ const blankIDCPage = (
 export const IDCBook = () => {
   const { data } = useBackend<DiseaseData>();
   const { diseases } = data;
+  const t = useT();
 
   const diseaseEntries: BookEntry<Disease>[] = diseases
     .map((disease) => ({
@@ -258,7 +278,7 @@ export const IDCBook = () => {
       bookData={diseaseEntries}
       title="IDC-27"
       estimateHeight={estimateHeight}
-      renderEntry={renderDSMEntry}
+      renderEntry={(entry) => renderDSMEntry(entry, t)}
       renderTOCEntry={renderTOCEntry}
       blankPage={blankIDCPage}
     />

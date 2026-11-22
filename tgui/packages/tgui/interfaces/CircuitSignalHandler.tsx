@@ -10,6 +10,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Response = {
@@ -61,6 +62,7 @@ export class CircuitSignalHandler extends Component<
 
   render() {
     const { act, data } = useBackend<CircuitSignalHandlerData>();
+    const t = useT();
     const { responseList, parameterList, signal_id, global } = this
       .state as CircuitSignalHandlerState;
     const { global_port_types } = data;
@@ -72,7 +74,7 @@ export class CircuitSignalHandler extends Component<
               <Stack fill>
                 <Stack.Item grow>
                   <Input
-                    placeholder="Signal ID"
+                    placeholder={t('circuitsignal-signal-id', {}, 'Signal ID')}
                     value={signal_id}
                     fluid
                     onChange={(value) => this.setState({ signal_id: value })}
@@ -81,7 +83,7 @@ export class CircuitSignalHandler extends Component<
                 <Stack.Item>
                   <Button.Checkbox
                     checked={global}
-                    content="Global"
+                    content={t('circuitsignal-global', {}, 'Global')}
                     onClick={(e) => this.setState({ global: !global })}
                   />
                 </Stack.Item>
@@ -90,7 +92,11 @@ export class CircuitSignalHandler extends Component<
             <Stack.Item grow>
               <Stack fill>
                 <Stack.Item grow={1} basis={0}>
-                  <Section title="Responses" fill scrollable>
+                  <Section
+                    title={t('circuitsignal-responses', {}, 'Responses')}
+                    fill
+                    scrollable
+                  >
                     <Stack vertical>
                       {responseList.map((val, index) => (
                         <Entry
@@ -111,7 +117,7 @@ export class CircuitSignalHandler extends Component<
                       <Stack.Item>
                         <Button
                           fluid
-                          content="Add Response"
+                          content={t('circuitsignal-add-response', {}, 'Add Response')}
                           color="good"
                           icon="plus"
                           onClick={() => {
@@ -133,7 +139,11 @@ export class CircuitSignalHandler extends Component<
                   </Section>
                 </Stack.Item>
                 <Stack.Item grow={1} basis={0}>
-                  <Section title="Parameters" fill scrollable>
+                  <Section
+                    title={t('circuitsignal-parameters', {}, 'Parameters')}
+                    fill
+                    scrollable
+                  >
                     <Stack vertical>
                       {parameterList.map((val, index) => (
                         <Entry
@@ -160,7 +170,7 @@ export class CircuitSignalHandler extends Component<
                       <Stack.Item>
                         <Button
                           fluid
-                          content="Add Parameter"
+                          content={t('circuitsignal-add-parameter', {}, 'Add Parameter')}
                           color="good"
                           icon="plus"
                           onClick={() => {
@@ -179,7 +189,7 @@ export class CircuitSignalHandler extends Component<
             </Stack.Item>
             <Stack.Item>
               <Button
-                content="Submit"
+                content={t('circuitsignal-submit', {}, 'Submit')}
                 textAlign="center"
                 fluid
                 onClick={() =>
@@ -209,6 +219,7 @@ type EntryProps = {
 };
 
 const Entry = (props: EntryProps) => {
+  const t = useT();
   const {
     onRemove,
     onChange,
@@ -223,7 +234,12 @@ const Entry = (props: EntryProps) => {
     <Stack.Item {...rest}>
       <Stack>
         <Stack.Item grow>
-          <Input placeholder="Name" value={name} onChange={onChange} fluid />
+          <Input
+            placeholder={t('circuitsignal-name', {}, 'Name')}
+            value={name}
+            onChange={onChange}
+            fluid
+          />
         </Stack.Item>
         <Stack.Item>
           {options.length > 0 ? (

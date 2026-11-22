@@ -12,7 +12,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
-import { departmentKey, useT } from '../i18n';
+import { departmentKey, jobKey, useT } from '../i18n';
 import { Window } from '../layouts';
 
 const OTHER = 'Other';
@@ -62,6 +62,7 @@ function RolesTab() {
     const name = value.slice(DEPARTMENT_PREFIX.length);
     return t(departmentKey(name), {}, name);
   };
+  const roleLabel = (name: string) => t(jobKey(name, 'name'), {}, name);
   const labelOf = (value: string | null) => {
     if (!value) {
       return t('rolewhitelist-category-other');
@@ -80,7 +81,9 @@ function RolesTab() {
 
   const visible = data.roles.filter(
     (role) =>
-      !search || role.name.toLowerCase().includes(search.toLowerCase()),
+      !search ||
+      role.name.toLowerCase().includes(search.toLowerCase()) ||
+      roleLabel(role.name).toLowerCase().includes(search.toLowerCase()),
   );
   const groupKeys = [
     ...data.department_categories.map((entry) => entry.value),
@@ -164,7 +167,7 @@ function RolesTab() {
               <Table>
                 {roles.map((role) => (
                   <Table.Row key={role.name} className="candystripe">
-                    <Table.Cell>{role.name}</Table.Cell>
+                    <Table.Cell>{roleLabel(role.name)}</Table.Cell>
                     <Table.Cell collapsing>
                       <Button
                         icon={role.restricted ? 'lock' : 'lock-open'}
@@ -233,8 +236,9 @@ function PlayersTab() {
   const [ckey, setCkey] = useState('');
   const [role, setRole] = useState('');
   const [search, setSearch] = useState('');
+  const roleLabel = (name: string) => t(jobKey(name, 'name'), {}, name);
 
-  const players = data.players.filter(
+  const players =data.players.filter(
     (player) =>
       !search || player.ckey.toLowerCase().includes(search.toLowerCase()),
   );
@@ -255,9 +259,14 @@ function PlayersTab() {
             <Stack.Item grow>
               <Dropdown
                 width="100%"
-                options={data.restricted_roles}
+                options={data.restricted_roles.map((name) => ({
+                  value: name,
+                  displayText: roleLabel(name),
+                }))}
                 selected={role}
-                displayText={role || t('rolewhitelist-grant-role')}
+                displayText={
+                  role ? roleLabel(role) : t('rolewhitelist-grant-role')
+                }
                 onSelected={setRole}
               />
             </Stack.Item>
@@ -308,7 +317,7 @@ function PlayersTab() {
                         act('revoke', { ckey: player.ckey, role: granted })
                       }
                     >
-                      {granted}
+                      {roleLabel(granted)}
                     </Button>
                   ))}
                 </Table.Cell>

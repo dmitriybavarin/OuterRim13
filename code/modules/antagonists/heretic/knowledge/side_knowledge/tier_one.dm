@@ -188,7 +188,7 @@
 		stack_trace("Somehow, no book in codex cicatrix selected atoms! [english_list(selected_atoms)]")
 	playsound(body, 'sound/items/poster/poster_ripped.ogg', 100, TRUE)
 	body.do_jitter_animation()
-	body.visible_message(span_danger("An awful ripping sound is heard as [ripped_thing]'s [exterior_text] is ripped straight out, wrapping around [le_book || "the book"], turning into an eldritch shade of blue!"))
+	body.visible_message(span_danger(loc_key("heretic-side-codex-ripped", list(part = ripped_thing, exterior = exterior_text, book = le_book || LOC_KEY("heretic-side-codex-book-default")))))
 	return ..()
 
 /**
@@ -304,7 +304,7 @@
 		return ..()
 
 	if(feedback)
-		to_chat(the_spell.owner, span_mansus("You need a Living Heart to cast [the_spell]!"))
+		to_chat(the_spell.owner, span_mansus(loc_key("heretic-side-cloak-no-heart", list(spell = loc_action_name(the_spell, the_spell.name)))))
 	return SPELL_CANCEL_CAST
 
 /datum/heretic_knowledge/lodestone
@@ -331,7 +331,7 @@
 		selected_atoms += whatever
 
 	if(!length(selected_atoms))
-		loc.balloon_alert(user, "no items to imbue!")
+		loc.balloon_alert(user, LOC_KEY("heretic-side-lodestone-no-items"))
 		return FALSE
 	return TRUE
 
@@ -361,7 +361,7 @@
 	for(var/obj/item/new_trackable as anything in valuable_pool | equipment_pool | weapon_pool | item_pool | leftover_pool)
 		var/datum/antagonist/heretic/heretic_datum = GET_HERETIC(user)
 		LAZYADD(heretic_datum.tracked_items, new_trackable)
-		to_chat(user, span_mansus("You feel the new lodestone in [new_trackable] start to beat in rhythm with your heart."))
+		to_chat(user, span_mansus(loc_key("heretic-side-lodestone-imbued", list(item = new_trackable))))
 		lodestones_created += 1
 		if(lodestones_created >= 3)
 			break

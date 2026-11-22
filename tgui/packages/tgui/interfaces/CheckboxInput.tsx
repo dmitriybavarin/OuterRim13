@@ -12,6 +12,7 @@ import {
 import { createSearch, decodeHtmlEntities } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { InputButtons } from './common/InputButtons';
 import { Loader } from './common/Loader';
@@ -28,6 +29,7 @@ type Data = {
 /** Renders a list of checkboxes per items for input. */
 export const CheckboxInput = (props) => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const {
     items = [],
     min_checked,
@@ -65,8 +67,18 @@ export const CheckboxInput = (props) => {
           <Stack.Item>
             <NoticeBox info textAlign="center">
               {decodeHtmlEntities(message)}{' '}
-              {min_checked > 0 && ` (Min: ${min_checked})`}
-              {max_checked < 50 && ` (Max: ${max_checked})`}
+              {min_checked > 0 &&
+                ` (${t(
+                  'inputmodal-checkbox-min',
+                  { value: min_checked },
+                  `Min: ${min_checked}`,
+                )})`}
+              {max_checked < 50 &&
+                ` (${t(
+                  'inputmodal-checkbox-max',
+                  { value: max_checked },
+                  `Max: ${max_checked}`,
+                )})`}
             </NoticeBox>
           </Stack.Item>
           <Stack.Item grow>
@@ -94,7 +106,10 @@ export const CheckboxInput = (props) => {
           </Stack.Item>
           <Stack m={1}>
             <Stack.Item>
-              <Tooltip content="Search" position="bottom">
+              <Tooltip
+                content={t('inputmodal-checkbox-search', {}, 'Search')}
+                position="bottom"
+              >
                 <Icon name="search" mt={0.5} />
               </Tooltip>
             </Stack.Item>

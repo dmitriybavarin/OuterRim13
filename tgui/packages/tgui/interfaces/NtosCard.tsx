@@ -11,6 +11,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { NtosWindow } from '../layouts';
 import type { NTOSData } from '../layouts/NtosWindow';
 import { AccessList } from './common/AccessList';
@@ -77,6 +78,7 @@ export const NtosCardContent = (props) => {
     access_flag_names,
     show_basic,
   } = data;
+  const t = useT();
 
   return (
     <Stack fill vertical>
@@ -93,14 +95,23 @@ export const NtosCardContent = (props) => {
       {!!modified_card && !!authed_user && (
         <Stack.Item>
           <Section
-            title="Templates"
+            title={t('ntoscard-templates', {}, 'Templates')}
             mt={1}
             buttons={
               <Button
                 icon="question-circle"
                 tooltip={
-                  'Will attempt to apply all access for the template to the ID card.\n' +
-                  'Does not use wildcards unless the template specifies them.'
+                  t(
+                    'ntoscard-templates-tooltip-apply',
+                    {},
+                    'Will attempt to apply all access for the template to the ID card.',
+                  ) +
+                  '\n' +
+                  t(
+                    'ntoscard-templates-tooltip-wildcards',
+                    {},
+                    'Does not use wildcards unless the template specifies them.',
+                  )
                 }
                 tooltipPosition="left"
               />
@@ -109,7 +120,11 @@ export const NtosCardContent = (props) => {
             {modified_card.has_trim ? (
               <TemplateDropdown templates={templates} />
             ) : (
-              'Templates require a trim already applied to the card. Please use an ID Painter to apply a trim.'
+              t(
+                'ntoscard-templates-need-trim',
+                {},
+                'Templates require a trim already applied to the card. Please use an ID Painter to apply a trim.',
+              )
             )}
           </Section>
         </Stack.Item>
@@ -129,8 +144,8 @@ export const NtosCardContent = (props) => {
                 showBasic={!!show_basic}
                 extraButtons={
                   <Button.Confirm
-                    content="Terminate Employment"
-                    confirmContent="Fire Employee?"
+                    content={t('ntoscard-terminate', {}, 'Terminate Employment')}
+                    confirmContent={t('ntoscard-terminate-confirm', {}, 'Fire Employee?')}
                     color="bad"
                     onClick={() => act('PRG_terminate')}
                   />
@@ -153,6 +168,7 @@ export const NtosCardContent = (props) => {
 const LoginPage = () => {
   const { act, data } = useBackend<Data>();
   const { authed_user, auth_card, is_holding_id } = data;
+  const t = useT();
 
   return (
     <Section>
@@ -160,8 +176,12 @@ const LoginPage = () => {
         <Stack.Item grow>
           <NoticeBox info={!!authed_user}>
             {authed_user
-              ? `Login: ${authed_user}`
-              : 'Please log in to continue.'}
+              ? t(
+                  'ntoscard-login',
+                  { user: authed_user },
+                  `Login: ${authed_user}`,
+                )
+              : t('ntoscard-login-prompt', {}, 'Please log in to continue.')}
           </NoticeBox>
         </Stack.Item>
         <Stack.Item width="100%">
@@ -178,7 +198,7 @@ const LoginPage = () => {
               >
                 {auth_card
                   ? `${auth_card.id_owner} (${auth_card.id_rank})`
-                  : 'Insert ID'}
+                  : t('ntoscard-insert-id', {}, 'Insert ID')}
               </Button>
             </Flex.Item>
             <Flex.Item>
@@ -189,7 +209,9 @@ const LoginPage = () => {
                   act(authed_user ? 'PRG_logout' : 'PRG_authenticate');
                 }}
               >
-                {authed_user ? 'Log Out' : 'Log In'}
+                {authed_user
+                  ? t('ntoscard-logout', {}, 'Log Out')
+                  : t('ntoscard-login-button', {}, 'Log In')}
               </Button>
             </Flex.Item>
           </Flex>
@@ -202,6 +224,7 @@ const LoginPage = () => {
 const IdCardPage = (props) => {
   const { act, data } = useBackend<Data>();
   const { authed_user, auth_card, modified_card, is_holding_id } = data;
+  const t = useT();
 
   return (
     <Section>
@@ -220,7 +243,7 @@ const IdCardPage = (props) => {
               >
                 {modified_card
                   ? `${modified_card.id_owner} (${modified_card.id_rank})`
-                  : 'Insert ID'}
+                  : t('ntoscard-insert-id', {}, 'Insert ID')}
               </Button>
             </Flex.Item>
             <Flex.Item>
@@ -229,7 +252,7 @@ const IdCardPage = (props) => {
                 disabled={!modified_card || !authed_user}
                 onClick={() => act('PRG_print')}
               >
-                Print Report
+                {t('ntoscard-print-report', {}, 'Print Report')}
               </Button>
             </Flex.Item>
           </Flex>
@@ -238,7 +261,9 @@ const IdCardPage = (props) => {
       {!!(modified_card && authed_user) && (
         <>
           <Stack mt={1}>
-            <Stack.Item align="center">Details:</Stack.Item>
+            <Stack.Item align="center">
+              {t('ntoscard-details', {}, 'Details:')}
+            </Stack.Item>
             <Stack.Item grow={1} mr={1} ml={1}>
               <Input
                 width="100%"
@@ -254,7 +279,7 @@ const IdCardPage = (props) => {
               <NumberInput
                 step={1}
                 value={modified_card.id_age || 0}
-                unit="Years"
+                unit={t('ntoscard-years', {}, 'Years')}
                 minValue={17}
                 maxValue={85}
                 onChange={(value) => {
@@ -266,7 +291,9 @@ const IdCardPage = (props) => {
             </Stack.Item>
           </Stack>
           <Stack>
-            <Stack.Item align="center">Assignment:</Stack.Item>
+            <Stack.Item align="center">
+              {t('ntoscard-assignment', {}, 'Assignment:')}
+            </Stack.Item>
             <Stack.Item grow={1} ml={1}>
               <Input
                 fluid
@@ -289,6 +316,7 @@ const IdCardPage = (props) => {
 const TemplateDropdown = (props) => {
   const { act } = useBackend<Data>();
   const { templates } = props;
+  const t = useT();
 
   const templateKeys = Object.keys(templates);
 
@@ -299,7 +327,11 @@ const TemplateDropdown = (props) => {
       <Stack.Item grow>
         <Dropdown
           width="100%"
-          placeholder="Select a template..."
+          placeholder={t(
+            'ntoscard-select-template',
+            {},
+            'Select a template...',
+          )}
           options={templateKeys.map((path) => {
             return templates[path];
           })}

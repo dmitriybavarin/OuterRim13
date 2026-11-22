@@ -7,6 +7,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -19,24 +20,25 @@ type Data = {
 
 export const Electrolyzer = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { hasPowercell, on, open, anchored, powerLevel } = data;
 
   return (
     <Window width={400} height={305}>
       <Window.Content>
         <Section
-          title="Power"
+          title={t('atmos-power', {}, 'Power')}
           buttons={
             <>
               <Button
                 icon="eject"
-                content="Eject Cell"
+                content={t('electrolyzer-eject-cell', {}, 'Eject Cell')}
                 disabled={!hasPowercell || !open}
                 onClick={() => act('eject')}
               />
               <Button
                 icon={on ? 'power-off' : 'times'}
-                content={on ? 'On' : 'Off'}
+                content={on ? t('atmos-on', {}, 'On') : t('atmos-off', {}, 'Off')}
                 selected={on}
                 disabled={!hasPowercell && !anchored}
                 onClick={() => act('power')}
@@ -45,7 +47,7 @@ export const Electrolyzer = (props) => {
           }
         >
           <LabeledList>
-            <LabeledList.Item label="Cell" color={!hasPowercell ? 'bad' : ''}>
+            <LabeledList.Item label={t('electrolyzer-cell', {}, 'Cell')} color={!hasPowercell ? 'bad' : ''}>
               {(hasPowercell && (
                 <ProgressBar
                   value={powerLevel / 100}
@@ -56,7 +58,7 @@ export const Electrolyzer = (props) => {
                   }}
                 />
               )) ||
-                'None'}
+                t('electrolyzer-cell-none', {}, 'None')}
             </LabeledList.Item>
           </LabeledList>
         </Section>

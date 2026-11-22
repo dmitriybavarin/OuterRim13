@@ -9,6 +9,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -23,12 +24,18 @@ function searchForPolicy(policy: Record<string, string>, token: string) {
 
 export const Policypanel = () => {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { policy } = data;
 
   const [currentPolicy, setCurrentPolicy] = useState<string>('');
 
   return (
-    <Window title="Policy Panel" theme="admin" width={400} height={300}>
+    <Window
+      title={t('policypanel-title', {}, 'Policy Panel')}
+      theme="admin"
+      width={400}
+      height={300}
+    >
       <Window.Content>
         <Stack fill vertical>
           <Stack.Item>
@@ -42,7 +49,7 @@ export const Policypanel = () => {
               </Flex.Item>
               <Flex.Item width="50%">
                 <Input
-                  placeholder="Search..."
+                  placeholder={t('policypanel-search', {}, 'Search...')}
                   fluid
                   onEnter={(value) => {
                     const results = searchForPolicy(policy, value);
@@ -58,8 +65,11 @@ export const Policypanel = () => {
             <Section scrollable fill>
               <BlockQuote fontSize="16px">
                 {policy[currentPolicy] ||
-                  `Select a policy to view. These policies are displayed
-                    to players upon gaining the relevant role.`}
+                  t(
+                    'policypanel-select-hint',
+                    {},
+                    'Select a policy to view. These policies are displayed to players upon gaining the relevant role.',
+                  )}
               </BlockQuote>
             </Section>
           </Stack.Item>

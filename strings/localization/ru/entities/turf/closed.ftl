@@ -103,13 +103,13 @@ ent-turf-closed-indestructible-ice = вечная мерзлота
 
 # name: impervious iron wall
 # desc: A wall with tough iron plating.
-ent-turf-closed-indestructible-iron = неуязвимая железная стена
-    .gen = неуязвимой железной стены
-    .dat = неуязвимой железной стене
-    .acc = неуязвимую железную стену
-    .ins = неуязвимой железной стеной
-    .pre = неуязвимой железной стене
-    .desc = Стена с прочной железной обшивкой.
+ent-turf-closed-indestructible-iron = неуязвимая стальная стена
+    .gen = неуязвимой стальной стены
+    .dat = неуязвимой стальной стене
+    .acc = неуязвимую стальную стену
+    .ins = неуязвимой стальной стеной
+    .pre = неуязвимой стальной стене
+    .desc = Стена с прочной стальной обшивкой.
 
 # name: dense meat wall
 # desc: A huge chunk of dense, packed meat. Effectively impervious to conventional methods of destruction.
@@ -639,13 +639,13 @@ ent-turf-closed-wall-mineral-gold = золотая стена
 
 # name: rough iron wall
 # desc: A wall with rough iron plating.
-ent-turf-closed-wall-mineral-iron = грубая железная стена
-    .gen = грубой железной стены
-    .dat = грубой железной стене
-    .acc = грубую железную стену
-    .ins = грубой железной стеной
-    .pre = грубой железной стене
-    .desc = Стена с грубой железной обшивкой.
+ent-turf-closed-wall-mineral-iron = грубая стальная стена
+    .gen = грубой стальной стены
+    .dat = грубой стальной стене
+    .acc = грубую стальную стену
+    .ins = грубой стальной стеной
+    .pre = грубой стальной стене
+    .desc = Стена с грубой стальной обшивкой.
 
 # name: plasma wall
 # desc: A wall with plasma plating. This is definitely a bad idea.

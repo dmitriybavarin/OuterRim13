@@ -68,7 +68,7 @@
 
 	if(!IS_HERETIC_OR_MONSTER(teleportee))
 		teleportee.apply_damage(20, BRUTE) //so they dont roll it like a jackpot machine to see if they can land in the armory
-		to_chat(teleportee, span_userdanger("You stumble through [src], battered by forces beyond your comprehension, landing anywhere but where you thought you were going."))
+		to_chat(teleportee, span_userdanger(loc_key("heretic-item-keyring-stumble", list(item = src))))
 
 	INVOKE_ASYNC(src, PROC_REF(async_opendoor), doorstination)
 
@@ -111,11 +111,11 @@
 	. = ..()
 	if(!IS_HERETIC_OR_MONSTER(user))
 		return
-	. += span_hypnophrase("Enchanted by the Mansus!")
-	. += span_hypnophrase("Using an ID on this or using this ID on another ID will consume it and allow you to copy its accesses.")
-	. += span_hypnophrase("<b>Using this in-hand</b> allows you to change its appearance.")
-	. += span_hypnophrase("<b>Using this on a pair of doors</b>, allows you to link them together. Entering one door will transport you to the other, while heathens are instead teleported to a random airlock.")
-	. += span_hypnophrase("<b>Ctrl-clicking the ID</b>, makes the ID make inverted portals instead, which teleport you onto a random airlock onstation, while heathens are teleported to the destination.")
+	. += span_hypnophrase(LOC_KEY("heretic-item-keyring-enchanted"))
+	. += span_hypnophrase(LOC_KEY("heretic-item-keyring-examine-consume"))
+	. += span_hypnophrase(LOC_KEY("heretic-item-keyring-examine-appearance"))
+	. += span_hypnophrase(LOC_KEY("heretic-item-keyring-examine-link"))
+	. += span_hypnophrase(LOC_KEY("heretic-item-keyring-examine-inverted"))
 
 /obj/item/card/id/advanced/heretic/attack_self(mob/user)
 	. = ..()
@@ -123,7 +123,7 @@
 		return
 	var/cardname = tgui_input_list(user, "Shapeshift into?", "Shapeshift", fused_ids)
 	if(!cardname)
-		balloon_alert(user, "no options!")
+		balloon_alert(user, LOC_KEY("heretic-item-keyring-no-options"))
 		return ..()
 	var/obj/item/card/id/card = fused_ids[cardname]
 	shapeshift(card)
@@ -132,7 +132,7 @@
 	if(!IS_HERETIC(user))
 		return CLICK_ACTION_BLOCKING
 	inverted = !inverted
-	balloon_alert(user, "[inverted ? "now" : "no longer"] creating inverted rifts")
+	balloon_alert(user, inverted ? LOC_KEY("heretic-item-keyring-inverted-on") : LOC_KEY("heretic-item-keyring-inverted-off"))
 	return CLICK_ACTION_SUCCESS
 
 ///Changes our appearance to the passed ID card
@@ -163,10 +163,10 @@
 
 ///Creates a portal pair at door1 and door2, displays a balloon alert to user
 /obj/item/card/id/advanced/heretic/proc/make_portal(mob/user, obj/machinery/door/door1, obj/machinery/door/door2)
-	var/message = "linked"
+	var/message = LOC_KEY("heretic-item-keyring-linked")
 	if(portal_one || portal_two)
 		clear_portals()
-		message += ", previous cleared"
+		message = LOC_KEY("heretic-item-keyring-linked-cleared")
 
 	portal_one = new(get_turf(door2), door2, inverted)
 	portal_two = new(get_turf(door1), door1, inverted)
@@ -189,7 +189,7 @@
 	access |= card.access
 	if(!isnull(user))
 		playsound(drop_location(), 'sound/items/eatfood.ogg', rand(10,30), TRUE)
-		balloon_alert(user, "consumed card")
+		balloon_alert(user, LOC_KEY("heretic-item-keyring-consumed"))
 
 /obj/item/card/id/advanced/heretic/interact_with_atom(atom/target, mob/living/user, list/modifiers)
 	if(!IS_HERETIC(user))
@@ -210,12 +210,12 @@
 
 	if(reference_resolved)
 		make_portal(user, reference_resolved, target)
-		to_chat(user, span_notice("You use [src], to link [reference_resolved] and [target] together."))
+		to_chat(user, span_notice(loc_key("heretic-item-keyring-link-done", list(item = src, first = reference_resolved, target = target))))
 		link = null
-		balloon_alert(user, "link 2/2")
+		balloon_alert(user, LOC_KEY("heretic-item-keyring-link-second"))
 	else
 		link = WEAKREF(target)
-		balloon_alert(user, "link 1/2")
+		balloon_alert(user, LOC_KEY("heretic-item-keyring-link-first"))
 	return ITEM_INTERACT_SUCCESS
 
 /obj/item/card/id/advanced/heretic/Destroy()

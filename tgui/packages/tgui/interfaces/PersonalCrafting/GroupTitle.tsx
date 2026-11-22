@@ -1,4 +1,5 @@
 import { Divider, Stack } from 'tgui-core/components';
+import { useCraftText } from '../../i18n';
 
 type Props = {
   title: string;
@@ -6,13 +7,14 @@ type Props = {
 
 export function GroupTitle(props: Props) {
   const { title } = props;
+  const text = useCraftText();
 
   return (
     <Stack my={1}>
       <Stack.Item grow>
         <Divider />
       </Stack.Item>
-      <Stack.Item color="gray">{title}</Stack.Item>
+      <Stack.Item color="gray">{text(title)}</Stack.Item>
       <Stack.Item grow>
         <Divider />
       </Stack.Item>
@@ -22,6 +24,7 @@ export function GroupTitle(props: Props) {
 
 export function SubGroupTitle(props: Props) {
   const { title } = props;
+  const text = useCraftText();
 
   return (
     <Stack>
@@ -38,7 +41,7 @@ export function SubGroupTitle(props: Props) {
         grow
       />
       <Stack.Item grow pr={0.5} pl={0.5} italic align="center">
-        {title}
+        {text(title)}
       </Stack.Item>
       <Stack.Item
         style={{

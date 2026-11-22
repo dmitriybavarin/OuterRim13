@@ -13,6 +13,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { NtosWindow } from '../layouts';
 
 type Data = {
@@ -41,12 +42,16 @@ export const NtosPay = (props) => {
 export const NtosPayContent = (props) => {
   const { data } = useBackend<Data>();
   const { name } = data;
+  const t = useT();
 
   if (!name) {
     return (
       <NoticeBox>
-        You need to insert your ID card into the card slot in order to use this
-        application.
+        {t(
+          'ntospay-need-id',
+          {},
+          'You need to insert your ID card into the card slot in order to use this application.',
+        )}
       </NoticeBox>
     );
   }
@@ -70,13 +75,24 @@ export const NtosPayContent = (props) => {
 const Introduction = (props) => {
   const { data } = useBackend<Data>();
   const { name, owner_token, money } = data;
+  const t = useT();
   return (
     <Section textAlign="center">
       <Table>
-        <Table.Row>Hi, {name}.</Table.Row>
-        <Table.Row>Your pay token is {owner_token}.</Table.Row>
+        <Table.Row>{t('ntospay-greeting', { name }, `Hi, ${name}.`)}</Table.Row>
         <Table.Row>
-          Account balance: {money} credit{money === 1 ? '' : 's'}
+          {t(
+            'ntospay-token',
+            { token: owner_token },
+            `Your pay token is ${owner_token}.`,
+          )}
+        </Table.Row>
+        <Table.Row>
+          {t(
+            'ntospay-balance',
+            { money },
+            `Account balance: ${money} credit${money === 1 ? '' : 's'}`,
+          )}
         </Table.Row>
       </Table>
     </Section>
@@ -87,6 +103,7 @@ const Introduction = (props) => {
 const TransferSection = (props) => {
   const { act, data } = useBackend<Data>();
   const { money, wanted_token } = data;
+  const t = useT();
 
   const [token, setToken] = useState('');
   const [moneyToSend, setMoneyToSend] = useState(1);
@@ -96,21 +113,29 @@ const TransferSection = (props) => {
   return (
     <Stack>
       <Stack.Item>
-        <Section title="Transfer Money">
+        <Section title={t('ntospay-transfer', {}, 'Transfer Money')}>
           <Box>
             <Tooltip
-              content="Enter the pay token of the account you want to transfer credits to."
+              content={t(
+                'ntospay-token-tooltip',
+                {},
+                'Enter the pay token of the account you want to transfer credits to.',
+              )}
               position="top"
             >
               <Input
-                placeholder="Pay Token"
+                placeholder={t('ntospay-token-placeholder', {}, 'Pay Token')}
                 width="190px"
                 onChange={setToken}
               />
             </Tooltip>
           </Box>
           <Tooltip
-            content="Enter amount of credits to transfer."
+            content={t(
+              'ntospay-amount-tooltip',
+              {},
+              'Enter amount of credits to transfer.',
+            )}
             position="top"
           >
             <RestrictedInput
@@ -131,15 +156,23 @@ const TransferSection = (props) => {
               })
             }
           >
-            Send credits
+            {t('ntospay-send', {}, 'Send credits')}
           </Button>
         </Section>
       </Stack.Item>
       <Stack.Item>
-        <Section title="Get Token" width="270px" height="98px">
+        <Section
+          title={t('ntospay-get-token', {}, 'Get Token')}
+          width="270px"
+          height="98px"
+        >
           <Box>
             <Input
-              placeholder="Full name of account."
+              placeholder={t(
+                'ntospay-name-placeholder',
+                {},
+                'Full name of account.',
+              )}
               width="190px"
               onChange={setNameToToken}
             />
@@ -150,7 +183,7 @@ const TransferSection = (props) => {
                 })
               }
             >
-              Get it
+              {t('ntospay-get-it', {}, 'Get it')}
             </Button>
           </Box>
           <Divider hidden />
@@ -165,9 +198,10 @@ const TransferSection = (props) => {
 const TransactionHistory = (props) => {
   const { data } = useBackend<Data>();
   const { transaction_list = [] } = data;
+  const t = useT();
 
   return (
-    <Section fill title="Transaction History">
+    <Section fill title={t('ntospay-history', {}, 'Transaction History')}>
       <Section fill scrollable title={<TableHeaders />}>
         <Table>
           {transaction_list.map((log, index) => (
@@ -191,14 +225,15 @@ const TransactionHistory = (props) => {
 
 /** Renders a set of sticky headers */
 const TableHeaders = (props) => {
+  const t = useT();
   return (
     <Table>
       <Table.Row>
         <Table.Cell color="label" width="100px">
-          Amount
+          {t('ntospay-amount', {}, 'Amount')}
         </Table.Cell>
         <Table.Cell color="label" textAlign="center">
-          Reason
+          {t('ntospay-reason', {}, 'Reason')}
         </Table.Cell>
       </Table.Row>
     </Table>

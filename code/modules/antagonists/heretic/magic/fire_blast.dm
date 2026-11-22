@@ -78,8 +78,8 @@
 	// but likely will (due to them not catching on fire)
 	if(to_beam.can_block_magic(antimagic_flags))
 		to_beam.visible_message(
-			span_warning("[to_beam] absorbs the spell, remaining unharmed!"),
-			span_userdanger("You absorb the spell, remaining unharmed!"),
+			span_warning(loc_key("heretic-spell-fire_blast-absorb-others", list(target = to_beam))),
+			span_userdanger(LOC_KEY("heretic-spell-fire_blast-absorb-self")),
 		)
 		// Apply status effect but with no overlay
 		to_beam.apply_status_effect(/datum/status_effect/fire_blasted)

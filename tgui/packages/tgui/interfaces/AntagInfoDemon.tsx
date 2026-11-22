@@ -2,6 +2,7 @@ import { Box, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { type Objective, ObjectivePrintout } from './common/Objectives';
 
@@ -21,6 +22,7 @@ type Info = {
 
 export const AntagInfoDemon = (props) => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { fluff, objectives, explain_attack } = data;
   return (
     <Window width={620} height={356} theme="syndicate">
@@ -43,7 +45,7 @@ export const AntagInfoDemon = (props) => {
                     </Stack.Item>
                     <Stack.Item>
                       <ObjectivePrintout
-                        titleMessage="It is in your nature to accomplish these goals:"
+                        titleMessage={t('antaginfo-demon-goals')}
                         objectiveTextSize="20px"
                         objectives={objectives}
                       />
@@ -53,23 +55,20 @@ export const AntagInfoDemon = (props) => {
               </Stack.Item>
               {!!explain_attack && (
                 <Stack.Item>
-                  <Section fill title="Demonic Powers">
+                  <Section fill title={t('antaginfo-demon-powers')}>
                     <Stack vertical>
                       <Stack.Item>
-                        <span style={jauntstyle}>Blood Jaunt:</span> You can
-                        dive in and out of blood to travel anywhere you need to
-                        be. You will gain a speed boost upon leaving the jaunt
-                        for surprise attacks. You can drag victims you have
-                        disabled through the blood, consuming them and restoring
-                        health.
+                        <span style={jauntstyle}>
+                          {t('antaginfo-demon-jaunt-name')}
+                        </span>{' '}
+                        {t('antaginfo-demon-jaunt-desc')}
                       </Stack.Item>
                       <Stack.Divider />
                       <Stack.Item>
-                        <span style={injurestyle}>Monstrous strike:</span> You
-                        can launch a devastating slam attack by right-clicking,
-                        capable of smashing bones in one strike. Great for
-                        preventing the escape of your victims, as their wounds
-                        will slow them.
+                        <span style={injurestyle}>
+                          {t('antaginfo-demon-strike-name')}
+                        </span>{' '}
+                        {t('antaginfo-demon-strike-desc')}
                       </Stack.Item>
                     </Stack>
                   </Section>

@@ -1,5 +1,6 @@
 import { BlockQuote, Stack } from 'tgui-core/components';
 
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 const goodstyle = {
@@ -15,38 +16,27 @@ const noticestyle = {
 };
 
 export const AntagInfoMorph = (props) => {
+  const t = useT();
   return (
     <Window width={620} height={170} theme="abductor">
       <Window.Content>
         <Stack vertical fill>
-          <Stack.Item fontSize="25px">You are a morph...</Stack.Item>
+          <Stack.Item fontSize="25px">{t('antaginfo-morph-title')}</Stack.Item>
           <Stack.Item>
             <BlockQuote>
-              ...a shapeshifting abomination that can eat almost anything. You
-              may take the form of anything you can see by{' '}
-              <span style={noticestyle}>
-                using your &quot;Assume Form&quot; ability on it. Shift-clicking
-                the object in question will also work.
-              </span>{' '}
+              {t('antaginfo-morph-intro')}{' '}
+              <span style={noticestyle}>{t('antaginfo-morph-assume')}</span>{' '}
               <span style={badstyle}>
-                &ensp;This process will alert any nearby observers.
+                &ensp;{t('antaginfo-morph-assume-alert')}
               </span>{' '}
-              While morphed, you move faster, but are unable to attack creatures
-              or eat anything. In addition,
+              {t('antaginfo-morph-morphed')}
               <span style={badstyle}>
-                &ensp;anyone within three tiles will note an uncanny wrongness
-                if examining you.
+                &ensp;{t('antaginfo-morph-wrongness')}
               </span>{' '}
-              You can attack any item or dead creature to consume it -
-              <span style={goodstyle}>
-                &ensp;corpses will restore your health.
-              </span>{' '}
-              Finally, you can restore yourself to your original form while
-              morphed by{' '}
-              <span style={noticestyle}>
-                using the &quot;Assume Form&quot; ability on yourself. You can
-                also shift-click yourself.
-              </span>{' '}
+              {t('antaginfo-morph-consume')}
+              <span style={goodstyle}>&ensp;{t('antaginfo-morph-corpses')}</span>{' '}
+              {t('antaginfo-morph-restore')}{' '}
+              <span style={noticestyle}>{t('antaginfo-morph-restore-how')}</span>{' '}
             </BlockQuote>
           </Stack.Item>
         </Stack>

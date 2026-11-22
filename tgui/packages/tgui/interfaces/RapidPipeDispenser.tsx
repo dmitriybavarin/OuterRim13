@@ -16,7 +16,10 @@ import type { BooleanLike } from 'tgui-core/react';
 import { capitalizeAll } from 'tgui-core/string';
 
 import { useBackend } from '../backend';
+import { slugify, useT } from '../i18n';
 import { Window } from '../layouts';
+
+const kebab = (text: string) => slugify(text).replace(/_/g, '-');
 
 const ROOT_CATEGORIES = ['Atmospherics', 'Disposals', 'Transit Tubes'] as const;
 
@@ -96,11 +99,12 @@ type Data = {
 
 export function ColorItem(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { selected_color, paint_colors = {} } = data;
   const colorNames = Object.keys(paint_colors);
 
   return (
-    <LabeledList.Item label="Color">
+    <LabeledList.Item label={t('rapid-color', {}, 'Color')}>
       {colorNames.map((colorName) => (
         <ColorBox
           key={colorName}
@@ -128,10 +132,11 @@ export function ColorItem(props) {
 
 function ModeItem(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { mode } = data;
 
   return (
-    <LabeledList.Item label="Modes">
+    <LabeledList.Item label={t('rapid-modes', {}, 'Modes')}>
       {TOOLS.map((tool) => (
         <Button.Checkbox
           key={tool.bitmask}
@@ -142,7 +147,7 @@ function ModeItem(props) {
             })
           }
         >
-          {tool.name}
+          {t(`rapid-tool-${kebab(tool.name)}`, {}, tool.name)}
         </Button.Checkbox>
       ))}
     </LabeledList.Item>
@@ -151,10 +156,11 @@ function ModeItem(props) {
 
 function CategoryItem(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { category: rootCategoryIndex } = data;
 
   return (
-    <LabeledList.Item label="Category">
+    <LabeledList.Item label={t('rapid-category', {}, 'Category')}>
       {ROOT_CATEGORIES.map((categoryName, i) => (
         <Button
           key={categoryName}
@@ -163,7 +169,7 @@ function CategoryItem(props) {
           color="transparent"
           onClick={() => act('category', { category: i })}
         >
-          {categoryName}
+          {t(`rapid-category-${kebab(categoryName)}`, {}, categoryName)}
         </Button>
       ))}
     </LabeledList.Item>
@@ -192,10 +198,11 @@ function layerToBitmask(layer: number) {
 
 function LayerSelect(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { pipe_layers, multi_layer, max_pipe_layers = 1 } = data;
 
   return (
-    <LabeledList.Item label="Layer">
+    <LabeledList.Item label={t('rapid-layer', {}, 'Layer')}>
       {Array.from({ length: max_pipe_layers }).map((_, layer) => (
         <Button.Checkbox
           key={layer}
@@ -214,12 +221,16 @@ function LayerSelect(props) {
       <Button.Checkbox
         key="multilayer"
         checked={multi_layer}
-        tooltip="Build on multiple pipe layers simultaneously"
+        tooltip={t(
+          'rapid-multi-layer-tooltip',
+          {},
+          'Build on multiple pipe layers simultaneously',
+        )}
         onClick={() => {
           act('toggle_multi_layer');
         }}
       >
-        Multi
+        {t('rapid-multi-layer', {}, 'Multi')}
       </Button.Checkbox>
     </LabeledList.Item>
   );
@@ -306,6 +317,7 @@ function RecipeRow(props: RecipeRowProps) {
 
 function PipeTypeSection(props) {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { categories = [], selected_category } = data;
   const [categoryName, setCategoryName] = useState(selected_category);
 
@@ -323,7 +335,11 @@ function PipeTypeSection(props) {
             selected={category.cat_name === shownCategory.cat_name}
             onClick={() => setCategoryName(category.cat_name)}
           >
-            {category.cat_name}
+            {t(
+              `rapid-category-${kebab(category.cat_name)}`,
+              {},
+              category.cat_name,
+            )}
           </Tabs.Tab>
         ))}
       </Tabs>
@@ -342,6 +358,7 @@ function PipeTypeSection(props) {
 
 export function SmartPipeBlockSection(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { init_directions } = data;
 
   return (
@@ -354,10 +371,11 @@ export function SmartPipeBlockSection(props) {
                 color="transparent"
                 icon="info"
                 tooltipPosition="right"
-                tooltip="This is a panel for blocking certain connection
-                directions for the smart pipes.
-                The button in the center resets to
-                default (all directions can connect)"
+                tooltip={t(
+                  'rapid-smart-pipe-tooltip',
+                  {},
+                  'This is a panel for blocking certain connection directions for the smart pipes. The button in the center resets to default (all directions can connect)',
+                )}
               />
             </Stack.Item>
             <Stack.Item>

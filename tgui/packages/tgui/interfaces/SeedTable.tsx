@@ -15,6 +15,8 @@ import {
 import { createSearch } from 'tgui-core/string';
 import { formatTime } from 'tgui-core/format';
 
+import { useT } from '../i18n';
+
 export type TraitData = {
   path: string;
   name: string;
@@ -60,6 +62,7 @@ type SeedTableProps = {
 };
 
 export const SeedTable = (props: SeedTableProps) => {
+  const t = useT();
   const [searchText, setSearchText] = useState('');
   const [sortField, setSortField] = useState('name');
   const search = createSearch(searchText, (item: SeedData) => item.name);
@@ -77,7 +80,7 @@ export const SeedTable = (props: SeedTableProps) => {
           <Table.Cell colSpan={3} px={1} py={2}>
             <Input
               autoFocus
-              placeholder="Search..."
+              placeholder={t('seedtable-search', {}, 'Search...')}
               value={searchText}
               onChange={setSearchText}
               fluid
@@ -86,98 +89,98 @@ export const SeedTable = (props: SeedTableProps) => {
           <Table.Cell collapsing p={1}>
             <Tooltip
               content={
-                'Potency: Determines product mass, reagent volume and strength of effects.'
+                t('seedtable-potency-tip', {}, 'Potency: Determines product mass, reagent volume and strength of effects.')
               }
             >
               <Box
                 style={{ cursor: 'pointer', textAlign: "center" }}
                 onClick={(e) => setSortField('potency')}
               >
-                PTN
+                {t('seedtable-potency-abbr', {}, 'PTN')}
               </Box>
             </Tooltip>
           </Table.Cell>
           <Table.Cell collapsing p={1}>
             <Tooltip
               content={
-                'Yield: The number of products gathered in a single harvest.'
+                t('seedtable-yield-tip', {}, 'Yield: The number of products gathered in a single harvest.')
               }
             >
               <Box
                 style={{ cursor: 'pointer', textAlign: "center" }}
                 onClick={(e) => setSortField('yield')}
               >
-                YLD
+                {t('seedtable-yield-abbr', {}, 'YLD')}
               </Box>
             </Tooltip>
           </Table.Cell>
           <Table.Cell collapsing p={1}>
             <Tooltip
               content={
-                'Instability: The likelihood of the plant to randomize stats or mutate. Affects quality of resulting food & drinks.'
+                t('seedtable-instability-tip', {}, 'Instability: The likelihood of the plant to randomize stats or mutate. Affects quality of resulting food & drinks.')
               }
             >
               <Box
                 style={{ cursor: 'pointer', textAlign: "center" }}
                 onClick={(e) => setSortField('instability')}
               >
-                INS
+                {t('seedtable-instability-abbr', {}, 'INS')}
               </Box>
             </Tooltip>
           </Table.Cell>
           <Table.Cell collapsing p={1}>
             <Tooltip
               content={
-                'Endurance: The health pool of the plant that delays death. Improves quality of resulting food & drinks.'
+                t('seedtable-endurance-tip', {}, 'Endurance: The health pool of the plant that delays death. Improves quality of resulting food & drinks.')
               }
             >
               <Box
                 style={{ cursor: 'pointer', textAlign: "center" }}
                 onClick={(e) => setSortField('endurance')}
               >
-                END
+                {t('seedtable-endurance-abbr', {}, 'END')}
               </Box>
             </Tooltip>
           </Table.Cell>
           <Table.Cell collapsing p={1}>
             <Tooltip
-              content={`Lifespan: The age at which the plant starts decaying. Improves quality of resulting food & drinks.`}
+              content={t('seedtable-lifespan-tip', {}, 'Lifespan: The age at which the plant starts decaying. Improves quality of resulting food & drinks.')}
             >
               <Box
                 style={{ cursor: 'pointer', textAlign: "center" }}
                 onClick={(e) => setSortField('lifespan')}
               >
-                LFS
+                {t('seedtable-lifespan-abbr', {}, 'LFS')}
               </Box>
             </Tooltip>
           </Table.Cell>
           <Table.Cell collapsing p={1}>
             <Tooltip
-              content={`Maturation: The age required for the first harvest.`}
+              content={t('seedtable-maturation-tip', {}, 'Maturation: The age required for the first harvest.')}
             >
               <Box
                 style={{ cursor: 'pointer', textAlign: "center" }}
                 onClick={(e) => setSortField('maturation')}
               >
-                MTR
+                {t('seedtable-maturation-abbr', {}, 'MTR')}
               </Box>
             </Tooltip>
           </Table.Cell>
           <Table.Cell collapsing p={1}>
             <Tooltip
-              content={`Production: The period of product regrowth.`}
+              content={t('seedtable-production-tip', {}, 'Production: The period of product regrowth.')}
             >
               <Box
                 style={{ cursor: 'pointer', textAlign: "center" }}
                 onClick={(e) => setSortField('production')}
               >
-                PRD
+                {t('seedtable-production-abbr', {}, 'PRD')}
               </Box>
             </Tooltip>
           </Table.Cell>
           <Table.Cell collapsing p={1} textAlign="right">
             {sortField !== 'name' && (
-              <Tooltip content="Reset sorting">
+              <Tooltip content={t('seedtable-reset-sort', {}, 'Reset sorting')}>
                 <Button
                   color="transparent"
                   icon="refresh"
@@ -216,7 +219,11 @@ export const SeedTable = (props: SeedTableProps) => {
                 ))}
                 {!!item.mutatelist.length && (
                   <Tooltip
-                    content={`Mutates into: ${item.mutatelist.join(', ')}`}
+                    content={t(
+                      'seedtable-mutates',
+                      { list: item.mutatelist.join(', ') },
+                      `Mutates into: ${item.mutatelist.join(', ')}`,
+                    )}
                   >
                     <Icon name="dna" m={0.5} />
                   </Tooltip>
@@ -237,13 +244,21 @@ export const SeedTable = (props: SeedTableProps) => {
                   </Tooltip>
                 )}
                 {!!item.juice_name && (
-                  <Tooltip content={`Juicing result: ${item.juice_name}`}>
+                  <Tooltip content={t(
+                      'seedtable-juice',
+                      { name: item.juice_name },
+                      `Juicing result: ${item.juice_name}`,
+                    )}>
                     <Icon name="glass-water" m={0.5} />
                   </Tooltip>
                 )}
                 {!!item.distill_reagent && (
                   <Tooltip
-                    content={`Ferments into: ${item.distill_reagent}`}
+                    content={t(
+                      'seedtable-ferments',
+                      { name: item.distill_reagent },
+                      `Ferments into: ${item.distill_reagent}`,
+                    )}
                   >
                     <Icon name="wine-bottle" m={0.5} />
                   </Tooltip>
@@ -284,7 +299,7 @@ export const SeedTable = (props: SeedTableProps) => {
       </Table>
       {seeds_sorted.length === 0 && (
         <NoticeBox m={1} p={1}>
-          No seeds found.
+          {t('seedtable-empty', {}, 'No seeds found.')}
         </NoticeBox>
       )}
     </Section>
@@ -321,6 +336,7 @@ export const Level = (props) => {
 };
 
 export const ReagentTooltip = (props) => {
+  const t = useT();
   let rate_total = 0;
   props.reagents.forEach((reagent) => {
     rate_total += reagent.rate;
@@ -344,7 +360,7 @@ export const ReagentTooltip = (props) => {
   return (
     <Table>
       <Table.Row header>
-        <Table.Cell colSpan={3}>Reagents on grind:</Table.Cell>
+        <Table.Cell colSpan={3}>{t('seedtable-reagents-grind', {}, 'Reagents on grind:')}</Table.Cell>
       </Table.Row>
       {props.reagents?.map((reagent, i) => (
         <Table.Row key={i}>
@@ -362,7 +378,7 @@ export const ReagentTooltip = (props) => {
         <Table.Cell colSpan={3} style={{ borderTop: '1px dotted gray' }} />
       </Table.Row>
       <Table.Row header>
-        <Table.Cell pt={1.5}>Total</Table.Cell>
+        <Table.Cell pt={1.5}>{t('seedtable-total', {}, 'Total')}</Table.Cell>
         <Table.Cell py={0.5} pl={2} textAlign={'right'}>
           {Math.round(reagent_volumes.reduce((a, b) => a + b))}u
         </Table.Cell>
@@ -371,7 +387,7 @@ export const ReagentTooltip = (props) => {
         </Table.Cell>
       </Table.Row>
       <Table.Row header>
-        <Table.Cell>Capacity</Table.Cell>
+        <Table.Cell>{t('seedtable-capacity', {}, 'Capacity')}</Table.Cell>
         <Table.Cell py={0.5} pl={2} textAlign={'right'}>
           {props.volume_units}u
         </Table.Cell>
@@ -384,7 +400,7 @@ export const ReagentTooltip = (props) => {
           </Table.Row>
           <Table.Row header>
             <Table.Cell colSpan={3} pt={1}>
-              Nutriments turn into:
+              {t('seedtable-nutriments', {}, 'Nutriments turn into:')}
             </Table.Cell>
           </Table.Row>
           {props.grind_results?.map((reagent, i) => (
@@ -399,8 +415,9 @@ export const ReagentTooltip = (props) => {
 };
 
 export const TraitTooltip = (props) => {
-  const trait = props.trait_db.find((t) => {
-    return t.path === props.path;
+  const t = useT();
+  const trait = props.trait_db.find((entry) => {
+    return entry.path === props.path;
   });
   if (!trait) {
     return;
@@ -411,7 +428,7 @@ export const TraitTooltip = (props) => {
         <Table>
           {!!props.grafting && (
             <Table.Row>
-              <Table.Cell pb={1}>Graft gains the following trait:</Table.Cell>
+              <Table.Cell pb={1}>{t('seedtable-graft-trait', {}, 'Graft gains the following trait:')}</Table.Cell>
             </Table.Row>
           )}
           <Table.Row header>
@@ -422,7 +439,7 @@ export const TraitTooltip = (props) => {
           </Table.Row>
           {!!props.removable && (
             <Table.Row>
-              <Table.Cell pb={1}>Removable trait.</Table.Cell>
+              <Table.Cell pb={1}>{t('seedtable-removable', {}, 'Removable trait.')}</Table.Cell>
             </Table.Row>
           )}
           {!!trait.description && (

@@ -1,4 +1,5 @@
 import { useBackend } from 'tgui/backend';
+import { useT } from 'tgui/i18n';
 import { BotControl, BotSettings } from 'tgui/interfaces/SimpleBot';
 import { Window } from 'tgui/layouts';
 import {
@@ -70,10 +71,13 @@ export function RepairBot(props) {
 function RepairBotMats(props) {
   const { act, data } = useBackend<Data>();
   const { repairbot_materials } = data;
+  const t = useT();
 
   return (
-    <Section title="Materials" minHeight="100px">
-      {repairbot_materials.length === 0 && <NoticeBox>No Materials!</NoticeBox>}
+    <Section title={t('repairbot-materials', {}, 'Materials')} minHeight="100px">
+      {repairbot_materials.length === 0 && (
+        <NoticeBox>{t('repairbot-no-materials', {}, 'No Materials!')}</NoticeBox>
+      )}
       <Flex style={{ padding: '0% 25%' }}>
         {repairbot_materials.map((mat) => (
           <Flex.Item grow key={mat.material_ref}>

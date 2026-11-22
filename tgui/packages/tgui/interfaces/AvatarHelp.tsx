@@ -1,6 +1,7 @@
 import { Box, Icon, Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -15,45 +16,55 @@ const boxHelp = [
     text: 'Study the area and do what needs to be done to recover the crate. Pay close attention to domain information and context clues.',
     icon: 'search-location',
     title: 'Search',
+    id: 'search',
   },
   {
     color: 'green',
     text: 'Bring the crate to the designated sending location in the safehouse. The area may seem out of place. Examine the safehouse to find it.',
     icon: 'boxes',
     title: 'Recover',
+    id: 'recover',
   },
   {
     color: 'blue',
     text: 'The ladder represents the safest way to disconnect before the cache is recovered. Should your connection sever, the netpod offers limited resuscitation potential.',
     icon: 'plug',
     title: 'Disconnect',
+    id: 'disconnect',
   },
   {
     color: 'yellow',
     text: 'While connected, you are somewhat safe from environmental hazards and intrusions, but not completely. Pay close attention to alerts.',
     icon: 'id-badge',
     title: 'Security',
+    id: 'security',
   },
   {
     color: 'gold',
     text: 'Generating avatars costs tremendous bandwidth. Do not waste them.',
     icon: 'coins',
     title: 'Limited Attempts',
+    id: 'attempts',
   },
   {
     color: 'red',
     text: 'Remember that you are physically linked to this presence. You are a foreign body in a hostile environment. It will attempt to forcefully eject you.',
     icon: 'skull-crossbones',
     title: 'Realized Danger',
+    id: 'danger',
   },
 ] as const;
 
 export const AvatarHelp = (props) => {
   const { data } = useBackend<Data>();
-  const { help_text = DEFAULT_HELP } = data;
+  const t = useT();
+  const help_text =
+    data.help_text === undefined
+      ? t('avatarhelp-default', {}, DEFAULT_HELP)
+      : data.help_text;
 
   return (
-    <Window title="Domain Information" width={600} height={600}>
+    <Window title={t('avatarhelp-title', {}, 'Domain Information')} width={600} height={600}>
       <Window.Content>
         <Stack fill vertical>
           <Stack.Item grow>
@@ -61,7 +72,7 @@ export const AvatarHelp = (props) => {
               color="good"
               fill
               scrollable
-              title="Welcome to the Virtual Domain."
+              title={t('avatarhelp-welcome', {}, 'Welcome to the Virtual Domain.')}
             >
               {help_text}
             </Section>
@@ -100,6 +111,7 @@ export const AvatarHelp = (props) => {
 // I wish I had media queries
 const BoxHelp = (props: { index: number }) => {
   const { index } = props;
+  const t = useT();
 
   return (
     <Stack.Item grow>
@@ -114,11 +126,21 @@ const BoxHelp = (props: { index: number }) => {
               mr={1}
               name={boxHelp[index].icon}
             />
-            <Box>{boxHelp[index].title}</Box>
+            <Box>
+              {t(
+                `avatarhelp-${boxHelp[index].id}-title`,
+                {},
+                boxHelp[index].title,
+              )}
+            </Box>
           </Stack>
         }
       >
-        {boxHelp[index].text}
+        {t(
+          `avatarhelp-${boxHelp[index].id}-text`,
+          {},
+          boxHelp[index].text,
+        )}
       </Section>
     </Stack.Item>
   );

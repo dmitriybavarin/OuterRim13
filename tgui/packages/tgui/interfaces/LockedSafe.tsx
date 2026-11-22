@@ -2,6 +2,7 @@ import { Box, Flex } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { NukeKeypad } from './NuclearBomb';
 
@@ -15,6 +16,7 @@ type Data = {
 export const LockedSafe = (props) => {
   const { act, data } = useBackend<Data>();
   const { input_code, locked, lock_code } = data;
+  const t = useT();
   return (
     <Window width={300} height={400} theme="ntos">
       <Window.Content>
@@ -23,8 +25,11 @@ export const LockedSafe = (props) => {
             {input_code}
           </Box>
           <Box className="NuclearBomb__displayBox">
-            {!lock_code && 'No password set.'}
-            {!!lock_code && (!locked ? 'Unlocked' : 'Locked')}
+            {!lock_code && t('lockedsafe-no-password', {}, 'No password set.')}
+            {!!lock_code &&
+              (!locked
+                ? t('lockedsafe-unlocked', {}, 'Unlocked')
+                : t('lockedsafe-locked', {}, 'Locked'))}
           </Box>
           <Flex ml="3px" mt="10px">
             <Flex.Item>

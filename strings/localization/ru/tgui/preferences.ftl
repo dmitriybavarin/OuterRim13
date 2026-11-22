@@ -387,3 +387,7 @@ pref-widescreenpref-name = Широкий экран
 pref-windowflashing-name = Мигание окна
 
 pref-windowflashing-desc = Если включено, при важных событиях значок игры на панели задач будет мигать.
+
+pref-category-admin = Администрация
+
+pref-category-tts = TTS

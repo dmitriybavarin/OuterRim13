@@ -64,7 +64,7 @@
 		team_color = pick(COLOR_CULT_RED, COLOR_GREEN)
 
 	user.add_traits(list(TRAIT_MANSUS_TOUCHED, TRAIT_BLOOD_FOUNTAIN), REF(src))
-	to_chat(user, span_alert("Your heart takes on a strange yet soothing irregular rhythm, and your blood feels significantly less viscous than it used to be. You're not sure if that's a good thing."))
+	to_chat(user, span_alert(LOC_KEY("heretic-item-neck-medallion-equip")))
 	component = user.AddComponent( \
 		/datum/component/aura_healing, \
 		range = 3, \
@@ -85,7 +85,7 @@
 		return
 
 	if(HAS_TRAIT_FROM(user, TRAIT_MANSUS_TOUCHED, REF(src)))
-		to_chat(user, span_notice("Your heart and blood return to their regular old rhythm and flow."))
+		to_chat(user, span_notice(LOC_KEY("heretic-item-neck-medallion-drop")))
 
 	if(IS_HERETIC_OR_MONSTER(user) && active)
 		for(var/datum/action/cooldown/spell/spell_action in user.actions)
@@ -104,10 +104,10 @@
 
 /obj/item/clothing/neck/heretic_focus/crimson_medallion/attack_self(mob/living/user, modifiers)
 	. = ..()
-	to_chat(user, span_danger("You start tightly squeezing [src]..."))
+	to_chat(user, span_danger(loc_key("heretic-item-neck-squeeze-start", list(item = src))))
 	if(!do_after(user, 1.25 SECONDS, src))
 		return
-	to_chat(user, span_danger("[src] explodes into a shower of gore and blood, drenching your arm. You can feel the blood seeping into your skin. You inmediately feel better, but soon, the feeling turns hollow as your veins itch."))
+	to_chat(user, span_danger(loc_key("heretic-item-neck-squeeze-done", list(item = src))))
 	new /obj/effect/gibspawner/generic(get_turf(src))
 	var/heal_amt = user.adjust_brute_loss(-50)
 	user.adjust_fire_loss( -(50 - abs(heal_amt)) ) // no double dipping
@@ -122,13 +122,13 @@
 
 	var/magic_dude
 	if(IS_CULTIST(user))
-		. += span_cult_bold("This focus will allow you to store one extra spell and halve the empowering time, alongside providing a small regenerative effect.")
+		. += span_cult_bold(LOC_KEY("heretic-item-neck-medallion-cult"))
 		magic_dude = TRUE
 	if(IS_HERETIC_OR_MONSTER(user))
 		magic_dude = TRUE
 
 	if(magic_dude)
-		. += span_red("You can also squeeze it to recover a large amount of health quickly, at a cost...")
+		. += span_red(LOC_KEY("heretic-item-neck-medallion-squeeze"))
 
 /obj/item/clothing/neck/eldritch_amulet
 	name = "warm eldritch medallion"
@@ -187,7 +187,7 @@
 /obj/item/clothing/neck/moon_amulet/examine(mob/user)
 	. = ..()
 	if(IS_HERETIC(user))
-		. += span_notice("Wearing this amulet increases your healing speed by 50%.")
+		. += span_notice(LOC_KEY("heretic-item-neck-moon-examine"))
 
 /obj/item/clothing/neck/moon_amulet/equipped(mob/living/user, slot)
 	. = ..()
@@ -242,7 +242,7 @@
 		return FALSE
 	var/mob/living/living_user = user
 	if(!IS_HERETIC_OR_MONSTER(living_user))
-		living_user.balloon_alert(living_user, "you feel a presence watching you")
+		living_user.balloon_alert(living_user, LOC_KEY("heretic-item-neck-moon-presence"))
 		living_user.add_mood_event("Moon Amulet Insanity", /datum/mood_event/amulet_insanity)
 		living_user.mob_mood.adjust_sanity(-50)
 		return FALSE
@@ -255,10 +255,10 @@
 		return TRUE
 	var/mob/living/carbon/human/human_target = target
 	if(IS_HERETIC_OR_MONSTER(human_target))
-		living_user.balloon_alert(living_user, "resists effects!")
+		living_user.balloon_alert(living_user, LOC_KEY("heretic-item-neck-moon-resists"))
 		return FALSE
 	if(human_target.has_status_effect(/datum/status_effect/moon_slept) || human_target.has_status_effect(/datum/status_effect/moon_converted))
-		human_target.balloon_alert(living_user, "causing damage!")
+		human_target.balloon_alert(living_user, LOC_KEY("heretic-item-neck-moon-damage"))
 		human_target.adjust_organ_loss(ORGAN_SLOT_BRAIN, 25)
 		return FALSE
 	if(human_target.can_block_magic(MAGIC_RESISTANCE_MOON))
@@ -266,16 +266,16 @@
 	if(!human_target.mob_mood)
 		return FALSE
 	if(human_target.mob_mood.sanity_level < sanity_threshold)
-		human_target.balloon_alert(living_user, "their mind is too strong!")
+		human_target.balloon_alert(living_user, LOC_KEY("heretic-item-neck-moon-strong"))
 		human_target.add_mood_event("Moon Amulet Insanity", /datum/mood_event/amulet_insanity)
 		human_target.mob_mood.adjust_sanity(-sanity_damage)
 	else
 		if(HAS_TRAIT(target, TRAIT_MINDSHIELD))
-			human_target.balloon_alert(living_user, "their mind almost bends but something protects it!")
+			human_target.balloon_alert(living_user, LOC_KEY("heretic-item-neck-moon-almost"))
 			human_target.apply_status_effect(/datum/status_effect/moon_slept)
 			return TRUE
 		SEND_SIGNAL(user, COMSIG_MOB_APPLIED_MOONLIGHT_AMULET, target)
-		human_target.balloon_alert(living_user, "their mind bends to see the truth!")
+		human_target.balloon_alert(living_user, LOC_KEY("heretic-item-neck-moon-bends"))
 		human_target.apply_status_effect(/datum/status_effect/moon_converted)
 		living_user.log_message("made [human_target] insane.", LOG_GAME)
 		human_target.log_message("was driven insane by [living_user]", LOG_GAME)
@@ -302,17 +302,18 @@
 /obj/item/clothing/neck/moon_amulet/proc/modify_attack_message(obj/item/weapon, mob/living/victim, mob/living/attacker)
 	SIGNAL_HANDLER
 
+	var/list/moon_args = list(weapon = weapon, victim = victim, attacker = attacker, their = victim.p_Their())
 	var/list/attack_list = list(
-		"You sweep [weapon] towards [victim], splitting [victim.p_Their()] image in two.",
-		"You strike [victim] with [weapon], spilling forth a cascade from within. Immaculate.",
-		"As it bite deep, your [weapon] unburdens [victim] of unneeded thought.",
+		loc_key("heretic-item-moonneck-attack-1", moon_args),
+		loc_key("heretic-item-moonneck-attack-2", moon_args),
+		loc_key("heretic-item-moonneck-attack-3", moon_args),
 	)
 	to_chat(attacker, span_danger(pick(attack_list)))
 
 	var/list/victim_list = list(
-		"You are struck by [attacker], but the [weapon] tears away something more than parts of your body.",
-		"You see an arch of light as [attacker]'s [weapon] twists towards you, and you see the world briefly in tetrachrome.",
-		"As [attacker] carves into you with [weapon], you lose something deep within. The agony is worse than any wound.",
+		loc_key("heretic-item-moonneck-victim-1", moon_args),
+		loc_key("heretic-item-moonneck-victim-2", moon_args),
+		loc_key("heretic-item-moonneck-victim-3", moon_args),
 	)
 	to_chat(victim, span_userdanger(pick(victim_list)))
 	playsound(attacker, pick(possible_sounds), 40, TRUE)

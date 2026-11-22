@@ -51,12 +51,12 @@
 	to_chat(viewer, span_notice(text_to_display))
 	viewer.apply_status_effect(applied_status_effect)
 	INVOKE_ASYNC(viewer, TYPE_PROC_REF(/mob, emote), "scream")
-	to_chat(viewer, span_hypnophrase("Your mind is overcome! The painting leaves a mark on your psyche."))
+	to_chat(viewer, span_hypnophrase(LOC_KEY("heretic-item-painting-overcome")))
 
 /obj/structure/sign/painting/eldritch/wirecutter_act(mob/living/user, obj/item/I)
 	if(!user.can_block_magic(MAGIC_RESISTANCE_MOON))
 		user.add_mood_event("ripped_eldritch_painting", /datum/mood_event/eldritch_painting)
-		to_chat(user, span_hypnophrase("There's an itch in your brain. It's laughing at you..."))
+		to_chat(user, span_hypnophrase(LOC_KEY("heretic-item-painting-itch")))
 	qdel(src)
 	return ITEM_INTERACT_SUCCESS
 
@@ -74,9 +74,9 @@
 
 /obj/structure/sign/painting/eldritch/proc/examine_effects(mob/living/carbon/examiner)
 	if(IS_HERETIC(examiner))
-		to_chat(examiner, span_notice("What an engrossing painting!"))
+		to_chat(examiner, span_notice(LOC_KEY("heretic-item-painting-engrossing")))
 	else
-		to_chat(examiner, span_notice("What a strange painting..."))
+		to_chat(examiner, span_notice(LOC_KEY("heretic-item-painting-strange")))
 
 // The Sister and He Who Wept eldritch painting
 /obj/item/wallframe/painting/eldritch/weeping
@@ -90,16 +90,16 @@
 	desc = "A beautiful painting depicting a fair lady sitting beside Him. He weeps. You will see him again. Removable with wirecutters."
 	icon_state = "eldritch_painting_weeping"
 	applied_status_effect = /datum/status_effect/eldritch_painting/weeping
-	text_to_display = "Such beauty! Such sorrow!"
+	text_to_display = LOC_KEY("heretic-item-painting-weeping-display")
 
 /obj/structure/sign/painting/eldritch/weeping/examine_effects(mob/living/carbon/examiner)
 	if(!IS_HERETIC(examiner))
-		to_chat(examiner, span_hypnophrase("Respite, for now...."))
+		to_chat(examiner, span_hypnophrase(LOC_KEY("heretic-item-painting-weeping-respite")))
 		examiner.mob_mood.mood_events.Remove("eldritch_weeping")
 		examiner.add_mood_event("weeping_withdrawal", /datum/mood_event/eldritch_painting/weeping_withdrawal)
 		return
 
-	to_chat(examiner, span_notice("Just gazing upon it clears your mind."))
+	to_chat(examiner, span_notice(LOC_KEY("heretic-item-painting-weeping-clear")))
 	examiner.remove_status_effect(/datum/status_effect/hallucination)
 	examiner.add_mood_event("heretic_eldritch_painting", /datum/mood_event/eldritch_painting/weeping_heretic)
 
@@ -115,17 +115,17 @@
 	desc = "A painting of an elaborate feast. Despite being made entirely of rotting meat and decaying organs, the food looks very appetising. Removable with wirecutters."
 	icon_state = "eldritch_painting_desire"
 	applied_status_effect = /datum/status_effect/eldritch_painting/desire
-	text_to_display = "Just looking at this painting makes me hungry..."
+	text_to_display = LOC_KEY("heretic-item-painting-desire-display")
 
 // The special examine interaction for this painting
 /obj/structure/sign/painting/eldritch/desire/examine_effects(mob/living/carbon/examiner)
 	if(!IS_HERETIC(examiner))
 		// Gives them some nutrition
 		examiner.adjust_nutrition(50)
-		to_chat(examiner, span_warning("You feel a searing pain in your stomach!"))
+		to_chat(examiner, span_warning(LOC_KEY("heretic-item-painting-desire-pain")))
 		examiner.adjust_organ_loss(ORGAN_SLOT_STOMACH, 5)
-		to_chat(examiner, span_notice("You feel less hungry."))
-		to_chat(examiner, span_warning("You should stockpile raw meat and organs, before you get hungry again."))
+		to_chat(examiner, span_notice(LOC_KEY("heretic-item-painting-desire-fed")))
+		to_chat(examiner, span_warning(LOC_KEY("heretic-item-painting-desire-stockpile")))
 		examiner.add_mood_event("respite_eldritch_hunger", /datum/mood_event/eldritch_painting/desire_examine)
 		return
 
@@ -146,8 +146,8 @@
 	)
 	var/organ_or_bodypart_to_spawn = pick(random_bodypart_or_organ)
 	new organ_or_bodypart_to_spawn(drop_location())
-	to_chat(examiner, span_notice("A piece of flesh crawls out of the painting and flops onto the floor."))
-	to_chat(examiner, span_warning("The void screams!"))
+	to_chat(examiner, span_notice(LOC_KEY("heretic-item-painting-desire-flesh")))
+	to_chat(examiner, span_warning(LOC_KEY("heretic-item-painting-desire-scream")))
 	// Adds a negative mood event to our heretic
 	examiner.add_mood_event("heretic_eldritch_hunger", /datum/mood_event/eldritch_painting/desire_heretic)
 
@@ -185,13 +185,13 @@
 	. = ..()
 	if(!IS_HERETIC(examiner))
 		new /datum/spacevine_controller(get_turf(examiner), mutations, 0, 10)
-		to_chat(examiner, span_hypnophrase("You are transfixed for a moment by the vines on the painting."))
-		to_chat(examiner, span_notice("You feel something writhing around you."))
+		to_chat(examiner, span_hypnophrase(LOC_KEY("heretic-item-painting-vines-transfixed")))
+		to_chat(examiner, span_notice(LOC_KEY("heretic-item-painting-vines-writhing")))
 		return
 
 	var/item_to_spawn = pick(items_to_spawn)
-	to_chat(examiner, span_notice("You are transfixed for a moment by the chaotic patterns the vines make."))
-	to_chat(examiner, span_notice("You feel life coalesce and bloom beneath you."))
+	to_chat(examiner, span_notice(LOC_KEY("heretic-item-painting-vines-patterns")))
+	to_chat(examiner, span_notice(LOC_KEY("heretic-item-painting-vines-bloom")))
 	new item_to_spawn(examiner.drop_location())
 	examiner.add_mood_event("heretic_vines", /datum/mood_event/eldritch_painting/heretic_vines)
 
@@ -208,7 +208,7 @@
 	desc = "A painting of an otherworldly being. Its thin, porcelain-coloured skin is stretched tight over its strange bone structure. It has an odd beauty. Removable with wirecutters."
 	icon_state = "eldritch_painting_beauty"
 	applied_status_effect = /datum/status_effect/eldritch_painting/beauty
-	text_to_display = "A beacon of purity, the real world seems so mundane and imperfect in comparison..."
+	text_to_display = LOC_KEY("heretic-item-painting-beauty-display")
 	/// List of reagents to add to heretics on examine, set to mutadone by default to remove mutations
 	var/list/reagents_to_add = list(/datum/reagent/medicine/mutadone = 5)
 
@@ -219,11 +219,11 @@
 		return
 
 	if(!IS_HERETIC(examiner))
-		to_chat(examiner, span_hypnophrase("You are not yet pure."))
+		to_chat(examiner, span_hypnophrase(LOC_KEY("heretic-item-painting-beauty-impure")))
 		examiner.easy_random_mutate(NEGATIVE + MINOR_NEGATIVE)
 		return
 
-	to_chat(examiner, span_notice("Your imperfections are shed."))
+	to_chat(examiner, span_notice(LOC_KEY("heretic-item-painting-beauty-shed")))
 	examiner.reagents.add_reagent_list(reagents_to_add)
 
 // Climb over the rusted mountain, gives a brain trauma causing the person to randomly rust tiles beneath them
@@ -238,16 +238,16 @@
 	desc = "A painting of a strange being climbing a rust-coloured mountain. The brushwork is unnatural and unnerving. Removable with wirecutters."
 	icon_state = "eldritch_painting_rust"
 	applied_status_effect = /datum/status_effect/eldritch_painting/rusting
-	text_to_display = "The rust decays. The master climbs. It calls. You answer..."
+	text_to_display = LOC_KEY("heretic-item-painting-rust-display")
 
 // The special examine interaction for this painting
 /obj/structure/sign/painting/eldritch/rust/examine_effects(mob/living/carbon/examiner)
 	. = ..()
 
 	if(!IS_HERETIC(examiner))
-		to_chat(examiner, span_hypnophrase("You feel the rust. The rot."))
+		to_chat(examiner, span_hypnophrase(LOC_KEY("heretic-item-painting-rust-rot")))
 		examiner.add_mood_event("rusted_examine", /datum/mood_event/eldritch_painting/rust_examine)
 		return
 
-	to_chat(examiner, span_notice("The painting fills you with resolve."))
+	to_chat(examiner, span_notice(LOC_KEY("heretic-item-painting-rust-resolve")))
 	examiner.add_mood_event("rusted_examine", /datum/mood_event/eldritch_painting/rust_heretic_examine)

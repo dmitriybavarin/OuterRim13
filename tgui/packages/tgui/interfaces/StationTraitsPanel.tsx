@@ -12,6 +12,7 @@ import { exhaustiveCheck } from 'tgui-core/exhaustive';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type CurrentStationTrait = {
@@ -40,6 +41,7 @@ enum Tab {
 const FutureStationTraitsPage = (props) => {
   const { act, data } = useBackend<StationTraitsData>();
   const { future_station_traits } = data;
+  const t = useT();
 
   const [selectedTrait, setSelectedTrait] = useState<string>('');
 
@@ -59,7 +61,11 @@ const FutureStationTraitsPage = (props) => {
           <Dropdown
             onSelected={setSelectedTrait}
             options={traitNames}
-            placeholder="Select trait to add..."
+            placeholder={t(
+              'stationtraits-select',
+              {},
+              'Select trait to add...',
+            )}
             selected={selectedTrait}
             width="100%"
           />
@@ -96,7 +102,7 @@ const FutureStationTraitsPage = (props) => {
               });
             }}
           >
-            Add
+            {t('stationtraits-add', {}, 'Add')}
           </Button>
         </Stack.Item>
       </Stack>
@@ -118,13 +124,13 @@ const FutureStationTraitsPage = (props) => {
                       onClick={() => {
                         act('setup_future_traits', {
                           station_traits: filter(
-                            map(future_station_traits, (t) => t.path),
+                            map(future_station_traits, (x) => x.path),
                             (p) => p !== trait.path,
                           ),
                         });
                       }}
                     >
-                      Delete
+                      {t('stationtraits-delete', {}, 'Delete')}
                     </Button>
                   </Stack.Item>
                 </Stack>
@@ -133,23 +139,43 @@ const FutureStationTraitsPage = (props) => {
           </Stack>
         ) : (
           <>
-            <Box>No station traits will run next round.</Box>
+            <Box>
+              {t(
+                'stationtraits-none-next',
+                {},
+                'No station traits will run next round.',
+              )}
+            </Box>
 
             <Box>
               <Button
                 color="red"
                 icon="times"
-                tooltip="The next round will roll station traits randomly, just like normal"
+                tooltip={t(
+                  'stationtraits-normal-hint',
+                  {},
+                  'The next round will roll station traits randomly, just like normal',
+                )}
                 onClick={() => act('clear_future_traits')}
               >
-                Run Station Traits Normally
+                {t(
+                  'stationtraits-normal',
+                  {},
+                  'Run Station Traits Normally',
+                )}
               </Button>
             </Box>
           </>
         )
       ) : (
         <>
-          <Box>No future station traits are planned.</Box>
+          <Box>
+            {t(
+              'stationtraits-none-planned',
+              {},
+              'No future station traits are planned.',
+            )}
+          </Box>
 
           <Box>
             <Button
@@ -161,7 +187,11 @@ const FutureStationTraitsPage = (props) => {
                 })
               }
             >
-              Prevent station traits from running next round
+              {t(
+                'stationtraits-prevent',
+                {},
+                'Prevent station traits from running next round',
+              )}
             </Button>
           </Box>
         </>
@@ -172,6 +202,7 @@ const FutureStationTraitsPage = (props) => {
 
 const ViewStationTraitsPage = (props) => {
   const { act, data } = useBackend<StationTraitsData>();
+  const t = useT();
 
   return data.current_traits.length > 0 ? (
     <Stack vertical fill>
@@ -182,14 +213,22 @@ const ViewStationTraitsPage = (props) => {
 
             <Stack.Item>
               <Button.Confirm
-                content="Revert"
+                content={t('stationtraits-revert', {}, 'Revert')}
                 color="red"
                 disabled={data.too_late_to_revert || !stationTrait.can_revert}
                 tooltip={
                   (!stationTrait.can_revert &&
-                    'This trait is not revertable.') ||
+                    t(
+                      'stationtraits-not-revertable',
+                      {},
+                      'This trait is not revertable.',
+                    )) ||
                   (data.too_late_to_revert &&
-                    "It's too late to revert station traits, the round has already started.")
+                    t(
+                      'stationtraits-too-late',
+                      {},
+                      "It's too late to revert station traits, the round has already started.",
+                    ))
                 }
                 icon="times"
                 onClick={() =>
@@ -204,11 +243,14 @@ const ViewStationTraitsPage = (props) => {
       ))}
     </Stack>
   ) : (
-    <Box>There are no active station traits.</Box>
+    <Box>
+      {t('stationtraits-no-active', {}, 'There are no active station traits.')}
+    </Box>
   );
 };
 
 export const StationTraitsPanel = (props) => {
+  const t = useT();
   const [currentTab, setCurrentTab] = useState(Tab.ViewStationTraits);
 
   let currentPage;
@@ -225,7 +267,7 @@ export const StationTraitsPanel = (props) => {
   }
 
   return (
-    <Window title="Modify Station Traits" height={500} width={500}>
+    <Window title={t('stationtraits-title', {}, 'Modify Station Traits')} height={500} width={500}>
       <Window.Content scrollable>
         <Tabs>
           <Tabs.Tab
@@ -233,7 +275,7 @@ export const StationTraitsPanel = (props) => {
             selected={currentTab === Tab.ViewStationTraits}
             onClick={() => setCurrentTab(Tab.ViewStationTraits)}
           >
-            View
+            {t('stationtraits-view', {}, 'View')}
           </Tabs.Tab>
 
           <Tabs.Tab
@@ -241,7 +283,7 @@ export const StationTraitsPanel = (props) => {
             selected={currentTab === Tab.SetupFutureStationTraits}
             onClick={() => setCurrentTab(Tab.SetupFutureStationTraits)}
           >
-            Edit
+            {t('stationtraits-edit', {}, 'Edit')}
           </Tabs.Tab>
         </Tabs>
 

@@ -112,7 +112,7 @@ item-stack-shaped-sheets = листы
 
 item-stack-shaped-rods = прутья
 
-item-stack-shaped-iron_sheets = железные листы
+item-stack-shaped-iron_sheets = стальные листы
 
 item-stack-shaped-floor_rods = половые прутья
 

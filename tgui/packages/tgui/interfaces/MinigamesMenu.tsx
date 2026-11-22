@@ -1,19 +1,29 @@
 import { Button, Divider, Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 export const MinigamesMenu = (props) => {
   const { act } = useBackend();
+  const t = useT();
 
   return (
-    <Window title="Minigames Menu" width={530} height={320}>
+    <Window
+      title={t('minigames-title', {}, 'Minigames Menu')}
+      width={530}
+      height={320}
+    >
       <Window.Content>
-        <Section title="Select Minigame" textAlign="center" fill>
+        <Section
+          title={t('minigames-select', {}, 'Select Minigame')}
+          textAlign="center"
+          fill
+        >
           <Stack>
             <Stack.Item grow>
               <Button
-                content="CTF"
+                content={t('minigames-ctf', {}, 'CTF')}
                 fluid
                 fontSize={3}
                 textAlign="center"
@@ -23,7 +33,7 @@ export const MinigamesMenu = (props) => {
             </Stack.Item>
             <Stack.Item grow>
               <Button
-                content="Mafia"
+                content={t('minigames-mafia', {}, 'Mafia')}
                 fluid
                 fontSize={3}
                 textAlign="center"
@@ -36,7 +46,7 @@ export const MinigamesMenu = (props) => {
           <Stack>
             <Stack.Item grow>
               <Button
-                content="Basketball"
+                content={t('minigames-basketball', {}, 'Basketball')}
                 fluid
                 fontSize={3}
                 textAlign="center"
@@ -46,7 +56,7 @@ export const MinigamesMenu = (props) => {
             </Stack.Item>
             <Stack.Item grow>
               <Button
-                content="Deathmatch"
+                content={t('minigames-deathmatch', {}, 'Deathmatch')}
                 fluid
                 fontSize={3}
                 textAlign="center"

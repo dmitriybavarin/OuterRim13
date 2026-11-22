@@ -8,6 +8,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -20,6 +21,7 @@ type Data = {
 
 export const BluespaceArtillery = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const { connected, notice, unlocked, visualizing, target } = data;
 
   return (
@@ -29,7 +31,7 @@ export const BluespaceArtillery = (props) => {
         {connected ? (
           <>
             <Section
-              title="Target"
+              title={t('bluespaceartillery-target', {}, 'Target')}
               buttons={
                 <Button
                   icon="crosshairs"
@@ -39,7 +41,7 @@ export const BluespaceArtillery = (props) => {
               }
             >
               <Box color={target ? 'average' : 'bad'} fontSize="25px">
-                {target || 'No Target Set'}
+                {target || t('bluespaceartillery-no-target', {}, 'No Target Set')}
               </Box>
             </Section>
             <Section>
@@ -47,7 +49,7 @@ export const BluespaceArtillery = (props) => {
                 <Box style={{ margin: 'auto' }}>
                   <Button
                     fluid
-                    content="FIRE"
+                    content={t('bluespaceartillery-fire', {}, 'FIRE')}
                     color="bad"
                     disabled={!target}
                     fontSize="30px"
@@ -59,11 +61,18 @@ export const BluespaceArtillery = (props) => {
               ) : (
                 <>
                   <Box color="bad" fontSize="18px">
-                    Bluespace artillery is currently locked.
+                    {t(
+                      'bluespaceartillery-locked',
+                      {},
+                      'Bluespace artillery is currently locked.',
+                    )}
                   </Box>
                   <Box mt={1}>
-                    Awaiting authorization via keycard reader from at minimum
-                    two station heads.
+                    {t(
+                      'bluespaceartillery-awaiting',
+                      {},
+                      'Awaiting authorization via keycard reader from at minimum two station heads.',
+                    )}
                   </Box>
                 </>
               )}
@@ -72,19 +81,19 @@ export const BluespaceArtillery = (props) => {
         ) : (
           <Section>
             <LabeledList>
-              <LabeledList.Item label="Maintenance">
+              <LabeledList.Item label={t('bluespaceartillery-maintenance', {}, 'Maintenance')}>
                 {(visualizing) ? (
                   <>
                     <Button color="good" onClick={() => act('build')}>
-                      Confirm Position
+                      {t('bluespaceartillery-confirm', {}, 'Confirm Position')}
                     </Button>
                     <Button color="bad" onClick={() => act('unvisualize')}>
-                      Cancel
+                      {t('bluespaceartillery-cancel', {}, 'Cancel')}
                     </Button>
                   </>
                 ) : (
                   <Button icon="wrench" onClick={() => act('visualize')}>
-                    Begin Deployment
+                    {t('bluespaceartillery-deploy', {}, 'Begin Deployment')}
                   </Button>
                 )}
               </LabeledList.Item>

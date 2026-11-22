@@ -32,8 +32,8 @@
 
 	if(cast_on.can_block_magic(antimagic_flags))
 		cast_on.visible_message(
-			span_danger("[cast_on]'s bruises briefly glow, but repels the effect!"),
-			span_danger("Your bruises sting a little, but you are protected!")
+			span_danger(loc_key("heretic-spell-apetra_vulnera-protected-others", list(target = cast_on))),
+			span_danger(LOC_KEY("heretic-spell-apetra_vulnera-protected-self"))
 		)
 		return FALSE
 
@@ -50,8 +50,8 @@
 		crit_wound.apply_wound(pick(cast_on.get_bodyparts()))
 
 	cast_on.visible_message(
-		span_danger("[cast_on]'s scratches and bruises are torn open by an unholy force!"),
-		span_danger("Your scratches and bruises are torn open by some horrible unholy force!")
+		span_danger(loc_key("heretic-spell-apetra_vulnera-hit-others", list(target = cast_on))),
+		span_danger(LOC_KEY("heretic-spell-apetra_vulnera-hit-self"))
 	)
 
 	new /obj/effect/temp_visual/cleave(get_turf(cast_on))

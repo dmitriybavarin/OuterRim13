@@ -517,8 +517,8 @@ INITIALIZE_IMMEDIATE(/obj/item/organ)
 	if(damage < low_threshold)
 		return ""
 	if(damage < high_threshold)
-		return span_warning("[self_aware ? "[capitalize(slot)]" : "It"] feels a bit off.")
-	return span_boldwarning("[self_aware ? "[capitalize(slot)]" : "It"] feels terrible!")
+		return span_warning(loc_key("organ-selfcheck-off-[self_aware ? "aware" : "looks"]", list(slot = capitalize(slot))))
+	return span_boldwarning(loc_key("organ-selfcheck-terrible-[self_aware ? "aware" : "looks"]", list(slot = capitalize(slot))))
 
 /// Tries to replace the existing organ on the passed mob with this one, with special handling for replacing a brain without ghosting target
 /obj/item/organ/proc/replace_into(mob/living/carbon/new_owner)

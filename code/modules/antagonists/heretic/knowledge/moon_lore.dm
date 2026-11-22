@@ -76,7 +76,7 @@
 	. = ..()
 
 	if(target.can_block_magic(MAGIC_RESISTANCE_MOON))
-		to_chat(target, span_danger("You hear echoing laughter from above..but it is dull and distant."))
+		to_chat(target, span_danger(LOC_KEY("heretic-moon-grasp-blocked")))
 		return
 
 	source.apply_status_effect(/datum/status_effect/moon_grasp_hide)
@@ -84,7 +84,7 @@
 	if(!iscarbon(target))
 		return
 	var/mob/living/carbon/carbon_target = target
-	to_chat(carbon_target, span_danger("You hear echoing laughter from above"))
+	to_chat(carbon_target, span_danger(LOC_KEY("heretic-moon-grasp-laughter")))
 	carbon_target.cause_hallucination(/datum/hallucination/delusion/preset/moon, "delusion/preset/moon hallucination caused by mansus grasp")
 	carbon_target.mob_mood.adjust_sanity(-30)
 
@@ -246,7 +246,7 @@
 
 	for(var/mob/living/carbon/human/crewmate as anything in lunatic_candidates)
 		if(amount_of_lunatics > max_lunatics)
-			to_chat(crewmate, span_boldwarning("You feel uneasy, as if for a brief moment something was gazing at you."))
+			to_chat(crewmate, span_boldwarning(LOC_KEY("heretic-moon-final-uneasy")))
 			continue
 		if(attempt_conversion(crewmate, user))
 			amount_of_lunatics++
@@ -254,11 +254,11 @@
 /datum/heretic_knowledge/ultimate/moon_final/proc/attempt_conversion(mob/living/carbon/convertee, mob/user)
 	// Heretics, lunatics and monsters shouldn't become lunatics because they either have a master or have a mansus grasp
 	if(IS_HERETIC_OR_MONSTER(convertee))
-		to_chat(convertee, span_boldwarning("[user]'s rise is influencing those who are weak willed. Their minds shall rend." ))
+		to_chat(convertee, span_boldwarning(loc_key("heretic-moon-final-influence", list(user = user))))
 		return FALSE
 	// Mindshielded and anti-magic folks are immune against this effect because this is a magical mind effect
 	if(HAS_MIND_TRAIT(convertee, TRAIT_UNCONVERTABLE) || convertee.can_block_magic(MAGIC_RESISTANCE))
-		to_chat(convertee, span_boldwarning("You feel shielded from something." ))
+		to_chat(convertee, span_boldwarning(LOC_KEY("heretic-moon-final-shielded")))
 		return FALSE
 
 	if(!convertee.mind)
@@ -296,7 +296,7 @@
 			continue
 		new /obj/effect/temp_visual/moon_ringleader(get_turf(carbon_view))
 		if(carbon_view.has_status_effect(/datum/status_effect/confusion))
-			to_chat(carbon_view, span_big(span_hypnophrase("YOUR HEAD RATTLES WITH A THOUSAND VOICES JOINED IN A MADDENING CACOPHONY OF SOUND AND MUSIC. EVERY FIBER OF YOUR BEING SAYS 'RUN'.")))
+			to_chat(carbon_view, span_big(span_hypnophrase(LOC_KEY("heretic-moon-final-cacophony"))))
 		carbon_view.adjust_confusion(2 SECONDS)
 		carbon_view.mob_mood.adjust_sanity(-20)
 
@@ -304,7 +304,7 @@
 			continue
 		// So our sanity is dead, time to fuck em up
 		if(SPT_PROB(20, seconds_per_tick))
-			to_chat(carbon_view, span_warning("it echoes through you!"))
+			to_chat(carbon_view, span_warning(LOC_KEY("heretic-moon-final-echo")))
 		visible_hallucination_pulse(
 			center = get_turf(carbon_view),
 			radius = 7,
@@ -312,9 +312,7 @@
 		)
 		carbon_view.adjust_temp_blindness(5 SECONDS)
 		if(should_mind_explode(carbon_view))
-			to_chat(carbon_view, span_boldbig(span_red(\
-				"YOUR SENSES REEL AS YOUR MIND IS ENVELOPED BY AN OTHERWORLDLY FORCE ATTEMPTING TO REWRITE YOUR VERY BEING. \
-				YOU CANNOT EVEN BEGIN TO SCREAM BEFORE YOUR IMPLANT ACTIVATES ITS PSIONIC FAIL-SAFE PROTOCOL, TAKING YOUR HEAD WITH IT.")))
+			to_chat(carbon_view, span_boldbig(span_red(LOC_KEY("heretic-moon-final-explode"))))
 			var/obj/item/bodypart/head/head = carbon_view.get_bodypart(BODY_ZONE_HEAD)
 			if(!head?.dismember())
 				carbon_view.gib(DROP_ALL_REMAINS)

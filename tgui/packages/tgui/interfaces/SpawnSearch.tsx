@@ -22,6 +22,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 import { resolveAsset } from '../assets';
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { logger } from '../logging';
 
@@ -59,6 +60,7 @@ const initialAtomPathData: AtomPathData = {
 
 export function SpawnSearch() {
   const { act, data } = useBackend<SpawnSearchData>();
+  const t = useT();
   const {
     fancyTypes,
     includeAbstracts,
@@ -243,11 +245,13 @@ export function SpawnSearch() {
     setTimeout(() => document!.getElementById(selected.toString())?.focus(), 1);
   }
 
-  const modeText = regexSearch ? 'RegEx Mode' : 'Standard Mode';
+  const modeText = regexSearch
+    ? t('spawnsearch-regex-mode', {}, 'RegEx Mode')
+    : t('spawnsearch-standard-mode', {}, 'Standard Mode');
 
   return (
     <Window
-      title="Spawn Atom"
+      title={t('spawnsearch-title', {}, 'Spawn Atom')}
       width={400}
       height={500}
       buttons={
@@ -255,7 +259,7 @@ export function SpawnSearch() {
           <Button
             icon="font"
             selected={includeAbstracts}
-            tooltip="Include Abstract Types"
+            tooltip={t('spawnsearch-abstract-types', {}, 'Include Abstract Types')}
             onClick={() =>
               act('setIncludeAbstracts', {
                 includeAbstracts: !includeAbstracts,
@@ -265,13 +269,13 @@ export function SpawnSearch() {
           <Button
             icon="file-signature"
             selected={searchNames}
-            tooltip="Name Search"
+            tooltip={t('spawnsearch-name-search', {}, 'Name Search')}
             onClick={() => act('setNameSearch', { searchNames: !searchNames })}
           />
           <Button
             icon="wand-magic-sparkles"
             selected={fancyTypes}
-            tooltip="Fancy Type Display"
+            tooltip={t('spawnsearch-fancy-types', {}, 'Fancy Type Display')}
             onClick={() => act('setFancyTypes', { fancyTypes: !fancyTypes })}
           />
         </>
@@ -343,7 +347,7 @@ export function SpawnSearch() {
                     fluid
                     onEnter={() => handleSelect(filteredItems[selected])}
                     onChange={handleSearch}
-                    placeholder="Search..."
+                    placeholder={t('spawnsearch-search', {}, 'Search...')}
                     value={query}
                     style={{
                       borderColor: invalidInput ? 'red' : undefined,
@@ -369,6 +373,7 @@ function ListItem(props: AtomSpanProps) {
 
   const { data } = useBackend<SpawnSearchData>();
   const { fancyTypes } = data;
+  const t = useT();
 
   const matchingKey = fancyTypes
     ? Object.keys(atomData.fancyTypes).findLast(
@@ -409,7 +414,7 @@ function ListItem(props: AtomSpanProps) {
             color: 'rgba(255, 162, 70, 0.5)',
           }}
         >
-          Abstract
+          {t('spawnsearch-abstract', {}, 'Abstract')}
         </span>
       )}
     </>

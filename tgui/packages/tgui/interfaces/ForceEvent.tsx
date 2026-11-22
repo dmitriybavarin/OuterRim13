@@ -11,6 +11,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 const CATEGORY_PAGE_ITEMS = 4;
@@ -75,6 +76,7 @@ type ForceEventData = {
 };
 
 export function ForceEvent(props) {
+  const t = useT();
   const { data } = useBackend<ForceEventData>();
   const { categories } = data;
 
@@ -83,7 +85,12 @@ export function ForceEvent(props) {
   const searchQueryState = useState('');
 
   return (
-    <Window theme="admin" title="Force Event" width={450} height={450}>
+    <Window
+      theme="admin"
+      title={t('forceevent-title', {}, 'Force Event')}
+      width={450}
+      height={450}
+    >
       <Window.Content>
         <ForceEventContext.Provider
           value={{ announceState, categoryState, searchQueryState }}
@@ -103,6 +110,7 @@ export function ForceEvent(props) {
 }
 
 function PanelOptions(props) {
+  const t = useT();
   const { searchQueryState, announceState } = useForceEventContext();
 
   const [searchQuery, setSearchQuery] = searchQueryState;
@@ -119,7 +127,7 @@ function PanelOptions(props) {
           autoFocus
           fluid
           onChange={setSearchQuery}
-          placeholder="Search..."
+          placeholder={t('forceevent-search', {}, 'Search...')}
           value={searchQuery}
         />
       </Stack.Item>
@@ -129,7 +137,7 @@ function PanelOptions(props) {
           checked={announce}
           onClick={() => setAnnounce(!announce)}
         >
-          Announce
+          {t('forceevent-announce', {}, 'Announce')}
         </Button.Checkbox>
       </Stack.Item>
     </Stack>
@@ -137,6 +145,7 @@ function PanelOptions(props) {
 }
 
 function EventSection(props) {
+  const t = useT();
   const { data, act } = useBackend<ForceEventData>();
   const { events } = data;
 
@@ -169,7 +178,13 @@ function EventSection(props) {
     EVENT_PAGE_ITEMS,
   );
 
-  const sectionTitle = searchQuery ? 'Searching...' : `${category.name} Events`;
+  const sectionTitle = searchQuery
+    ? t('forceevent-section-searching', {}, 'Searching...')
+    : t(
+        'forceevent-section-category',
+        { category: category.name },
+        `${category.name} Events`,
+      );
 
   return (
     <Section scrollable fill title={sectionTitle} buttons={<PanelOptions />}>
@@ -185,7 +200,11 @@ function EventSection(props) {
                         fluid
                         checked={!event.disabled}
                         onClick={() => act('toggleevent', { type: event.type })}
-                        tooltip="If unchecked, this event cannot randomly trigger."
+                        tooltip={t(
+                          'forceevent-toggle-tooltip',
+                          {},
+                          'If unchecked, this event cannot randomly trigger.',
+                        )}
                       />
                     </Stack.Item>
                     <Stack.Item grow>
@@ -194,7 +213,11 @@ function EventSection(props) {
                         tooltip={
                           event.description +
                           (event.has_customization
-                            ? ' Includes admin customization.'
+                            ? ` ${t(
+                                'forceevent-customization',
+                                {},
+                                'Includes admin customization.',
+                              )}`
                             : '')
                         }
                         fluid

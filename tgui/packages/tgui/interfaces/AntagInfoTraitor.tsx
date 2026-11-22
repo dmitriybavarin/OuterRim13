@@ -2,6 +2,7 @@ import { BlockQuote, Button, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { type Objective, ObjectivePrintout } from './common/Objectives';
 
@@ -39,9 +40,10 @@ type Info = {
 
 const IntroductionSection = (props) => {
   const { act, data } = useBackend<Info>();
+  const t = useT();
   const { intro, objectives } = data;
   return (
-    <Section fill title="Intro" scrollable>
+    <Section fill title={t('antaginfo-common-intro')} scrollable>
       <Stack vertical fill>
         <Stack.Item fontSize="25px">{intro}</Stack.Item>
         <Stack.Item grow>
@@ -54,22 +56,20 @@ const IntroductionSection = (props) => {
 
 const EmployerSection = (props) => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { allies, goal } = data;
   return (
     <Section
       fill
-      title="Employer"
+      title={t('antaginfo-traitor-employer')}
       scrollable
       buttons={
         <Button
           icon="hammer"
-          tooltip={`
-            This is a gameplay suggestion for bored traitors.
-            You don't have to follow it, unless you want some
-            ideas for how to spend the round.`}
+          tooltip={t('antaginfo-traitor-policy-tooltip')}
           tooltipPosition="bottom-start"
         >
-          Policy
+          {t('antaginfo-common-policy')}
         </Button>
       }
     >
@@ -78,7 +78,7 @@ const EmployerSection = (props) => {
           <Stack vertical>
             <Stack.Item>
               <span style={allystyle}>
-                Your allegiances:
+                {t('antaginfo-traitor-allegiances')}
                 <br />
               </span>
               <BlockQuote>{allies}</BlockQuote>
@@ -86,7 +86,7 @@ const EmployerSection = (props) => {
             <Stack.Divider />
             <Stack.Item mb={1}>
               <span style={goalstyle}>
-                Employer thoughts:
+                {t('antaginfo-traitor-thoughts')}
                 <br />
               </span>
               <BlockQuote>{goal}</BlockQuote>
@@ -100,20 +100,25 @@ const EmployerSection = (props) => {
 
 const UplinkSection = (props) => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { has_uplink, uplink_intro, uplink_unlock_info, code, failsafe_code } =
     data;
   return (
-    <Section title="Uplink" mb={!has_uplink && -1}>
+    <Section title={t('antaginfo-traitor-uplink')} mb={!has_uplink && -1}>
       <Stack fill>
         {
           <>
             <Stack.Item bold>
               {uplink_intro}
               <br />
-              {code && <span style={goalstyle}>Code: {code}</span>}
+              {code && <span style={goalstyle}>
+                  {t('antaginfo-traitor-code', { code })}
+                </span>}
               <br />
               {failsafe_code && (
-                <span style={badstyle}>Failsafe: {failsafe_code}</span>
+                <span style={badstyle}>
+                  {t('antaginfo-traitor-failsafe', { code: failsafe_code })}
+                </span>
               )}
             </Stack.Item>
             <Stack.Divider />
@@ -137,38 +142,33 @@ const UplinkSection = (props) => {
 
 const CodewordsSection = (props) => {
   const { data } = useBackend<Info>();
+  const t = useT();
   const { has_codewords, phrases, responses } = data;
   return (
-    <Section title="Codewords" mb={!has_codewords && -1}>
+    <Section title={t('antaginfo-common-codewords')} mb={!has_codewords && -1}>
       <Stack fill>
         {(!has_codewords && (
           <BlockQuote>
-            You have not been supplied with codewords. You will have to use
-            alternative methods to find potential allies. Proceed with caution,
-            however, as everyone is a potential foe.
+            {t('antaginfo-traitor-no-codewords')}
           </BlockQuote>
         )) || (
           <>
             <Stack.Item grow basis={0}>
               <BlockQuote>
-                Your employer provided you with the following codewords to
-                identify fellow agents. Use the codewords during regular
-                conversation to identify other agents. Proceed with caution,
-                however, as everyone is a potential foe.
+                {t('antaginfo-traitor-codewords')}
                 <span style={badstyle}>
-                  &ensp;You have memorized the codewords, allowing you to
-                  recognise them when heard.
+                  &ensp;{t('antaginfo-traitor-codewords-memorized')}
                 </span>
               </BlockQuote>
             </Stack.Item>
             <Stack.Divider mr={1} />
             <Stack.Item grow basis={0}>
               <Stack vertical>
-                <Stack.Item>Code Phrases:</Stack.Item>
+                <Stack.Item>{t('antaginfo-common-code-phrases')}</Stack.Item>
                 <Stack.Item bold textColor="blue">
                   {phrases}
                 </Stack.Item>
-                <Stack.Item>Code Responses:</Stack.Item>
+                <Stack.Item>{t('antaginfo-common-code-responses')}</Stack.Item>
                 <Stack.Item bold textColor="red">
                   {responses}
                 </Stack.Item>

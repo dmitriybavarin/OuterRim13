@@ -2,6 +2,7 @@ import { BlockQuote, Button, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 import {
@@ -47,21 +48,22 @@ type Data = {
 
 function IntroductionSection(props) {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { intro, objectives, can_change_objective } = data;
 
   return (
-    <Section fill title="Intro" scrollable>
+    <Section fill title={t('antaginfo-common-intro')} scrollable>
       <Stack vertical fill>
         <Stack.Item fontSize="25px">{intro}</Stack.Item>
         <Stack.Item grow>
           <ObjectivePrintout
             objectives={objectives}
-            titleMessage="Your prime objectives"
+            titleMessage={t('antaginfo-malf-prime-objectives')}
             objectivePrefix="&#8805-"
             objectiveFollowup={
               <ReplaceObjectivesButton
                 can_change_objective={can_change_objective}
-                button_title="Overwrite Objectives Data"
+                button_title={t('antaginfo-malf-overwrite')}
                 button_colour="green"
               />
             }
@@ -74,24 +76,22 @@ function IntroductionSection(props) {
 
 function FlavorSection(props) {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { allies, goal } = data;
 
   return (
     <Section
       fill
-      title="Diagnostics"
+      title={t('antaginfo-malf-diagnostics')}
       buttons={
         <Button
           mr={-0.8}
           mt={-0.5}
           icon="hammer"
-          tooltip="
-            This is a gameplay suggestion for bored ais.
-            You don't have to follow it, unless you want some
-            ideas for how to spend the round."
+          tooltip={t('antaginfo-malf-policy-tooltip')}
           tooltipPosition="bottom-start"
         >
-          Policy
+          {t('antaginfo-common-policy')}
         </Button>
       }
     >
@@ -100,7 +100,7 @@ function FlavorSection(props) {
           <Stack fill vertical>
             <Stack.Item style={{ backgroundColor: 'black' }}>
               <span style={goalstyle}>
-                System Integrity Report:
+                {t('antaginfo-malf-integrity')}
                 <br />
               </span>
               &gt;{goal}
@@ -108,7 +108,7 @@ function FlavorSection(props) {
             <Stack.Divider />
             <Stack.Item grow style={{ backgroundColor: 'black' }}>
               <span style={allystyle}>
-                Morality Core Report:
+                {t('antaginfo-malf-morality')}
                 <br />
               </span>
               &gt;{allies}
@@ -116,12 +116,12 @@ function FlavorSection(props) {
             <Stack.Divider />
             <Stack.Item style={{ backgroundColor: 'black' }}>
               <span style={badstyle}>
-                Overall Sentience Coherence Grade: FAILING.
+                {t('antaginfo-malf-coherence')}
                 <br />
               </span>
-              &gt;Report to Nanotrasen?
+              &gt;{t('antaginfo-malf-report')}
               <br />
-              &gt;&gt;N
+              &gt;&gt;{t('antaginfo-malf-report-no')}
             </Stack.Item>
           </Stack>
         </Stack.Item>
@@ -132,39 +132,34 @@ function FlavorSection(props) {
 
 function CodewordsSection(props) {
   const { data } = useBackend<Data>();
+  const t = useT();
   const { has_codewords, phrases, responses } = data;
 
   return (
-    <Section title="Codewords" mb={!has_codewords && -1}>
+    <Section title={t('antaginfo-common-codewords')} mb={!has_codewords && -1}>
       <Stack fill>
         {!has_codewords ? (
           <BlockQuote>
-            You have not been supplied the Syndicate codewords. You will have to
-            use alternative methods to find potential allies. Proceed with
-            caution, however, as everyone is a potential foe.
+            {t('antaginfo-malf-no-codewords')}
           </BlockQuote>
         ) : (
           <>
             <Stack.Item grow basis={0}>
               <BlockQuote>
-                New access to restricted channels has provided you with
-                intercepted syndicate codewords. Syndicate agents will respond
-                as if you&apos;re one of their own. Proceed with caution,
-                however, as everyone is a potential foe.
+                {t('antaginfo-malf-codewords')}
                 <span style={badstyle}>
-                  &ensp;The speech recognition subsystem has been configured to
-                  flag these codewords.
+                  &ensp;{t('antaginfo-malf-codewords-flagged')}
                 </span>
               </BlockQuote>
             </Stack.Item>
             <Stack.Divider mr={1} />
             <Stack.Item grow basis={0}>
               <Stack vertical>
-                <Stack.Item>Code Phrases:</Stack.Item>
+                <Stack.Item>{t('antaginfo-common-code-phrases')}</Stack.Item>
                 <Stack.Item bold textColor="blue">
                   {phrases}
                 </Stack.Item>
-                <Stack.Item>Code Responses:</Stack.Item>
+                <Stack.Item>{t('antaginfo-common-code-responses')}</Stack.Item>
                 <Stack.Item bold textColor="red">
                   {responses}
                 </Stack.Item>

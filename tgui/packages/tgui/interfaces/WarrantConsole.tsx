@@ -13,6 +13,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend, useLocalState } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type Data = {
@@ -63,6 +64,7 @@ export const WarrantConsole = (props) => {
 const RecordList = (props) => {
   const { act, data } = useBackend<Data>();
   const { records = [] } = data;
+  const t = useT();
   const sorted = sortBy(records, [(record) => record.crew_name]);
 
   const [selectedRecord, setSelectedRecord] = useLocalState<
@@ -83,17 +85,19 @@ const RecordList = (props) => {
         <Button
           icon="sync"
           onClick={() => act('refresh')}
-          tooltip="Refresh"
+          tooltip={t('warrant-refresh', {}, 'Refresh')}
           tooltipPosition="bottom-start"
         />
       }
       fill
       scrollable
-      title="Citations"
+      title={t('warrant-citations', {}, 'Citations')}
     >
       <Stack fill vertical>
         {!records?.length ? (
-          <NoticeBox>No citations issued.</NoticeBox>
+          <NoticeBox>
+            {t('warrant-no-citations', {}, 'No citations issued.')}
+          </NoticeBox>
         ) : (
           <Tabs vertical>
             {sorted.map((record, index) => (
@@ -139,6 +143,7 @@ const CitationManager = (props) => {
   if (!foundRecord) return;
 
   const { act } = useBackend<Data>();
+  const t = useT();
   const {
     citation: { author, details, fine, fine_ref, fine_name, paid, time },
   } = props;
@@ -158,22 +163,22 @@ const CitationManager = (props) => {
             act('print', { crew_ref: crew_ref, fine_ref: fine_ref })
           }
         >
-          Print
+          {t('warrant-print', {}, 'Print')}
         </Button>
       }
       color={getFineColor(fine)}
       title={fine_name}
     >
       <LabeledList>
-        <LabeledList.Item label="Details">
+        <LabeledList.Item label={t('warrant-details', {}, 'Details')}>
           <BlockQuote>{details}</BlockQuote>
         </LabeledList.Item>
-        <LabeledList.Item label="Author">{author}</LabeledList.Item>
-        <LabeledList.Item label="Time">{time}</LabeledList.Item>
-        <LabeledList.Item label="Fine">{fine}</LabeledList.Item>
-        <LabeledList.Item label="Paid">{paid}</LabeledList.Item>
+        <LabeledList.Item label={t('warrant-author', {}, 'Author')}>{author}</LabeledList.Item>
+        <LabeledList.Item label={t('warrant-time', {}, 'Time')}>{time}</LabeledList.Item>
+        <LabeledList.Item label={t('warrant-fine', {}, 'Fine')}>{fine}</LabeledList.Item>
+        <LabeledList.Item label={t('warrant-paid', {}, 'Paid')}>{paid}</LabeledList.Item>
         {fine > 0 && (
-          <LabeledList.Item label="Pay">
+          <LabeledList.Item label={t('warrant-pay', {}, 'Pay')}>
             <RestrictedInput
               maxValue={fine}
               minValue={5}
@@ -191,7 +196,7 @@ const CitationManager = (props) => {
                 })
               }
             >
-              Pay
+              {t('warrant-pay', {}, 'Pay')}
             </Button.Confirm>
           </LabeledList.Item>
         )}

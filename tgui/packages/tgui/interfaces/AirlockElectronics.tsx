@@ -8,6 +8,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { AccessConfig, type Region } from './common/AccessConfig';
 
@@ -33,6 +34,7 @@ export function AirlockElectronics(props) {
 
 export function AirLockMainSection(props) {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     accesses = [],
     oneAccess,
@@ -48,26 +50,32 @@ export function AirLockMainSection(props) {
       <Stack.Item>
         <Section fill>
           <LabeledList>
-            <LabeledList.Item label="Integrated Circuit Shell">
+            <LabeledList.Item label={t('airlockelectronics-circuit-shell', {}, 'Integrated Circuit Shell')}>
               <Button.Checkbox
                 checked={shell}
                 onClick={() => {
                   act('set_shell', { on: !shell });
                 }}
-                tooltip="Whether this airlock can have an integrated circuit placed inside of it or not."
+                tooltip={t(
+                  'airlockelectronics-shell-hint',
+                  {},
+                  'Whether this airlock can have an integrated circuit placed inside of it or not.',
+                )}
               >
-                Shell
+                {t('airlockelectronics-shell', {}, 'Shell')}
               </Button.Checkbox>
             </LabeledList.Item>
-            <LabeledList.Item label="Access Required">
+            <LabeledList.Item label={t('airlockelectronics-access', {}, 'Access Required')}>
               <Button
                 icon={oneAccess ? 'unlock' : 'lock'}
                 onClick={() => act('one_access')}
               >
-                {oneAccess ? 'One' : 'All'}
+                {oneAccess
+                  ? t('airlockelectronics-one', {}, 'One')
+                  : t('airlockelectronics-all', {}, 'All')}
               </Button>
             </LabeledList.Item>
-            <LabeledList.Item label="Unrestricted Access">
+            <LabeledList.Item label={t('airlockelectronics-unrestricted', {}, 'Unrestricted Access')}>
               <Button
                 icon={unres_direction & 1 ? 'check-square-o' : 'square-o'}
                 selected={unres_direction & 1}
@@ -77,7 +85,7 @@ export function AirLockMainSection(props) {
                   })
                 }
               >
-                North
+                {t('airlockelectronics-north', {}, 'North')}
               </Button>
               <Button
                 icon={unres_direction & 2 ? 'check-square-o' : 'square-o'}
@@ -88,7 +96,7 @@ export function AirLockMainSection(props) {
                   })
                 }
               >
-                South
+                {t('airlockelectronics-south', {}, 'South')}
               </Button>
               <Button
                 icon={unres_direction & 4 ? 'check-square-o' : 'square-o'}
@@ -99,7 +107,7 @@ export function AirLockMainSection(props) {
                   })
                 }
               >
-                East
+                {t('airlockelectronics-east', {}, 'East')}
               </Button>
               <Button
                 icon={unres_direction & 8 ? 'check-square-o' : 'square-o'}
@@ -110,10 +118,10 @@ export function AirLockMainSection(props) {
                   })
                 }
               >
-                West
+                {t('airlockelectronics-west', {}, 'West')}
               </Button>
             </LabeledList.Item>
-            <LabeledList.Item label="Airlock Name">
+            <LabeledList.Item label={t('airlockelectronics-name', {}, 'Airlock Name')}>
               <Input
                 fluid
                 maxLength={30}
@@ -125,7 +133,7 @@ export function AirLockMainSection(props) {
                 }
               />
             </LabeledList.Item>
-            <LabeledList.Item label="Cycling Id">
+            <LabeledList.Item label={t('airlockelectronics-cycle-id', {}, 'Cycling Id')}>
               <Input
                 fluid
                 maxLength={30}

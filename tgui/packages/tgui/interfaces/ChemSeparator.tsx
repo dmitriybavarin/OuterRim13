@@ -9,6 +9,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 type RegHolderData = {
@@ -31,6 +32,7 @@ type Data = {
 
 export const ChemSeparator = (props) => {
   const { act, data } = useBackend<Data>();
+  const t = useT();
   const {
     flask,
     beaker,
@@ -54,7 +56,7 @@ export const ChemSeparator = (props) => {
                   width: '57px',
                 }}
               >
-                Flask:
+                {t('chemseparator-flask', {}, 'Flask:')}
               </Box>
             }
           >
@@ -74,9 +76,15 @@ export const ChemSeparator = (props) => {
                       textShadow: '1px 1px 0 black',
                     }}
                   >
-                    {`${Math.ceil(flask.total_volume)} of ${
-                      flask.maximum_volume
-                    } units at ${Math.ceil(flask.temp)}K`}
+                    {t(
+                      'chemseparator-volume-at-temp',
+                      {
+                        current: Math.ceil(flask.total_volume),
+                        max: flask.maximum_volume,
+                        temp: Math.ceil(flask.temp),
+                      },
+                      `${Math.ceil(flask.total_volume)} of ${flask.maximum_volume} units at ${Math.ceil(flask.temp)}K`,
+                    )}
                   </Box>
                 </ProgressBar>
               </Stack.Item>
@@ -90,7 +98,7 @@ export const ChemSeparator = (props) => {
                   disabled={flask.total_volume <= 0 || !beaker}
                   onClick={() => act('drain')}
                 >
-                  Drain
+                  {t('chemseparator-drain', {}, 'Drain')}
                 </Button>
               </Stack.Item>
             </Stack>
@@ -104,7 +112,7 @@ export const ChemSeparator = (props) => {
                     width: '57px',
                   }}
                 >
-                  Beaker:
+                  {t('chemseparator-beaker', {}, 'Beaker:')}
                 </Box>
               }
             >
@@ -124,9 +132,15 @@ export const ChemSeparator = (props) => {
                         textShadow: '1px 1px 0 black',
                       }}
                     >
-                      {`${Math.ceil(beaker.total_volume)} of ${
-                        beaker.maximum_volume
-                      } units at ${Math.ceil(beaker.temp)}K`}
+                      {t(
+                        'chemseparator-volume-at-temp',
+                        {
+                          current: Math.ceil(beaker.total_volume),
+                          max: beaker.maximum_volume,
+                          temp: Math.ceil(beaker.temp),
+                        },
+                        `${Math.ceil(beaker.total_volume)} of ${beaker.maximum_volume} units at ${Math.ceil(beaker.temp)}K`,
+                      )}
                     </Box>
                   </ProgressBar>
                 </Stack.Item>
@@ -140,7 +154,7 @@ export const ChemSeparator = (props) => {
                     disabled={beaker.total_volume <= 0}
                     onClick={() => act('filter')}
                   >
-                    Filter
+                    {t('chemseparator-filter', {}, 'Filter')}
                   </Button>
                 </Stack.Item>
               </Stack>
@@ -154,7 +168,7 @@ export const ChemSeparator = (props) => {
                   width: '57px',
                 }}
               >
-                Burner Knob:
+                {t('chemseparator-burner-knob', {}, 'Burner Knob:')}
               </Box>
             }
           >
@@ -182,7 +196,7 @@ export const ChemSeparator = (props) => {
                     width: '57px',
                   }}
                 >
-                  Fuel Source:
+                  {t('chemseparator-fuel-source', {}, 'Fuel Source:')}
                 </Box>
               }
             >
@@ -201,9 +215,15 @@ export const ChemSeparator = (props) => {
                     textShadow: '1px 1px 0 black',
                   }}
                 >
-                  {`${Math.ceil(fuel.total_volume)} of ${
-                    fuel.maximum_volume
-                  } units at ${Math.ceil(fuel.temp)}K`}
+                  {t(
+                    'chemseparator-volume-at-temp',
+                    {
+                      current: Math.ceil(fuel.total_volume),
+                      max: fuel.maximum_volume,
+                      temp: Math.ceil(fuel.temp),
+                    },
+                    `${Math.ceil(fuel.total_volume)} of ${fuel.maximum_volume} units at ${Math.ceil(fuel.temp)}K`,
+                  )}
                 </Box>
               </ProgressBar>
             </LabeledList.Item>
@@ -219,7 +239,7 @@ export const ChemSeparator = (props) => {
                       width: '57px',
                     }}
                   >
-                    Cooling:
+                    {t('chemseparator-cooling', {}, 'Cooling:')}
                   </Box>
                 }
               >
@@ -231,7 +251,7 @@ export const ChemSeparator = (props) => {
                   ml="25px"
                   onClick={() => act('cool')}
                 >
-                  Start
+                  {t('chemseparator-start', {}, 'Start')}
                 </Button>
               </LabeledList.Item>
             )}

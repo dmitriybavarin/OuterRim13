@@ -11,6 +11,7 @@ import {
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 import { CargoCatalog } from './Cargo/CargoCatalog';
 
@@ -31,6 +32,7 @@ type Data = {
 export function CargoExpress(props) {
   const { data } = useBackend<Data>();
   const { beaconError, canBeacon, message, locked } = data;
+  const t = useT();
 
   return (
     <Window width={600} height={700}>
@@ -41,7 +43,11 @@ export function CargoExpress(props) {
               <Stack.Item bold color={'red'}>
                 <Icon mb={3} name={'lock'} size={7.5} />
                 <br />
-                {`Swipe a Cargo Technician-level ID card to unlock this interface.`}
+                {t(
+                  'cargoexpress-locked',
+                  {},
+                  'Swipe a Cargo Technician-level ID card to unlock this interface.',
+                )}
               </Stack.Item>
             </Stack>
           </Section>
@@ -71,23 +77,27 @@ function CargoExpressContent(props) {
     canBuyBeacon,
     printMsg,
   } = data;
+  const t = useT();
 
   return (
     <Stack fill vertical g={0}>
       <Stack.Item>
         <Section
-          title="Cargo Express"
+          title={t('cargoexpress-title', {}, 'Cargo Express')}
           buttons={
             <Box inline bold verticalAlign={'middle'}>
               <AnimatedNumber value={Math.round(points)} />
-              {' credits'}
+              {' '}
+              {t('cargoexpress-credits', {}, 'credits')}
             </Box>
           }
         >
           <LabeledList>
-            <LabeledList.Item label="Landing Location">
+            <LabeledList.Item
+              label={t('cargoexpress-landing-location', {}, 'Landing Location')}
+            >
               <Button selected={!using_beacon} onClick={() => act('LZCargo')}>
-                Cargo Bay
+                {t('cargoexpress-cargo-bay', {}, 'Cargo Bay')}
               </Button>
               <Button
                 selected={using_beacon}

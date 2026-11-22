@@ -2,6 +2,7 @@ import { BlockQuote, Button, Flex, Section, Stack } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
+import { useT } from '../i18n';
 import { Window } from '../layouts';
 
 enum LawType {
@@ -30,11 +31,12 @@ type Data = {
 
 export const StateLawUi = () => {
   const { data, act } = useBackend<Data>();
+  const t = useT();
   const { locked, stated_laws, all_laws } = data;
 
   return (
     <Window
-      title="State Laws"
+      title={t('statelaw-title', {}, 'State Laws')}
       width={400}
       height={Math.max(1, all_laws.length) * 55 + 150}
     >
@@ -44,13 +46,13 @@ export const StateLawUi = () => {
         }}
       >
         <Section
-          title="Which laws do you want to include when stating them for the crew?"
+          title={t('statelaw-which', {}, 'Which laws do you want to include when stating them for the crew?')}
           scrollable
         >
           <Stack vertical>
             {all_laws.length === 0 ? (
               <Stack.Item>
-                <BlockQuote>No laws available!</BlockQuote>
+                <BlockQuote>{t('statelaw-none', {}, 'No laws available!')}</BlockQuote>
               </Stack.Item>
             ) : (
               all_laws.map((law, index) => (
@@ -87,7 +89,9 @@ export const StateLawUi = () => {
             onClick={() => act('state_laws')}
             italic={!!locked}
           >
-            {locked ? 'On Cooldown' : 'State Laws'}
+            {locked
+              ? t('statelaw-cooldown', {}, 'On Cooldown')
+              : t('statelaw-state', {}, 'State Laws')}
           </Button.Confirm>
         </Section>
       </Window.Content>
